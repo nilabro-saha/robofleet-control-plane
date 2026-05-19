@@ -9,6 +9,8 @@ mkdir -p "$RUN_DIR"
 SERVICE_PID_FILE="$RUN_DIR/fleet-state-service.pid"
 SIM_PID_FILE="$RUN_DIR/robot-simulator.pid"
 SERVICE_PORT_FILE="$RUN_DIR/fleet-state-service.port"
+UI_PID_FILE="$RUN_DIR/fleet-dashboard-ui.pid"
+UI_PORT_FILE="$RUN_DIR/fleet-dashboard-ui.port"
 
 echo "[mvp-up] Root: $ROOT_DIR"
 
@@ -28,7 +30,11 @@ if [[ -f "$SIM_PID_FILE" ]] && ! is_pid_alive "$SIM_PID_FILE"; then
   rm -f "$SIM_PID_FILE"
 fi
 
-if [[ -f "$SERVICE_PID_FILE" ]] || [[ -f "$SIM_PID_FILE" ]]; then
+if [[ -f "$UI_PID_FILE" ]] && ! is_pid_alive "$UI_PID_FILE"; then
+  rm -f "$UI_PID_FILE" "$UI_PORT_FILE"
+fi
+
+if [[ -f "$SERVICE_PID_FILE" ]] || [[ -f "$SIM_PID_FILE" ]] || [[ -f "$UI_PID_FILE" ]]; then
   echo "[mvp-up] Existing live PID files found in .run/. Run './scripts/mvp-down.sh' first."
   exit 1
 fi
@@ -101,10 +107,27 @@ nohup "$ROOT_DIR/robot-simulator/.venv/bin/python" "$ROOT_DIR/robot-simulator/sr
   > "$RUN_DIR/robot-simulator.log" 2>&1 &
 echo $! > "$SIM_PID_FILE"
 
+echo "[mvp-up] Starting fleet-dashboard-ui..."
+UI_PORT=5173
+if port_in_use "$UI_PORT"; then
+  UI_PORT=5174
+  echo "[mvp-up] Port 5173 is in use. Starting fleet-dashboard-ui on port ${UI_PORT}."
+fi
+
+echo "$UI_PORT" > "$UI_PORT_FILE"
+
+nohup "$PYTHON_BIN" -m http.server "$UI_PORT" \
+  --bind 127.0.0.1 \
+  --directory "$ROOT_DIR/fleet-dashboard-ui" \
+  > "$RUN_DIR/fleet-dashboard-ui.log" 2>&1 &
+echo $! > "$UI_PID_FILE"
+
 echo "[mvp-up] Started successfully"
 echo "  Fleet service PID: $(cat "$SERVICE_PID_FILE")"
 echo "  Simulator PID:     $(cat "$SIM_PID_FILE")"
+echo "  Dashboard UI PID:  $(cat "$UI_PID_FILE")"
 echo "  Logs:"
 echo "    - $RUN_DIR/fleet-state-service.log"
 echo "    - $RUN_DIR/robot-simulator.log"
-echo "[mvp-up] Dashboard: http://localhost:${SERVICE_PORT}"
+echo "    - $RUN_DIR/fleet-dashboard-ui.log"
+echo "[mvp-up] Dashboard: http://localhost:${UI_PORT}/?apiBase=http://localhost:${SERVICE_PORT}"

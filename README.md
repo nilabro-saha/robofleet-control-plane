@@ -15,7 +15,8 @@ This repository contains a multi-module MVP for a **RoboFleet Control Plane** id
 ```text
 .
 ├── robot-simulator/        # Python telemetry producer
-├── fleet-state-service/    # Spring Boot Kafka consumer + REST + dashboard
+├── fleet-state-service/    # Spring Boot Kafka consumer + REST API
+├── fleet-dashboard-ui/     # Vanilla JS dashboard consuming /api/robots
 └── docker-compose.yml      # Local Kafka infrastructure
 ```
 
@@ -57,7 +58,7 @@ python robot_simulator.py
 
 ## Verify
 
-- Dashboard: `http://localhost:8080`
+- Dashboard (new JS module): `http://localhost:5173/?apiBase=http://localhost:8080`
 - API all robots: `http://localhost:8080/api/robots`
 - API one robot: `http://localhost:8080/api/robots/robot-1`
 
@@ -85,6 +86,7 @@ Logs are written to:
 
 - `.run/fleet-state-service.log`
 - `.run/robot-simulator.log`
+- `.run/fleet-dashboard-ui.log`
 - `.run/kafka.log` (when running local no-Docker Kafka)
 
 ## Telemetry Event Shape

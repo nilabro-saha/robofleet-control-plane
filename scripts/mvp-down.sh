@@ -8,6 +8,8 @@ RUN_DIR="$ROOT_DIR/.run"
 SERVICE_PID_FILE="$RUN_DIR/fleet-state-service.pid"
 SIM_PID_FILE="$RUN_DIR/robot-simulator.pid"
 SERVICE_PORT_FILE="$RUN_DIR/fleet-state-service.port"
+UI_PID_FILE="$RUN_DIR/fleet-dashboard-ui.pid"
+UI_PORT_FILE="$RUN_DIR/fleet-dashboard-ui.port"
 
 stop_pid_file() {
   local name="$1"
@@ -33,7 +35,9 @@ stop_pid_file() {
 
 stop_pid_file "fleet-state-service" "$SERVICE_PID_FILE"
 stop_pid_file "robot-simulator" "$SIM_PID_FILE"
+stop_pid_file "fleet-dashboard-ui" "$UI_PID_FILE"
 rm -f "$SERVICE_PORT_FILE"
+rm -f "$UI_PORT_FILE"
 
 if command -v docker >/dev/null 2>&1; then
   echo "[mvp-down] Stopping Kafka (Redpanda)..."

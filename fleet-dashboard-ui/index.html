@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoboFleet Dashboard</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main>
+    <h1>RoboFleet Control Plane - MVP</h1>
+    <div class="controls">
+      <button id="toggle-live" type="button">Live Refresh: ON</button>
+      <label for="interval-select">Interval</label>
+      <select id="interval-select">
+        <option value="1000">1 second</option>
+        <option value="2000">2 seconds</option>
+        <option value="5000">5 seconds</option>
+        <option value="10000">10 seconds</option>
+      </select>
+      <button id="refresh-now" type="button">Refresh Now</button>
+    </div>
+    <p id="connection" class="muted">Connecting to fleet-state-service API...</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Robot ID</th>
+          <th>X</th>
+          <th>Y</th>
+          <th>Battery</th>
+          <th>Status</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="robots-body">
+        <tr>
+          <td colspan="6">Waiting for telemetry...</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 2rem;
+  background: #f5f7fb;
+  color: #1f2937;
+}
+
+h1 {
+  margin-bottom: 1rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.controls button,
+.controls select {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111827;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.9rem;
+}
+
+.controls select:disabled {
+  background: #e5e7eb;
+  color: #6b7280;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.controls button:hover {
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+th {
+  background: #111827;
+  color: #f9fafb;
+}
+
+.status-IDLE {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.status-MOVING {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.status-CHARGING {
+  color: #d97706;
+  font-weight: bold;
+}
+
+.status-ERROR {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
