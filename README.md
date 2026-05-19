@@ -61,6 +61,32 @@ python robot_simulator.py
 - API all robots: `http://localhost:8080/api/robots`
 - API one robot: `http://localhost:8080/api/robots/robot-1`
 
+## One-command MVP launch
+
+Start everything (Kafka + backend + simulator):
+
+```bash
+chmod +x scripts/mvp-up.sh scripts/mvp-down.sh
+./scripts/mvp-up.sh
+```
+
+`mvp-up.sh` automatically chooses:
+
+- Docker Kafka (if Docker is available), or
+- Local no-Docker Kafka (downloads and runs Apache Kafka under `.local/`)
+
+Stop everything:
+
+```bash
+./scripts/mvp-down.sh
+```
+
+Logs are written to:
+
+- `.run/fleet-state-service.log`
+- `.run/robot-simulator.log`
+- `.run/kafka.log` (when running local no-Docker Kafka)
+
 ## Telemetry Event Shape
 
 ```json
