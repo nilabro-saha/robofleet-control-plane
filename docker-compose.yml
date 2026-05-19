@@ -1,5 +1,10 @@
 version: "3.9"
 
+# Intent:
+# Provide a minimal, disposable Kafka-compatible broker for local MVP runs.
+# Redpanda is used here to reduce operational overhead versus a full Kafka +
+# ZooKeeper setup while preserving the same producer/consumer semantics.
+
 services:
   redpanda:
     image: redpandadata/redpanda:v24.1.9

@@ -2,6 +2,12 @@
 
 This repository contains a multi-module MVP for a **RoboFleet Control Plane** idea.
 
+The intent of this project is to demonstrate a clear separation of concerns that often appears in real robotics platforms:
+
+- an **edge producer** (robots/simulators) that emits telemetry,
+- a **control-plane state service** that materializes fleet state from a stream,
+- and a **read-only operator UI** that visualizes current state.
+
 ## MVP Scope
 
 - Simulate 3 robots emitting telemetry every second
@@ -10,6 +16,8 @@ This repository contains a multi-module MVP for a **RoboFleet Control Plane** id
 - Persist latest robot state to SQLite
 - Expose API and a tiny dashboard for fleet visibility
 
+This MVP intentionally focuses on **current state materialization** rather than historical analytics. It is a “what is happening now?” system for operators.
+
 ## Repository Structure
 
 ```text
@@ -17,8 +25,16 @@ This repository contains a multi-module MVP for a **RoboFleet Control Plane** id
 ├── robot-simulator/        # Python telemetry producer
 ├── fleet-state-service/    # Spring Boot Kafka consumer + REST API
 ├── fleet-dashboard-ui/     # Vanilla JS dashboard consuming /api/robots
+├── scripts/                # One-command orchestration helpers
 └── docker-compose.yml      # Local Kafka infrastructure
 ```
+
+For deeper intent and file-level guidance, see module docs:
+
+- `robot-simulator/README.md`
+- `fleet-state-service/README.md`
+- `fleet-dashboard-ui/README.md`
+- `scripts/README.md`
 
 ## Prerequisites
 
@@ -44,6 +60,8 @@ mvn spring-boot:run
 
 Service starts at `http://localhost:8080`.
 
+If `8080` is already occupied, the one-command launcher auto-selects `8081`.
+
 ## 3) Run Robot Simulator
 
 Open a second terminal:
@@ -56,11 +74,15 @@ pip install -r requirements.txt
 python robot_simulator.py
 ```
 
+The simulator continuously emits synthetic state for three robots and is intentionally simple so you can quickly change behavior (movement, battery model, status transitions).
+
 ## Verify
 
 - Dashboard (new JS module): `http://localhost:5173/?apiBase=http://localhost:8080`
 - API all robots: `http://localhost:8080/api/robots`
 - API one robot: `http://localhost:8080/api/robots/robot-1`
+
+If `mvp-up.sh` moved ports (for example to `8081`), use the dashboard URL printed by the script.
 
 ## One-command MVP launch
 
@@ -88,6 +110,8 @@ Logs are written to:
 - `.run/robot-simulator.log`
 - `.run/fleet-dashboard-ui.log`
 - `.run/kafka.log` (when running local no-Docker Kafka)
+
+These logs are operational artifacts only and are intentionally ignored by git.
 
 ## Telemetry Event Shape
 

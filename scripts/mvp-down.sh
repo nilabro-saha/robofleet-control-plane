@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+# Intent:
+# Symmetric counterpart to mvp-up.sh — stop everything that was started for
+# the demo run and clean launch bookkeeping files.
+
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 RUN_DIR="$ROOT_DIR/.run"
 

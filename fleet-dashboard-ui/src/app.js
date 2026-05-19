@@ -7,6 +7,12 @@ const refreshNowButton = document.getElementById("refresh-now");
 const params = new URLSearchParams(window.location.search);
 const apiBase = params.get("apiBase") ?? "http://localhost:8080";
 
+/**
+ * Intent of this module:
+ * Keep the operator experience framework-light while still giving practical
+ * control over how live fleet state is refreshed and inspected.
+ */
+
 let liveRefreshEnabled = true;
 let refreshIntervalMs = Number(intervalSelect.value);
 let refreshTimerId = null;

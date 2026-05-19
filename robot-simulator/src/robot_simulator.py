@@ -16,8 +16,18 @@ PUBLISH_INTERVAL_SECONDS = 1
 STATUSES = ["IDLE", "MOVING", "CHARGING", "ERROR"]
 
 
+"""
+Intent of this module:
+
+Act as a lightweight stand-in for real robots so the control-plane pipeline
+can be demonstrated end-to-end (producer -> Kafka -> state service -> UI)
+without hardware dependencies.
+"""
+
+
 @dataclass
 class RobotState:
+    """Event payload contract shared with downstream consumers."""
     robotId: str
     x: float
     y: float
@@ -27,6 +37,8 @@ class RobotState:
 
 
 class RobotSimulator:
+    """Simple state machine that generates plausible robot telemetry over time."""
+
     def __init__(self, robot_id: str):
         self.robot_id = robot_id
         self.x = random.uniform(0, 100)
@@ -71,6 +83,7 @@ def shutdown_handler(signum, frame):
 
 
 def main():
+    """Run three simulators and continuously publish their latest state."""
     signal.signal(signal.SIGINT, shutdown_handler)
     signal.signal(signal.SIGTERM, shutdown_handler)
 

@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+# Intent:
+# Provide one reliable command that brings up the full MVP stack for demos,
+# while adapting to local constraints (existing Kafka, Docker availability,
+# and occupied service/UI ports).
+
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 RUN_DIR="$ROOT_DIR/.run"
 mkdir -p "$RUN_DIR"
