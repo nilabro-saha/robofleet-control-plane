@@ -21,6 +21,29 @@ This service bridges that gap by consuming the event stream and continuously ups
   - `GET /api/robots`
   - `GET /api/robots/{id}`
 
+## API query behavior
+
+`GET /api/robots` supports Spring pageable query params:
+
+- `sort=<field>,<direction>`
+  - example: `sort=battery,desc`
+- `size=<number>`
+- `page=<number>`
+
+Default behavior:
+
+- `size=100`
+- `sort=robotId,asc`
+
+Supported sort fields for this endpoint:
+
+- `robotId`
+- `positionX`
+- `positionY`
+- `battery`
+- `status`
+- `timestamp`
+
 ## Design note
 
 This service intentionally stores only the latest state (not full history), keeping the MVP simple and fast to reason about.

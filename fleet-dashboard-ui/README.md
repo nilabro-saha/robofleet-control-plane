@@ -18,6 +18,11 @@ This UI converts API responses into an at-a-glance operations view.
   - live refresh on/off
   - refresh interval selection
   - manual refresh
+- Support backend-driven sorting from the table headers:
+  - click a header to sort ascending by that field
+  - click the same header again to toggle descending
+- Open a right-side details panel when a robot row is clicked
+  - fetches single-robot data from `GET /api/robots/{id}`
 - Present timestamps in browser-local time for operator context
 
 ## Runtime assumption
@@ -27,3 +32,18 @@ The API base URL is provided by query parameter (for example):
 `/?apiBase=http://localhost:8081`
 
 This keeps the UI static and backend-agnostic.
+
+## Sorting contract
+
+Sorting is not performed in the browser. The UI calls backend pageable sort params:
+
+- `GET /api/robots?sort=<field>,<direction>&size=100`
+
+Supported sort fields used by the UI:
+
+- `robotId`
+- `positionX`
+- `positionY`
+- `battery`
+- `status`
+- `timestamp`

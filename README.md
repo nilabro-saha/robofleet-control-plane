@@ -80,9 +80,18 @@ The simulator continuously emits synthetic state for three robots and is intenti
 
 - Dashboard (new JS module): `http://localhost:5173/?apiBase=http://localhost:8080`
 - API all robots: `http://localhost:8080/api/robots`
+- API sorted robots (pageable): `http://localhost:8080/api/robots?sort=timestamp,desc&size=3`
 - API one robot: `http://localhost:8080/api/robots/robot-1`
 
 If `mvp-up.sh` moved ports (for example to `8081`), use the dashboard URL printed by the script.
+
+### Dashboard behaviors
+
+- Click any table row to open a right-side robot details panel
+- Click table headers to change backend-driven sorting
+  - click once for ascending
+  - click same header again for descending
+- Sorting is handled by backend API/database query path (not by frontend array sorting)
 
 ## One-command MVP launch
 
