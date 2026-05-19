@@ -7,6 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,12 +32,14 @@ class RobotApiControllerTest {
 
   @Test
   void shouldReturnAllRobots() {
-    when(robotStateService.getAllRobots()).thenReturn(List.of(sampleResponse()));
+    Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.ASC, "robotId"));
+    when(robotStateService.getAllRobots(pageable)).thenReturn(List.of(sampleResponse()));
 
-    List<RobotStateResponse> response = robotApiController.getAllRobots();
+    List<RobotStateResponse> response = robotApiController.getAllRobots(pageable);
 
     assertEquals(1, response.size());
     assertEquals("robot-1", response.get(0).getRobotId());
+    verify(robotStateService).getAllRobots(pageable);
   }
 
   @Test

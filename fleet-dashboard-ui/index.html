@@ -25,12 +25,12 @@
     <table>
       <thead>
         <tr>
-          <th>Robot ID</th>
-          <th>X</th>
-          <th>Y</th>
-          <th>Battery</th>
-          <th>Status</th>
-          <th>Timestamp</th>
+          <th data-sort-field="robotId">Robot ID</th>
+          <th data-sort-field="positionX">X</th>
+          <th data-sort-field="positionY">Y</th>
+          <th data-sort-field="battery">Battery</th>
+          <th data-sort-field="status">Status</th>
+          <th data-sort-field="timestamp">Timestamp</th>
         </tr>
       </thead>
       <tbody id="robots-body">
@@ -40,6 +40,17 @@
       </tbody>
     </table>
   </main>
+
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+  <aside id="robot-sidebar" class="robot-sidebar" aria-hidden="true">
+    <div class="sidebar-header">
+      <h2 id="sidebar-title">Robot Details</h2>
+      <button id="sidebar-close" type="button" aria-label="Close sidebar">✕</button>
+    </div>
+    <div id="sidebar-content" class="sidebar-content">
+      <p class="muted">Select a robot row to view details.</p>
+    </div>
+  </aside>
 
   <script type="module" src="./src/app.js"></script>
 </body>

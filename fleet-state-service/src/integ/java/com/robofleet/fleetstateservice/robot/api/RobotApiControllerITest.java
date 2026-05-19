@@ -32,6 +32,16 @@ class RobotApiControllerITest {
   }
 
   @Test
+  void shouldReturnRobotsSortedByBatteryDescending() throws Exception {
+    mockMvc.perform(get("/api/robots")
+            .param("sort", "battery,desc")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].robotId").value("robot-1"))
+        .andExpect(jsonPath("$[1].robotId").value("robot-2"));
+  }
+
+  @Test
   void shouldReturnSingleRobotWhenPresent() throws Exception {
     mockMvc.perform(get("/api/robots/robot-1").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())

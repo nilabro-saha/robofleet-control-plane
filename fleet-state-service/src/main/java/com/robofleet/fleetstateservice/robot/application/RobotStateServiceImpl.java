@@ -7,6 +7,7 @@ import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotSta
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,11 +44,13 @@ public class RobotStateServiceImpl implements RobotStateService {
   /**
    * Retrieves latest-state rows for all robots.
    *
+   * @param pageable pagination and sorting request
    * @return list of API response objects
    */
   @Override
-  public List<RobotStateResponse> getAllRobots() {
-    return robotStateRepository.findAll()
+  public List<RobotStateResponse> getAllRobots(Pageable pageable) {
+    return robotStateRepository.findAll(pageable)
+        .getContent()
         .stream()
         .map(this::toResponse)
         .toList();

@@ -10,6 +10,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.Instant;
 import java.util.List;
@@ -57,7 +61,8 @@ class RobotStateServiceImplTest {
   @Test
   void shouldReturnAllRobots() {
     Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
-    when(robotStateRepository.findAll()).thenReturn(List.of(
+    Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.ASC, "robotId"));
+    when(robotStateRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(
         RobotState.builder()
             .robotId("robot-1")
             .positionX(12.34)
@@ -66,14 +71,26 @@ class RobotStateServiceImplTest {
             .status("MOVING")
             .timestamp(timestamp)
             .build()
-    ));
+    )));
 
-    List<RobotStateResponse> response = robotStateService.getAllRobots();
+    List<RobotStateResponse> response = robotStateService.getAllRobots(pageable);
 
     assertEquals(1, response.size());
     assertEquals("robot-1", response.get(0).getRobotId());
     assertEquals(12.34, response.get(0).getPositionX());
     assertEquals(56.78, response.get(0).getPositionY());
+
+    verify(robotStateRepository).findAll(pageable);
+  }
+
+  @Test
+  void shouldUsePageableSortingFromCaller() {
+    Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "battery"));
+    when(robotStateRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of()));
+
+    robotStateService.getAllRobots(pageable);
+
+    verify(robotStateRepository).findAll(pageable);
   }
 
   @Test

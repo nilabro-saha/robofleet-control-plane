@@ -4,6 +4,7 @@ import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotTelemetryEvent;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Application boundary for fleet state use cases.
@@ -23,9 +24,10 @@ public interface RobotStateService {
   /**
    * Returns the current known state for every robot in the fleet snapshot.
    *
+   * @param pageable paging and sorting request
    * @return list of latest robot states
    */
-  List<RobotStateResponse> getAllRobots();
+  List<RobotStateResponse> getAllRobots(Pageable pageable);
 
   /**
    * Returns the current known state for one robot, if available.

@@ -3,6 +3,7 @@ body {
   margin: 2rem;
   background: #f5f7fb;
   color: #1f2937;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -54,9 +55,52 @@ td {
   text-align: left;
 }
 
+tbody tr[data-robot-id] {
+  cursor: pointer;
+}
+
+tbody tr[data-robot-id]:hover {
+  background: #eef2ff;
+}
+
+tbody tr.selected-row {
+  background: #e0e7ff;
+}
+
 th {
   background: #111827;
   color: #f9fafb;
+}
+
+th[data-sort-field] {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 26px;
+}
+
+th[data-sort-field]:hover {
+  background: #1f2937;
+}
+
+th[data-sort-field]::after {
+  content: "⇅";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+th.sort-active::after {
+  content: "▴";
+  color: #e2e8f0;
+  font-size: 0.82rem;
+}
+
+th.sort-active.sort-desc::after {
+  content: "▾";
 }
 
 .status-IDLE {
@@ -83,4 +127,80 @@ th {
   color: #6b7280;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.robot-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(30vw, 420px);
+  min-width: 320px;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  box-shadow: -8px 0 20px rgba(15, 23, 42, 0.16);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+}
+
+.robot-sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sidebar-header button {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+}
+
+.sidebar-content {
+  padding: 1rem;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  row-gap: 0.6rem;
+  column-gap: 0.8rem;
+}
+
+.details-grid dt {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.details-grid dd {
+  margin: 0;
 }
