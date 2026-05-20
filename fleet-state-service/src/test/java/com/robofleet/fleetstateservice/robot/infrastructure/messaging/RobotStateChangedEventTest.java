@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class RobotTelemetryEventTest {
+class RobotStateChangedEventTest {
 
   private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
@@ -22,7 +22,7 @@ class RobotTelemetryEventTest {
         }
         """;
 
-    RobotTelemetryEvent event = objectMapper.readValue(json, RobotTelemetryEvent.class);
+    RobotStateChangedEvent event = objectMapper.readValue(json, RobotStateChangedEvent.class);
 
     assertEquals("robot-1", event.getRobotId());
     assertEquals(12.34, event.getPositionX());

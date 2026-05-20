@@ -2,10 +2,8 @@ package com.robofleet.robotsimulator.robot.domain;
 
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotTelemetryEvent;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.AccessLevel;
@@ -38,31 +36,46 @@ public class RobotActor {
   private final Lock stateLock = new ReentrantLock();
 
   /**
-   * Produces telemetry for the current in-memory state without advancing it.
+   * Produces a telemetry view of current in-memory state without advancing it.
    */
-  public RobotTelemetryEvent currentTelemetry() {
+  public LastStateView lastStateView() {
     stateLock.lock();
     try {
-      return RobotTelemetryEvent.builder()
-          .robotId(robotId)
-          .positionX(roundTwo(positionX))
-          .positionY(roundTwo(positionY))
-          .battery(roundTwo(battery))
-          .status(status.name())
-          .timestamp(Instant.now())
-          .build();
+      return new LastStateView(
+          robotId,
+          roundTwo(positionX),
+          roundTwo(positionY),
+          roundTwo(battery),
+          status.name(),
+          Instant.now()
+      );
     } finally {
       stateLock.unlock();
     }
   }
 
   /**
+   * Immutable view of robot state used by application listeners.
+   */
+  public record LastStateView(
+      String robotId,
+      double positionX,
+      double positionY,
+      double battery,
+      String status,
+      Instant timestamp
+  ) {
+  }
+
+  /**
    * Advances robot state for the next publish cycle.
    */
-  public void advanceState(RobotMap map) {
+  public void advanceState(RobotMap map, AdvancementMode advancementMode) {
     stateLock.lock();
     try {
-      ThreadLocalRandom random = ThreadLocalRandom.current();
+      if (!(advancementMode instanceof RandomAdvance(var random))) {
+        throw new IllegalStateException("Unsupported advancement mode: " + advancementMode);
+      }
       if (!(map instanceof RectangularMap rectangularMap)) {
         throw new IllegalStateException("Unsupported map type for robot movement: " + map);
       }

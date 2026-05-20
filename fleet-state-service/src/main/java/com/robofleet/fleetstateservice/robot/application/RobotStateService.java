@@ -1,7 +1,7 @@
 package com.robofleet.fleetstateservice.robot.application;
 
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
-import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotTelemetryEvent;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ public interface RobotStateService {
    *
    * @param event telemetry payload emitted by a robot/simulator
    */
-  void upsertFromTelemetry(RobotTelemetryEvent event);
+  void upsertFromTelemetry(RobotStateChangedEvent event);
 
   /**
    * Returns the current known state for every robot in the fleet snapshot.
@@ -36,4 +36,11 @@ public interface RobotStateService {
    * @return latest state wrapped in {@link Optional}
    */
   Optional<RobotStateResponse> getRobotById(String robotId);
+
+  /**
+   * Removes one robot from the latest-state projection.
+   *
+   * @param robotId unique robot identifier
+   */
+  void removeRobotById(String robotId);
 }

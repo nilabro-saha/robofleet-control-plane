@@ -25,13 +25,39 @@ public class RobotTelemetryConsumer {
    *
    * @param event telemetry payload deserialized from topic message
    */
-  @KafkaListener(topics = "robot.telemetry", groupId = "fleet-state-service")
-  public void consume(RobotTelemetryEvent event) {
+  @KafkaListener(
+      topics = "${fleet.state.kafka.telemetry-topic:robot.telemetry}",
+      groupId = "${spring.kafka.consumer.group-id:fleet-state-service}"
+  )
+  public void consume(RobotStateChangedEvent event) {
     try {
       robotStateService.upsertFromTelemetry(event);
       log.info("Telemetry consumed for robotId={}", event.getRobotId());
     } catch (Exception e) {
       log.error("Failed to process telemetry event for robotId={} ", event.getRobotId(), e);
+    }
+  }
+
+  /**
+   * Consumes lifecycle events and applies removal commands to materialized state.
+   */
+  @KafkaListener(
+      topics = "${fleet.state.kafka.lifecycle-topic:robot.lifecycle}",
+      groupId = "${spring.kafka.consumer.group-id:fleet-state-service}",
+      properties = {
+          "spring.json.trusted.packages=com.robofleet.fleetstateservice.*",
+          "spring.json.value.default.type=${fleet.state.kafka.lifecycle-value-type}",
+          "spring.json.use.type.headers=false"
+      }
+  )
+  public void consumeLifecycle(RobotLifecycleEvent event) {
+    try {
+      if ("REMOVED".equals(event.getEventType())) {
+        robotStateService.removeRobotById(event.getRobotId());
+        log.info("Lifecycle removal consumed for robotId={}", event.getRobotId());
+      }
+    } catch (Exception e) {
+      log.error("Failed to process lifecycle event for robotId={} ", event.getRobotId(), e);
     }
   }
 }

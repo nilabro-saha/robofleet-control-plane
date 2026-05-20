@@ -3,12 +3,14 @@ package com.robofleet.robotsimulator.config;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
-import com.robofleet.robotsimulator.robot.domain.RobotRegistry;
+import com.robofleet.robotsimulator.robot.application.RobotRegistry;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.concurrent.ScheduledExecutorService;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 class SimulatorRuntimeConfigurationTest {
 
@@ -41,7 +43,7 @@ class SimulatorRuntimeConfigurationTest {
 
   @Test
   void robotRegistry_shouldCreateRegistryBean() {
-    RobotRegistry robotRegistry = configuration.robotRegistry();
+    RobotRegistry robotRegistry = configuration.robotRegistry(mock(ApplicationEventPublisher.class));
 
     assertNotNull(robotRegistry);
   }

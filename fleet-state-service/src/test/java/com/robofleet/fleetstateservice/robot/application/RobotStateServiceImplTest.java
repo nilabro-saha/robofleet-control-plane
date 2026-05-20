@@ -2,7 +2,7 @@ package com.robofleet.fleetstateservice.robot.application;
 
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
-import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotTelemetryEvent;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class RobotStateServiceImplTest {
@@ -36,7 +37,7 @@ class RobotStateServiceImplTest {
   @Test
   void shouldUpsertFromTelemetry() {
     Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
-    RobotTelemetryEvent event = RobotTelemetryEvent.builder()
+    RobotStateChangedEvent event = RobotStateChangedEvent.builder()
         .robotId("robot-1")
         .positionX(12.34)
         .positionY(56.78)
@@ -111,5 +112,12 @@ class RobotStateServiceImplTest {
 
     assertTrue(response.isPresent());
     assertEquals("robot-1", response.get().getRobotId());
+  }
+
+  @Test
+  void shouldRemoveRobotById() {
+    robotStateService.removeRobotById("robot-1");
+
+    verify(robotStateRepository, times(1)).deleteById("robot-1");
   }
 }

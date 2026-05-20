@@ -6,14 +6,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
-import com.robofleet.robotsimulator.robot.domain.RobotRegistry;
+import com.robofleet.robotsimulator.robot.domain.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.RobotStatus;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class RobotSimulationOrchestratorTest {
@@ -22,25 +23,37 @@ class RobotSimulationOrchestratorTest {
   private SimulatorProperties simulatorProperties;
   @Mock
   private RobotRegistry robotRegistry;
-  @Mock
-  private ApplicationEventPublisher applicationEventPublisher;
 
   @Test
-  void startFleet_shouldRegisterRobotsAndPublishEvents() {
+  void startFleet_shouldRegisterRobots() {
     RobotMap robotMap = new RectangularMap(0.0, 100.0, 0.0, 100.0);
     RobotSimulationOrchestrator robotSimulationOrchestrator = new RobotSimulationOrchestrator(
         simulatorProperties,
         robotMap,
-        robotRegistry,
-        applicationEventPublisher);
+        robotRegistry);
 
     when(simulatorProperties.getRobotCount()).thenReturn(3);
     when(simulatorProperties.getTelemetryIntervalMs()).thenReturn(1000L);
+    when(robotRegistry.clearAndGetRemovedRobots()).thenReturn(List.of(
+        RobotActor.builder()
+            .robotId("old-1")
+            .positionX(0.0)
+            .positionY(0.0)
+            .battery(0.0)
+            .status(RobotStatus.IDLE)
+            .build(),
+        RobotActor.builder()
+            .robotId("old-2")
+            .positionX(0.0)
+            .positionY(0.0)
+            .battery(0.0)
+            .status(RobotStatus.IDLE)
+            .build()
+    ));
 
     robotSimulationOrchestrator.startFleet();
 
+    verify(robotRegistry).clearAndGetRemovedRobots();
     verify(robotRegistry, times(3)).register(any());
-    verify(applicationEventPublisher, times(3)).publishEvent(any(RobotTelemetryInstrumentationRequestedEvent.class));
-    verify(applicationEventPublisher, times(3)).publishEvent(any(RobotStateAdvancementRequestedEvent.class));
   }
 }

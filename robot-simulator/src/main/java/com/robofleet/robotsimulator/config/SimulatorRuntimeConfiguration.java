@@ -1,10 +1,12 @@
 package com.robofleet.robotsimulator.config;
 
-import com.robofleet.robotsimulator.robot.domain.RobotRegistry;
+import com.robofleet.robotsimulator.robot.application.RobotLifecyclePublisher;
+import com.robofleet.robotsimulator.robot.application.RobotRegistry;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,7 +41,7 @@ public class SimulatorRuntimeConfiguration {
    * Central robot registry for active robot actors.
    */
   @Bean
-  public RobotRegistry robotRegistry() {
-    return new RobotRegistry();
+  public RobotRegistry robotRegistry(ApplicationEventPublisher applicationEventPublisher) {
+    return new RobotRegistry(applicationEventPublisher);
   }
 }

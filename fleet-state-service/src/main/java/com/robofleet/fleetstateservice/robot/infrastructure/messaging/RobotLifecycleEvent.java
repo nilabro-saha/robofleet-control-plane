@@ -7,15 +7,12 @@ import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Incoming telemetry contract transported over Kafka.
- *
- * <p>Intent: define the minimum shared schema between telemetry producers
- * (simulator/robots) and the fleet state materializer.</p>
+ * Lifecycle contract for create/remove robot events transported over Kafka.
  */
 @Value
 @Builder
 @Jacksonized
-public class RobotTelemetryEvent {
+public class RobotLifecycleEvent {
   String robotId;
   @JsonProperty("x")
   double positionX;
@@ -23,5 +20,6 @@ public class RobotTelemetryEvent {
   double positionY;
   double battery;
   String status;
+  String eventType;
   Instant timestamp;
 }

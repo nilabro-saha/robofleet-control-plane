@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RobotTelemetryKafkaDbITest {
 
   @Autowired
-  private KafkaTemplate<String, RobotTelemetryEvent> kafkaTemplate;
+  private KafkaTemplate<String, RobotStateChangedEvent> kafkaTemplate;
 
   @Autowired
   private MockMvc mockMvc;
@@ -37,7 +37,7 @@ class RobotTelemetryKafkaDbITest {
   void shouldInsertAndThenUpdateRobotStateFromKafkaTelemetry() {
     String robotId = "robot-kafka-1";
 
-    RobotTelemetryEvent first = RobotTelemetryEvent.builder()
+    RobotStateChangedEvent first = RobotStateChangedEvent.builder()
         .robotId(robotId)
         .positionX(10.0)
         .positionY(20.0)
@@ -60,7 +60,7 @@ class RobotTelemetryKafkaDbITest {
               .andExpect(jsonPath("$.status").value("IDLE"));
         });
 
-    RobotTelemetryEvent second = RobotTelemetryEvent.builder()
+    RobotStateChangedEvent second = RobotStateChangedEvent.builder()
         .robotId(robotId)
         .positionX(30.0)
         .positionY(40.0)

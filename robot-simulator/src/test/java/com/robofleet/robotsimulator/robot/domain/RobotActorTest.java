@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotTelemetryEvent;
 import java.time.Instant;
+import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Test;
 
 class RobotActorTest {
 
   @Test
-  void currentTelemetry_shouldReflectCurrentState() {
+  void lastStateView_shouldReflectCurrentState() {
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-1")
         .positionX(10.126)
@@ -22,15 +22,15 @@ class RobotActorTest {
         .status(RobotStatus.IDLE)
         .build();
 
-    RobotTelemetryEvent telemetryEvent = robotActor.currentTelemetry();
+    RobotActor.LastStateView lastStateView = robotActor.lastStateView();
 
-    assertEquals("robot-1", telemetryEvent.getRobotId());
-    assertEquals(10.13, telemetryEvent.getPositionX());
-    assertEquals(20.99, telemetryEvent.getPositionY());
-    assertEquals(55.68, telemetryEvent.getBattery());
-    assertEquals("IDLE", telemetryEvent.getStatus());
-    assertNotNull(telemetryEvent.getTimestamp());
-    assertTrue(telemetryEvent.getTimestamp().isBefore(Instant.now().plusSeconds(1)));
+    assertEquals("robot-1", lastStateView.robotId());
+    assertEquals(10.13, lastStateView.positionX());
+    assertEquals(20.99, lastStateView.positionY());
+    assertEquals(55.68, lastStateView.battery());
+    assertEquals("IDLE", lastStateView.status());
+    assertNotNull(lastStateView.timestamp());
+    assertTrue(lastStateView.timestamp().isBefore(Instant.now().plusSeconds(1)));
   }
 
   @Test
@@ -45,11 +45,11 @@ class RobotActorTest {
     RectangularMap map = new RectangularMap(0.0, 100.0, 0.0, 100.0);
 
     for (int i = 0; i < 200; i++) {
-      robotActor.advanceState(map);
-      RobotTelemetryEvent telemetryEvent = robotActor.currentTelemetry();
-      assertTrue(telemetryEvent.getPositionX() >= 0.0 && telemetryEvent.getPositionX() <= 100.0);
-      assertTrue(telemetryEvent.getPositionY() >= 0.0 && telemetryEvent.getPositionY() <= 100.0);
-      assertTrue(telemetryEvent.getBattery() >= 0.0 && telemetryEvent.getBattery() <= 100.0);
+      robotActor.advanceState(map, new RandomAdvance(ThreadLocalRandom.current()));
+      RobotActor.LastStateView lastStateView = robotActor.lastStateView();
+      assertTrue(lastStateView.positionX() >= 0.0 && lastStateView.positionX() <= 100.0);
+      assertTrue(lastStateView.positionY() >= 0.0 && lastStateView.positionY() <= 100.0);
+      assertTrue(lastStateView.battery() >= 0.0 && lastStateView.battery() <= 100.0);
       assertNotNull(robotActor.getStatus());
     }
   }
@@ -64,6 +64,8 @@ class RobotActorTest {
         .status(RobotStatus.IDLE)
         .build();
 
-    assertThrows(IllegalStateException.class, () -> robotActor.advanceState(null));
+    assertThrows(
+        IllegalStateException.class,
+        () -> robotActor.advanceState(null, new RandomAdvance(ThreadLocalRandom.current())));
   }
 }

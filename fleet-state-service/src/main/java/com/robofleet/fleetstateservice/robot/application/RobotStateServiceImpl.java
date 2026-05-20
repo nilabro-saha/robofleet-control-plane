@@ -2,7 +2,7 @@ package com.robofleet.fleetstateservice.robot.application;
 
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
-import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotTelemetryEvent;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class RobotStateServiceImpl implements RobotStateService {
    * @param event telemetry payload to materialize
    */
   @Override
-  public void upsertFromTelemetry(RobotTelemetryEvent event) {
+  public void upsertFromTelemetry(RobotStateChangedEvent event) {
     RobotState entity = RobotState.builder()
         .robotId(event.getRobotId())
         .positionX(event.getPositionX())
@@ -65,6 +65,16 @@ public class RobotStateServiceImpl implements RobotStateService {
   @Override
   public Optional<RobotStateResponse> getRobotById(String robotId) {
     return robotStateRepository.findById(robotId).map(this::toResponse);
+  }
+
+  /**
+   * Removes latest-state row for one robot.
+   *
+   * @param robotId unique robot identifier
+   */
+  @Override
+  public void removeRobotById(String robotId) {
+    robotStateRepository.deleteById(robotId);
   }
 
   /**

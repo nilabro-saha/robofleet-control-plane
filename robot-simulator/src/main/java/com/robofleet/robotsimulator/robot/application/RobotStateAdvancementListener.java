@@ -1,53 +1,42 @@
 package com.robofleet.robotsimulator.robot.application;
 
-import com.robofleet.robotsimulator.config.SimulatorProperties;
+import com.robofleet.robotsimulator.robot.domain.AdvancementMode;
 import com.robofleet.robotsimulator.robot.domain.RobotActor;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
- * Listens for state advancement requests and registers random movement/state evolution tasks.
+ * Listens for single state advancement requests and publishes telemetry for advanced state.
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class RobotStateAdvancementListener {
 
-  private final ScheduledExecutorService robotTelemetryScheduler;
-  private final SimulatorProperties simulatorProperties;
   private final RobotMap robotMap;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
   /**
-   * Registers fixed-rate state advancement for the requested robot actor.
+   * Advances state once and immediately publishes telemetry for updated state.
    */
   @EventListener
-  public void onRobotStateAdvancementRequested(RobotStateAdvancementRequestedEvent event) {
+  public void onRobotStateAdvancementRequested(AdvanceRobotStateRequest event) {
     RobotActor robotActor = event.robotActor();
-
-    robotTelemetryScheduler.scheduleAtFixedRate(
-        () -> advanceState(robotActor),
-        0,
-        simulatorProperties.getStateAdvanceIntervalMs(),
-        TimeUnit.MILLISECONDS
-    );
-
-    log.info(
-        "Registered state advancement schedule for {} (advance={}ms)",
-        robotActor.getRobotId(),
-        simulatorProperties.getStateAdvanceIntervalMs()
-    );
+    advanceStateAndPublishTelemetry(robotActor, event.advancementMode());
   }
 
-  private void advanceState(RobotActor robotActor) {
+  private void advanceStateAndPublishTelemetry(
+      RobotActor robotActor,
+      AdvancementMode advancementMode) {
     try {
-      robotActor.advanceState(robotMap);
+      robotActor.advanceState(robotMap, advancementMode);
+      applicationEventPublisher.publishEvent(new RobotAdvancedEvent(robotActor));
     } catch (Exception exception) {
-      log.error("Failed to advance state for {}", robotActor.getRobotId(), exception);
+      log.error("Failed to advance/publish state for {}", robotActor.getRobotId(), exception);
     }
   }
 }
