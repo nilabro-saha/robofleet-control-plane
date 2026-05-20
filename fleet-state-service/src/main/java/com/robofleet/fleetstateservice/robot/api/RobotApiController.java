@@ -4,6 +4,7 @@ import com.robofleet.fleetstateservice.robot.application.RobotStateService;
 import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotSummaryResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * or persistence implementation details.</p>
  */
 @RestController
-@RequestMapping("/api/robots")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class RobotApiController {
 
@@ -38,11 +39,11 @@ public class RobotApiController {
    * @param pageable pagination and sorting request
    * @return current fleet snapshot
    */
-  @GetMapping
-  public List<RobotStateResponse> getAllRobots(
+  @GetMapping("/robot-statuses")
+  public List<RobotStateResponse> getAllRobotStatuses(
       @PageableDefault(size = 100, sort = "robotId", direction = Sort.Direction.ASC)
       Pageable pageable) {
-    return robotStateService.getAllRobots(pageable);
+    return robotStateService.getAllRobotStatuses(pageable);
   }
 
   /**
@@ -51,8 +52,28 @@ public class RobotApiController {
    * @param id robot identifier
    * @return 200 with state when found, otherwise 404
    */
-  @GetMapping("/{id}")
-  public ResponseEntity<RobotStateResponse> getRobotById(@PathVariable("id") String id) {
+  @GetMapping("/robot-statuses/{id}")
+  public ResponseEntity<RobotStateResponse> getRobotStatusById(@PathVariable("id") String id) {
+    return robotStateService.getRobotStatusById(id)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+  }
+
+  /**
+   * Lists robot identity/lifecycle data.
+   */
+  @GetMapping("/robots")
+  public List<RobotSummaryResponse> getAllRobots(
+      @PageableDefault(size = 100, sort = "robotId", direction = Sort.Direction.ASC)
+      Pageable pageable) {
+    return robotStateService.getAllRobots(pageable);
+  }
+
+  /**
+   * Fetches robot identity/lifecycle data for one robot.
+   */
+  @GetMapping("/robots/{id}")
+  public ResponseEntity<RobotSummaryResponse> getRobotById(@PathVariable("id") String id) {
     return robotStateService.getRobotById(id)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
@@ -61,7 +82,7 @@ public class RobotApiController {
   /**
    * Creates a new robot orchestration request and marks it pending.
    */
-  @PostMapping
+  @PostMapping("/robots")
   public ResponseEntity<RobotCreationResponse> createRobot(
       @RequestBody CreateRobotRequest request) {
     RobotCreationResponse response = robotStateService.createRobot(request);

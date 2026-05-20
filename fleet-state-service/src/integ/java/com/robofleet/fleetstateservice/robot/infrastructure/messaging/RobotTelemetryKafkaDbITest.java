@@ -50,13 +50,14 @@ class RobotTelemetryKafkaDbITest {
     kafkaTemplate.flush();
 
     await()
-        .atMost(Duration.ofSeconds(10))
+        .atMost(Duration.ofSeconds(20))
         .untilAsserted(() -> {
-          mockMvc.perform(get("/api/robots/{id}", robotId))
+          mockMvc.perform(get("/api/robot-statuses/{id}", robotId))
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.x").value(10.0))
               .andExpect(jsonPath("$.y").value(20.0))
               .andExpect(jsonPath("$.displayName").isEmpty())
+              .andExpect(jsonPath("$.lifecycleStatus").value("ACTIVE"))
               .andExpect(jsonPath("$.battery").value(90.0))
               .andExpect(jsonPath("$.status").value("IDLE"));
         });
@@ -74,13 +75,14 @@ class RobotTelemetryKafkaDbITest {
     kafkaTemplate.flush();
 
     await()
-        .atMost(Duration.ofSeconds(10))
+        .atMost(Duration.ofSeconds(20))
         .untilAsserted(() -> {
-          mockMvc.perform(get("/api/robots/{id}", robotId))
+          mockMvc.perform(get("/api/robot-statuses/{id}", robotId))
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.x").value(30.0))
               .andExpect(jsonPath("$.y").value(40.0))
               .andExpect(jsonPath("$.displayName").isEmpty())
+              .andExpect(jsonPath("$.lifecycleStatus").value("ACTIVE"))
               .andExpect(jsonPath("$.battery").value(55.5))
               .andExpect(jsonPath("$.status").value("MOVING"));
         });

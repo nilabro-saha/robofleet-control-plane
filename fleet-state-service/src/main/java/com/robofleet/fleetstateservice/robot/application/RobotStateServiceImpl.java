@@ -3,6 +3,7 @@ package com.robofleet.fleetstateservice.robot.application;
 import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotSummaryResponse;
 import com.robofleet.fleetstateservice.robot.domain.Robot;
 import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
@@ -104,12 +105,9 @@ public class RobotStateServiceImpl implements RobotStateService {
    * @return list of API response objects
    */
   @Override
-  public List<RobotStateResponse> getAllRobots(Pageable pageable) {
-    return robotStateRepository.findAll(pageable)
-        .getContent()
-        .stream()
-        .map(this::toResponse)
-        .toList();
+  public List<RobotStateResponse> getAllRobotStatuses(Pageable pageable) {
+    return robotStateRepository.findAllRobotStatuses(pageable)
+        .getContent();
   }
 
   /**
@@ -119,8 +117,25 @@ public class RobotStateServiceImpl implements RobotStateService {
    * @return optional response if robot is known
    */
   @Override
-  public Optional<RobotStateResponse> getRobotById(String robotId) {
-    return robotStateRepository.findById(robotId).map(this::toResponse);
+  public Optional<RobotStateResponse> getRobotStatusById(String robotId) {
+    return robotStateRepository.findRobotStatusByRobotId(robotId);
+  }
+
+  /**
+   * Retrieves robot identity/lifecycle rows for all robots.
+   */
+  @Override
+  public List<RobotSummaryResponse> getAllRobots(Pageable pageable) {
+    return robotRepository.findAllRobotSummaries(pageable)
+        .getContent();
+  }
+
+  /**
+   * Retrieves one robot identity/lifecycle row by id.
+   */
+  @Override
+  public Optional<RobotSummaryResponse> getRobotById(String robotId) {
+    return robotRepository.findRobotSummaryByRobotId(robotId);
   }
 
   /**
@@ -173,27 +188,5 @@ public class RobotStateServiceImpl implements RobotStateService {
               .build();
           robotStateRepository.save(updatedState);
         });
-  }
-
-  /**
-   * Maps persistence entity into API response shape.
-   *
-   * @param entity persisted latest-state row
-   * @return response DTO for API consumers
-   */
-  private RobotStateResponse toResponse(RobotState entity) {
-    String displayName = robotRepository.findById(entity.getRobotId())
-        .map(Robot::getDisplayName)
-        .orElse(null);
-
-    return RobotStateResponse.builder()
-        .robotId(entity.getRobotId())
-        .displayName(displayName)
-        .positionX(entity.getPositionX())
-        .positionY(entity.getPositionY())
-        .battery(entity.getBattery())
-        .status(entity.getStatus())
-        .timestamp(entity.getTimestamp())
-        .build();
   }
 }

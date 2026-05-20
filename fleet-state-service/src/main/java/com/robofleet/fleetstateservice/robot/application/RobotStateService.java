@@ -3,6 +3,7 @@ package com.robofleet.fleetstateservice.robot.application;
 import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotSummaryResponse;
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotLifecycleEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import java.util.List;
@@ -38,7 +39,7 @@ public interface RobotStateService {
    * @param pageable paging and sorting request
    * @return list of latest robot states
    */
-  List<RobotStateResponse> getAllRobots(Pageable pageable);
+  List<RobotStateResponse> getAllRobotStatuses(Pageable pageable);
 
   /**
    * Returns the current known state for one robot, if available.
@@ -46,7 +47,23 @@ public interface RobotStateService {
    * @param robotId unique robot identifier
    * @return latest state wrapped in {@link Optional}
    */
-  Optional<RobotStateResponse> getRobotById(String robotId);
+  Optional<RobotStateResponse> getRobotStatusById(String robotId);
+
+  /**
+   * Returns robot identity/lifecycle projection for all robots.
+   *
+   * @param pageable paging and sorting request
+   * @return list of robot identity/lifecycle summaries
+   */
+  List<RobotSummaryResponse> getAllRobots(Pageable pageable);
+
+  /**
+   * Returns robot identity/lifecycle projection for one robot, if available.
+   *
+   * @param robotId unique robot identifier
+   * @return robot summary wrapped in {@link Optional}
+   */
+  Optional<RobotSummaryResponse> getRobotById(String robotId);
 
   /**
    * Removes one robot from the latest-state projection.

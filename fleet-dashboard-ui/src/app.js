@@ -29,7 +29,7 @@ let sortBy = "robotId";
 let sortDir = "asc";
 
 async function fetchRobotById(robotId) {
-  const response = await fetch(`${apiBase}/api/robots/${encodeURIComponent(robotId)}`, {
+  const response = await fetch(`${apiBase}/api/robot-statuses/${encodeURIComponent(robotId)}`, {
     headers: {
       Accept: "application/json"
     }
@@ -73,7 +73,7 @@ async function fetchRobots() {
     size: "100"
   });
 
-  const response = await fetch(`${apiBase}/api/robots?${query.toString()}`, {
+  const response = await fetch(`${apiBase}/api/robot-statuses?${query.toString()}`, {
     headers: {
       Accept: "application/json"
     }
@@ -89,7 +89,7 @@ async function fetchRobots() {
 function renderRows(robots) {
   if (!Array.isArray(robots) || robots.length === 0) {
     closeSidebar();
-    tbody.innerHTML = `<tr><td colspan="7">No telemetry received yet.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8">No telemetry received yet.</td></tr>`;
     return;
   }
 
@@ -102,6 +102,7 @@ function renderRows(robots) {
         <tr class="${selectedClass}" data-robot-id="${robot.robotId}">
           <td>${robot.robotId}</td>
           <td>${robot.displayName ?? "-"}</td>
+          <td>${robot.lifecycleStatus ?? "UNKNOWN"}</td>
           <td>${Number(robot.x).toFixed(2)}</td>
           <td>${Number(robot.y).toFixed(2)}</td>
           <td>${Number(robot.battery).toFixed(2)}%</td>
@@ -127,6 +128,7 @@ function formatRobotDetails(robot) {
     <dl class="details-grid">
       <dt>Robot ID</dt><dd>${robot.robotId}</dd>
       <dt>Display Name</dt><dd>${robot.displayName ?? "-"}</dd>
+      <dt>Lifecycle</dt><dd>${robot.lifecycleStatus ?? "UNKNOWN"}</dd>
       <dt>Status</dt><dd>${robot.status ?? "UNKNOWN"}</dd>
       <dt>Battery</dt><dd>${Number(robot.battery).toFixed(2)}%</dd>
       <dt>X</dt><dd>${Number(robot.x).toFixed(2)}</dd>
@@ -221,7 +223,7 @@ async function refresh() {
     await syncSidebarWithData(robots);
     lastRefreshAt = formatLocalTimestamp(new Date());
     const modeText = liveRefreshEnabled
-      ? `Live polling ${apiBase}/api/robots?sort=${sortBy},${sortDir} every ${refreshIntervalMs / 1000}s | Last refresh: ${lastRefreshAt}`
+      ? `Live polling ${apiBase}/api/robot-statuses?sort=${sortBy},${sortDir} every ${refreshIntervalMs / 1000}s | Last refresh: ${lastRefreshAt}`
       : `Live refresh is paused. API base: ${apiBase} | sort=${sortBy},${sortDir} | Last refresh: ${lastRefreshAt}`;
     connectionEl.textContent = modeText;
   } catch (error) {

@@ -23,18 +23,19 @@ class RobotApiControllerITest {
   private MockMvc mockMvc;
 
   @Test
-  void shouldReturnRobotsCollection() throws Exception {
-    mockMvc.perform(get("/api/robots").accept(MediaType.APPLICATION_JSON))
+  void shouldReturnRobotStatusesCollection() throws Exception {
+    mockMvc.perform(get("/api/robot-statuses").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].robotId").value("robot-1"))
         .andExpect(jsonPath("$[0].displayName").value("Alpha"))
+        .andExpect(jsonPath("$[0].lifecycleStatus").value("ACTIVE"))
         .andExpect(jsonPath("$[0].x").value(12.34))
         .andExpect(jsonPath("$[0].y").value(56.78));
   }
 
   @Test
-  void shouldReturnRobotsSortedByBatteryDescending() throws Exception {
-    mockMvc.perform(get("/api/robots")
+  void shouldReturnRobotStatusesSortedByBatteryDescending() throws Exception {
+    mockMvc.perform(get("/api/robot-statuses")
             .param("sort", "battery,desc")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -43,11 +44,27 @@ class RobotApiControllerITest {
   }
 
   @Test
-  void shouldReturnSingleRobotWhenPresent() throws Exception {
-    mockMvc.perform(get("/api/robots/robot-1").accept(MediaType.APPLICATION_JSON))
+  void shouldReturnSingleRobotStatusWhenPresent() throws Exception {
+    mockMvc.perform(get("/api/robot-statuses/robot-1").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.robotId").value("robot-1"))
-        .andExpect(jsonPath("$.displayName").value("Alpha"));
+        .andExpect(jsonPath("$.displayName").value("Alpha"))
+        .andExpect(jsonPath("$.lifecycleStatus").value("ACTIVE"));
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenRobotStatusIsMissing() throws Exception {
+    mockMvc.perform(get("/api/robot-statuses/missing").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldReturnRobotsCollection() throws Exception {
+    mockMvc.perform(get("/api/robots").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].robotId").value("robot-1"))
+        .andExpect(jsonPath("$[0].displayName").value("Alpha"))
+        .andExpect(jsonPath("$[0].lifecycleStatus").value("ACTIVE"));
   }
 
   @Test

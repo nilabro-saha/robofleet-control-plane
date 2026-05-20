@@ -13,7 +13,7 @@ This UI converts API responses into an at-a-glance operations view.
 
 ## Responsibilities
 
-- Poll `GET /api/robots` and render current robot state
+- Poll `GET /api/robot-statuses` and render current robot state
 - Offer operator controls for:
   - live refresh on/off
   - refresh interval selection
@@ -22,7 +22,7 @@ This UI converts API responses into an at-a-glance operations view.
   - click a header to sort ascending by that field
   - click the same header again to toggle descending
 - Open a right-side details panel when a robot row is clicked
-  - fetches single-robot data from `GET /api/robots/{id}`
+  - fetches single-robot data from `GET /api/robot-statuses/{id}`
 - Present timestamps in browser-local time for operator context
 
 ## Runtime assumption
@@ -37,11 +37,13 @@ This keeps the UI static and backend-agnostic.
 
 Sorting is not performed in the browser. The UI calls backend pageable sort params:
 
-- `GET /api/robots?sort=<field>,<direction>&size=100`
+- `GET /api/robot-statuses?sort=<field>,<direction>&size=100`
 
 Supported sort fields used by the UI:
 
 - `robotId`
+- `displayName`
+- `lifecycleStatus`
 - `positionX`
 - `positionY`
 - `battery`

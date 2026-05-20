@@ -3,6 +3,7 @@ package com.robofleet.fleetstateservice.robot.application;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotSummaryResponse;
 import com.robofleet.fleetstateservice.robot.domain.Robot;
 import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
@@ -81,68 +82,113 @@ class RobotStateServiceImplTest {
   void shouldReturnAllRobots() {
     Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
     Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.ASC, "robotId"));
-    when(robotStateRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(
-        RobotState.builder()
-            .robotId("robot-1")
-            .positionX(12.34)
-            .positionY(56.78)
-            .battery(87.1)
-            .status("MOVING")
-            .timestamp(timestamp)
-            .build()
-    )));
-    when(robotRepository.findById("robot-1"))
-        .thenReturn(Optional.of(Robot.builder()
+    when(robotRepository.findAllRobotSummaries(pageable)).thenReturn(new PageImpl<>(List.of(
+        RobotSummaryResponse.builder()
             .robotId("robot-1")
             .displayName("Alpha")
             .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
-            .build()));
+            .build()
+    )));
 
-    List<RobotStateResponse> response = robotStateService.getAllRobots(pageable);
+    List<RobotSummaryResponse> response = robotStateService.getAllRobots(pageable);
 
     assertEquals(1, response.size());
     assertEquals("robot-1", response.get(0).getRobotId());
     assertEquals("Alpha", response.get(0).getDisplayName());
-    assertEquals(12.34, response.get(0).getPositionX());
-    assertEquals(56.78, response.get(0).getPositionY());
+    assertEquals(RobotLifecycleStatus.ACTIVE, response.get(0).getLifecycleStatus());
 
-    verify(robotStateRepository).findAll(pageable);
+    verify(robotRepository).findAllRobotSummaries(pageable);
   }
 
   @Test
   void shouldUsePageableSortingFromCaller() {
     Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "battery"));
-    when(robotStateRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of()));
+    when(robotRepository.findAllRobotSummaries(pageable)).thenReturn(new PageImpl<>(List.of()));
 
     robotStateService.getAllRobots(pageable);
 
-    verify(robotStateRepository).findAll(pageable);
+    verify(robotRepository).findAllRobotSummaries(pageable);
   }
 
   @Test
   void shouldReturnRobotByIdWhenFound() {
-    Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
-    when(robotStateRepository.findById("robot-1")).thenReturn(Optional.of(
-        RobotState.builder()
-            .robotId("robot-1")
-            .positionX(12.34)
-            .positionY(56.78)
-            .battery(87.1)
-            .status("MOVING")
-            .timestamp(timestamp)
-            .build()
-    ));
-    when(robotRepository.findById("robot-1"))
-        .thenReturn(Optional.of(Robot.builder()
+    when(robotRepository.findRobotSummaryByRobotId("robot-1"))
+        .thenReturn(Optional.of(RobotSummaryResponse.builder()
             .robotId("robot-1")
             .displayName(null)
             .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
-            .build()));
+            .build()
+        ));
 
-    Optional<RobotStateResponse> response = robotStateService.getRobotById("robot-1");
+    Optional<RobotSummaryResponse> response = robotStateService.getRobotById("robot-1");
 
     assertTrue(response.isPresent());
     assertEquals("robot-1", response.get().getRobotId());
+  }
+
+  @Test
+  void shouldReturnEmptyWhenRobotByIdNotFound() {
+    when(robotRepository.findRobotSummaryByRobotId("missing")).thenReturn(Optional.empty());
+
+    Optional<RobotSummaryResponse> response = robotStateService.getRobotById("missing");
+
+    assertTrue(response.isEmpty());
+  }
+
+  @Test
+  void shouldReturnAllRobotStatuses() {
+    Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
+    Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.ASC, "robotId"));
+    when(robotStateRepository.findAllRobotStatuses(pageable)).thenReturn(new PageImpl<>(List.of(
+        RobotStateResponse.builder()
+            .robotId("robot-1")
+            .displayName("Alpha")
+            .positionX(12.34)
+            .positionY(56.78)
+            .battery(87.1)
+            .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
+            .status("MOVING")
+            .timestamp(timestamp)
+            .build()
+    )));
+
+    List<RobotStateResponse> response = robotStateService.getAllRobotStatuses(pageable);
+
+    assertEquals(1, response.size());
+    assertEquals("robot-1", response.get(0).getRobotId());
+    assertEquals("Alpha", response.get(0).getDisplayName());
+    verify(robotStateRepository).findAllRobotStatuses(pageable);
+  }
+
+  @Test
+  void shouldReturnRobotStatusByIdWhenFound() {
+    Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
+    when(robotStateRepository.findRobotStatusByRobotId("robot-1"))
+        .thenReturn(Optional.of(RobotStateResponse.builder()
+            .robotId("robot-1")
+            .displayName("Alpha")
+            .positionX(12.34)
+            .positionY(56.78)
+            .battery(87.1)
+            .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
+            .status("MOVING")
+            .timestamp(timestamp)
+            .build()));
+
+    Optional<RobotStateResponse> response = robotStateService.getRobotStatusById("robot-1");
+
+    assertTrue(response.isPresent());
+    assertEquals("robot-1", response.get().getRobotId());
+    verify(robotStateRepository).findRobotStatusByRobotId("robot-1");
+  }
+
+  @Test
+  void shouldReturnEmptyWhenRobotStatusByIdNotFound() {
+    when(robotStateRepository.findRobotStatusByRobotId("missing")).thenReturn(Optional.empty());
+
+    Optional<RobotStateResponse> response = robotStateService.getRobotStatusById("missing");
+
+    assertTrue(response.isEmpty());
   }
 
   @Test
@@ -151,6 +197,19 @@ class RobotStateServiceImplTest {
 
     verify(robotStateRepository, times(1)).deleteById("robot-1");
     verify(robotRepository, times(1)).deleteById("robot-1");
+  }
+
+  @Test
+  void shouldApplyRemovedLifecycleEventByRemovingRobot() {
+    RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .robotId("robot-1")
+        .eventType(LifecycleEventType.REMOVED)
+        .build();
+
+    robotStateService.applyRemovedLifecycleEvent(event);
+
+    verify(robotStateRepository).deleteById("robot-1");
+    verify(robotRepository).deleteById("robot-1");
   }
 
   @Test

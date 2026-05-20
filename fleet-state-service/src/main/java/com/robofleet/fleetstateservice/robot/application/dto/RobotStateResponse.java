@@ -1,6 +1,7 @@
 package com.robofleet.fleetstateservice.robot.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Value;
@@ -21,6 +22,7 @@ public class RobotStateResponse {
   @JsonProperty("y")
   double positionY;
   double battery;
+  RobotLifecycleStatus lifecycleStatus;
   String status;
   Instant timestamp;
 }
