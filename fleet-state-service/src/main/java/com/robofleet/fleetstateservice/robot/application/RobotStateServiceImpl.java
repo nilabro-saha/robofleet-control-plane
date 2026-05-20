@@ -1,13 +1,20 @@
 package com.robofleet.fleetstateservice.robot.application;
 
+import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import com.robofleet.fleetstateservice.robot.domain.Robot;
+import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.LifecycleEventType;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotLifecycleEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotRepository;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +31,7 @@ public class RobotStateServiceImpl implements RobotStateService {
 
   private final RobotRepository robotRepository;
   private final RobotStateRepository robotStateRepository;
+  private final RobotCreationCommandGateway robotCreationCommandGateway;
 
   /**
    * Upserts the latest state row for the telemetry's robot id.
@@ -32,15 +40,19 @@ public class RobotStateServiceImpl implements RobotStateService {
    */
   @Override
   public void upsertFromTelemetry(RobotStateChangedEvent event) {
-    String normalizedDisplayName = robotRepository.findById(event.getRobotId())
-        .map(existingRobot -> event.getDisplayName() == null
-            ? existingRobot.getDisplayName()
-            : event.getDisplayName())
-        .orElse(event.getDisplayName());
+    Optional<Robot> existingRobot = robotRepository.findById(event.getRobotId());
+    String normalizedDisplayName = existingRobot
+        .map(Robot::getDisplayName)
+        .orElse(null);
+
+    RobotLifecycleStatus lifecycleStatus = existingRobot
+        .map(Robot::getLifecycleStatus)
+        .orElse(RobotLifecycleStatus.ACTIVE);
 
     Robot robot = Robot.builder()
         .robotId(event.getRobotId())
         .displayName(normalizedDisplayName)
+        .lifecycleStatus(lifecycleStatus)
         .build();
     robotRepository.save(robot);
 
@@ -54,6 +66,35 @@ public class RobotStateServiceImpl implements RobotStateService {
         .build();
 
     robotStateRepository.save(entity);
+  }
+
+  /**
+   * Creates a robot orchestration request and persists pending status.
+   */
+  @Override
+  public RobotCreationResponse createRobot(CreateRobotRequest request) {
+    String generatedRobotId = UUID.randomUUID().toString();
+
+    Robot pendingRobot = Robot.builder()
+        .robotId(generatedRobotId)
+        .displayName(request.getDisplayName())
+        .lifecycleStatus(RobotLifecycleStatus.CREATE_PENDING)
+        .build();
+    robotRepository.save(pendingRobot);
+
+    robotCreationCommandGateway.publishLifecycleEvent(
+        RobotLifecycleEvent.builder()
+            .robotId(generatedRobotId)
+            .eventType(LifecycleEventType.CREATE_PENDING)
+            .timestamp(Instant.now())
+            .build()
+    );
+
+    return new RobotCreationResponse(
+        generatedRobotId,
+        request.getDisplayName(),
+        RobotLifecycleStatus.CREATE_PENDING.name()
+    );
   }
 
   /**
@@ -91,6 +132,47 @@ public class RobotStateServiceImpl implements RobotStateService {
   public void removeRobotById(String robotId) {
     robotStateRepository.deleteById(robotId);
     robotRepository.deleteById(robotId);
+  }
+
+  /**
+   * Applies REMOVED lifecycle update by deleting robot projections.
+   */
+  @Override
+  public void applyRemovedLifecycleEvent(RobotLifecycleEvent event) {
+    removeRobotById(event.getRobotId());
+  }
+
+  /**
+   * Applies CREATED lifecycle update by activating and seeding robot state.
+   */
+  @Override
+  public void applyCreatedLifecycleEvent(RobotLifecycleEvent event) {
+    robotRepository.findById(event.getRobotId())
+        .ifPresent(robot -> {
+          robot.markAsActive();
+          robotRepository.save(robot);
+
+          Optional<RobotState> existingState = robotStateRepository.findById(event.getRobotId());
+          RobotState updatedState = RobotState.builder()
+              .robotId(event.getRobotId())
+              .positionX(event.getPositionX() == null
+                  ? existingState.map(RobotState::getPositionX).orElse(0.0)
+                  : event.getPositionX())
+              .positionY(event.getPositionY() == null
+                  ? existingState.map(RobotState::getPositionY).orElse(0.0)
+                  : event.getPositionY())
+              .battery(event.getBattery() == null
+                  ? existingState.map(RobotState::getBattery).orElse(0.0)
+                  : event.getBattery())
+              .status(event.getStatus() == null
+                  ? existingState.map(RobotState::getStatus).orElse("UNKNOWN")
+                  : event.getStatus())
+              .timestamp(event.getTimestamp() == null
+                  ? existingState.map(RobotState::getTimestamp).orElse(Instant.now())
+                  : event.getTimestamp())
+              .build();
+          robotStateRepository.save(updatedState);
+        });
   }
 
   /**

@@ -1,29 +1,25 @@
 package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
 
 import com.robofleet.fleetstateservice.robot.application.RobotStateService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 /**
- * Kafka ingestion boundary for robot telemetry.
- *
- * <p>Intent: keep stream consumption simple and resilient—on each message,
- * delegate business handling to the application layer and isolate failures
- * so one bad event does not stop the consumer loop.</p>
+ * Kafka ingestion boundary for robot telemetry and lifecycle events.
  */
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class RobotTelemetryConsumer {
+public class RobotLifecycleConsumer {
 
   private final RobotStateService robotStateService;
+  private final List<RobotLifecycleEventHandler> lifecycleEventHandlers;
 
   /**
    * Consumes one telemetry message from Kafka and forwards it for materialization.
-   *
-   * @param event telemetry payload deserialized from topic message
    */
   @KafkaListener(
       topics = "${fleet.state.kafka.telemetry-topic:robot.telemetry}",
@@ -39,7 +35,7 @@ public class RobotTelemetryConsumer {
   }
 
   /**
-   * Consumes lifecycle events and applies removal commands to materialized state.
+   * Consumes lifecycle events and dispatches to matching handlers.
    */
   @KafkaListener(
       topics = "${fleet.state.kafka.lifecycle-topic:robot.lifecycle}",
@@ -52,10 +48,10 @@ public class RobotTelemetryConsumer {
   )
   public void consumeLifecycle(RobotLifecycleEvent event) {
     try {
-      if ("REMOVED".equals(event.getEventType())) {
-        robotStateService.removeRobotById(event.getRobotId());
-        log.info("Lifecycle removal consumed for robotId={}", event.getRobotId());
-      }
+      lifecycleEventHandlers.stream()
+          .filter(handler -> handler.canHandle(event))
+          .forEach(handler -> handler.handleEvent(event));
+      log.info("Lifecycle {} consumed for robotId={}", event.getEventType(), event.getRobotId());
     } catch (Exception e) {
       log.error("Failed to process lifecycle event for robotId={} ", event.getRobotId(), e);
     }

@@ -14,13 +14,12 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class RobotLifecycleEvent {
   String robotId;
-  String displayName;
   @JsonProperty("x")
-  double positionX;
+  Double positionX;
   @JsonProperty("y")
-  double positionY;
-  double battery;
+  Double positionY;
+  Double battery;
   String status;
-  String eventType;
+  LifecycleEventType eventType;
   Instant timestamp;
 }

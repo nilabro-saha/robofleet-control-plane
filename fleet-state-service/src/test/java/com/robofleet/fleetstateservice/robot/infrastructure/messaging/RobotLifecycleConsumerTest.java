@@ -1,32 +1,46 @@
 package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
 
 import com.robofleet.fleetstateservice.robot.application.RobotStateService;
+import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
-
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RobotTelemetryConsumerTest {
+class RobotLifecycleConsumerTest {
 
   @Mock
   private RobotStateService robotStateService;
 
   @InjectMocks
-  private RobotTelemetryConsumer consumer;
+  private RobotLifecycleConsumer consumer;
+
+  @Mock
+  private RobotLifecycleEventHandler matchingLifecycleHandler;
+
+  @Mock
+  private RobotLifecycleEventHandler nonMatchingLifecycleHandler;
+
+  @org.junit.jupiter.api.BeforeEach
+  void setUp() {
+    consumer = new RobotLifecycleConsumer(
+        robotStateService,
+        List.of(matchingLifecycleHandler, nonMatchingLifecycleHandler)
+    );
+  }
 
   @Test
   void shouldDelegateConsumedEventToService() {
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
         .robotId("robot-1")
-        .displayName("Alpha")
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -43,7 +57,6 @@ class RobotTelemetryConsumerTest {
   void shouldNotThrowWhenServiceFails() {
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
         .robotId("robot-1")
-        .displayName(null)
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -58,38 +71,42 @@ class RobotTelemetryConsumerTest {
   }
 
   @Test
-  void shouldDelegateLifecycleRemovalToService() {
+  void shouldDispatchLifecycleToMatchingHandler() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
         .robotId("robot-1")
-        .displayName("Alpha")
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
         .status("MOVING")
-        .eventType("REMOVED")
+        .eventType(LifecycleEventType.REMOVED)
         .timestamp(Instant.parse("2026-05-19T16:40:03Z"))
         .build();
+    when(matchingLifecycleHandler.canHandle(event)).thenReturn(true);
+    when(nonMatchingLifecycleHandler.canHandle(event)).thenReturn(false);
 
     consumer.consumeLifecycle(event);
 
-    verify(robotStateService).removeRobotById("robot-1");
+    verify(matchingLifecycleHandler).handleEvent(event);
+    verify(nonMatchingLifecycleHandler, never()).handleEvent(event);
   }
 
   @Test
-  void shouldIgnoreNonRemovalLifecycleEvents() {
+  void shouldIgnoreWhenNoLifecycleHandlersMatch() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
         .robotId("robot-1")
-        .displayName(null)
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
         .status("MOVING")
-        .eventType("CREATED")
+        .eventType(LifecycleEventType.CREATED)
         .timestamp(Instant.parse("2026-05-19T16:40:03Z"))
         .build();
+    when(matchingLifecycleHandler.canHandle(event)).thenReturn(false);
+    when(nonMatchingLifecycleHandler.canHandle(event)).thenReturn(false);
 
     consumer.consumeLifecycle(event);
 
-    verify(robotStateService, never()).removeRobotById("robot-1");
+    verify(matchingLifecycleHandler, never()).handleEvent(event);
+    verify(nonMatchingLifecycleHandler, never()).handleEvent(event);
   }
 }

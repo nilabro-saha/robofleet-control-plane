@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS robot (
   robot_id TEXT PRIMARY KEY,
-  display_name TEXT NULL
+  display_name TEXT NULL,
+  lifecycle_status TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS robot_state (

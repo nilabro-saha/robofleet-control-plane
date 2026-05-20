@@ -1,8 +1,13 @@
 package com.robofleet.fleetstateservice.robot.application;
 
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
+import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.domain.Robot;
+import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotLifecycleEvent;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.LifecycleEventType;
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotRepository;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
@@ -24,6 +29,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
@@ -37,6 +43,9 @@ class RobotStateServiceImplTest {
   @Mock
   private RobotStateRepository robotStateRepository;
 
+  @Mock
+  private RobotCreationCommandGateway robotCreationCommandGateway;
+
   @InjectMocks
   private RobotStateServiceImpl robotStateService;
 
@@ -45,7 +54,6 @@ class RobotStateServiceImplTest {
     Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
         .robotId("robot-1")
-        .displayName("Alpha")
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -84,7 +92,11 @@ class RobotStateServiceImplTest {
             .build()
     )));
     when(robotRepository.findById("robot-1"))
-        .thenReturn(Optional.of(Robot.builder().robotId("robot-1").displayName("Alpha").build()));
+        .thenReturn(Optional.of(Robot.builder()
+            .robotId("robot-1")
+            .displayName("Alpha")
+            .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
+            .build()));
 
     List<RobotStateResponse> response = robotStateService.getAllRobots(pageable);
 
@@ -121,7 +133,11 @@ class RobotStateServiceImplTest {
             .build()
     ));
     when(robotRepository.findById("robot-1"))
-        .thenReturn(Optional.of(Robot.builder().robotId("robot-1").displayName(null).build()));
+        .thenReturn(Optional.of(Robot.builder()
+            .robotId("robot-1")
+            .displayName(null)
+            .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
+            .build()));
 
     Optional<RobotStateResponse> response = robotStateService.getRobotById("robot-1");
 
@@ -138,11 +154,10 @@ class RobotStateServiceImplTest {
   }
 
   @Test
-  void shouldPreserveExistingDisplayNameWhenTelemetryDisplayNameIsNull() {
+  void shouldPreserveExistingDisplayNameWhenTelemetryIsConsumed() {
     Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
         .robotId("robot-1")
-        .displayName(null)
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -151,7 +166,11 @@ class RobotStateServiceImplTest {
         .build();
 
     when(robotRepository.findById("robot-1"))
-        .thenReturn(Optional.of(Robot.builder().robotId("robot-1").displayName("Persisted").build()));
+        .thenReturn(Optional.of(Robot.builder()
+            .robotId("robot-1")
+            .displayName("Persisted")
+            .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
+            .build()));
 
     robotStateService.upsertFromTelemetry(event);
 
@@ -159,5 +178,114 @@ class RobotStateServiceImplTest {
     verify(robotRepository).save(robotCaptor.capture());
     assertEquals("Persisted", robotCaptor.getValue().getDisplayName());
     verify(robotStateRepository).save(any(RobotState.class));
+  }
+
+  @Test
+  void shouldCreateRobotAsPendingAndPublishCommand() {
+    CreateRobotRequest request = CreateRobotRequest.builder()
+        .displayName("NinetyNine")
+        .build();
+
+    RobotCreationResponse response = robotStateService.createRobot(request);
+
+    assertTrue(response.robotId() != null && !response.robotId().isBlank());
+    assertEquals("NinetyNine", response.displayName());
+    assertEquals("CREATE_PENDING", response.lifecycleStatus());
+    verify(robotRepository).save(any(Robot.class));
+    verify(robotCreationCommandGateway).publishLifecycleEvent(any());
+  }
+
+  @Test
+  void shouldDoNothingWhenCreatedLifecycleEventRobotIsUnknown() {
+    Instant now = Instant.parse("2026-05-19T16:40:03Z");
+    RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .robotId("robot-1")
+        .positionX(1.2)
+        .positionY(3.4)
+        .battery(88.8)
+        .status("IDLE")
+        .eventType(LifecycleEventType.CREATED)
+        .timestamp(now)
+        .build();
+    when(robotRepository.findById("robot-1")).thenReturn(Optional.empty());
+
+    robotStateService.applyCreatedLifecycleEvent(event);
+
+    verify(robotRepository, never()).save(any(Robot.class));
+    verify(robotStateRepository, never()).save(any(RobotState.class));
+  }
+
+  @Test
+  void shouldMarkRobotActiveWhenCreatedLifecycleEventRobotExists() {
+    Instant now = Instant.parse("2026-05-19T16:40:03Z");
+    RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .robotId("robot-1")
+        .positionX(11.1)
+        .positionY(22.2)
+        .battery(77.7)
+        .status("IDLE")
+        .eventType(LifecycleEventType.CREATED)
+        .timestamp(now)
+        .build();
+    Robot existingRobot = Robot.builder()
+        .robotId("robot-1")
+        .displayName("Alpha")
+        .lifecycleStatus(RobotLifecycleStatus.CREATE_PENDING)
+        .build();
+    RobotState existingState = RobotState.builder()
+        .robotId("robot-1")
+        .positionX(1.0)
+        .positionY(2.0)
+        .battery(3.0)
+        .status("MOVING")
+        .timestamp(Instant.parse("2026-05-19T16:00:00Z"))
+        .build();
+    when(robotRepository.findById("robot-1")).thenReturn(Optional.of(existingRobot));
+    when(robotStateRepository.findById("robot-1")).thenReturn(Optional.of(existingState));
+
+    robotStateService.applyCreatedLifecycleEvent(event);
+
+    ArgumentCaptor<Robot> robotCaptor = ArgumentCaptor.forClass(Robot.class);
+    ArgumentCaptor<RobotState> stateCaptor = ArgumentCaptor.forClass(RobotState.class);
+    verify(robotRepository).save(robotCaptor.capture());
+    verify(robotStateRepository).save(stateCaptor.capture());
+    assertEquals(RobotLifecycleStatus.ACTIVE, robotCaptor.getValue().getLifecycleStatus());
+    assertEquals(11.1, stateCaptor.getValue().getPositionX());
+    assertEquals(22.2, stateCaptor.getValue().getPositionY());
+    assertEquals(77.7, stateCaptor.getValue().getBattery());
+    assertEquals("IDLE", stateCaptor.getValue().getStatus());
+    assertEquals(now, stateCaptor.getValue().getTimestamp());
+  }
+
+  @Test
+  void shouldCreateRobotStateWhenMissingAndRobotExistsForCreatedEvent() {
+    Instant now = Instant.parse("2026-05-19T16:40:03Z");
+    RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .robotId("robot-2")
+        .positionX(4.4)
+        .positionY(5.5)
+        .battery(6.6)
+        .status("CHARGING")
+        .eventType(LifecycleEventType.CREATED)
+        .timestamp(now)
+        .build();
+    Robot existingRobot = Robot.builder()
+        .robotId("robot-2")
+        .displayName("Beta")
+        .lifecycleStatus(RobotLifecycleStatus.CREATE_PENDING)
+        .build();
+    when(robotRepository.findById("robot-2")).thenReturn(Optional.of(existingRobot));
+    when(robotStateRepository.findById("robot-2")).thenReturn(Optional.empty());
+
+    robotStateService.applyCreatedLifecycleEvent(event);
+
+    ArgumentCaptor<RobotState> stateCaptor = ArgumentCaptor.forClass(RobotState.class);
+    verify(robotStateRepository).save(stateCaptor.capture());
+    assertEquals("robot-2", stateCaptor.getValue().getRobotId());
+    assertEquals(4.4, stateCaptor.getValue().getPositionX());
+    assertEquals(5.5, stateCaptor.getValue().getPositionY());
+    assertEquals(6.6, stateCaptor.getValue().getBattery());
+    assertEquals("CHARGING", stateCaptor.getValue().getStatus());
+    assertEquals(now, stateCaptor.getValue().getTimestamp());
   }
 }

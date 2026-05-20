@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS robot (
   robot_id TEXT PRIMARY KEY,
-  display_name TEXT NULL
+  display_name TEXT NULL,
+  lifecycle_status TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS robot_state (
@@ -16,11 +17,11 @@ CREATE TABLE IF NOT EXISTS robot_state (
 DELETE FROM robot_state;
 DELETE FROM robot;
 
-INSERT INTO robot (robot_id, display_name)
-VALUES ('robot-1', 'Alpha');
+INSERT INTO robot (robot_id, display_name, lifecycle_status)
+VALUES ('robot-1', 'Alpha', 'ACTIVE');
 
-INSERT INTO robot (robot_id, display_name)
-VALUES ('robot-2', NULL);
+INSERT INTO robot (robot_id, display_name, lifecycle_status)
+VALUES ('robot-2', NULL, 'ACTIVE');
 
 INSERT INTO robot_state (robot_id, x, y, battery, status, timestamp)
 VALUES ('robot-1', 12.34, 56.78, 87.1, 'MOVING', '2026-05-19 16:40:03.000');

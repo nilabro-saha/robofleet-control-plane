@@ -1,6 +1,8 @@
 package com.robofleet.fleetstateservice.robot.api;
 
 import com.robofleet.fleetstateservice.robot.application.RobotStateService;
+import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,6 +63,20 @@ class RobotApiControllerTest {
     ResponseEntity<RobotStateResponse> response = robotApiController.getRobotById("missing");
 
     assertEquals(HttpStatusCode.valueOf(404), response.getStatusCode());
+  }
+
+  @Test
+  void shouldAcceptCreateRobotRequest() {
+    CreateRobotRequest request = CreateRobotRequest.builder()
+        .displayName("NinetyNine")
+        .build();
+    when(robotStateService.createRobot(request))
+        .thenReturn(new RobotCreationResponse("generated-id", "NinetyNine", "CREATE_PENDING"));
+
+    ResponseEntity<RobotCreationResponse> response = robotApiController.createRobot(request);
+
+    assertEquals(HttpStatusCode.valueOf(202), response.getStatusCode());
+    assertEquals("generated-id", response.getBody().robotId());
   }
 
   private RobotStateResponse sampleResponse() {

@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
 import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
@@ -12,6 +11,7 @@ import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -60,7 +60,42 @@ class RobotSimulationOrchestratorTest {
 
     ArgumentCaptor<RobotActor> robotCaptor = ArgumentCaptor.forClass(RobotActor.class);
     verify(robotRegistry, times(3)).register(robotCaptor.capture());
-    assertTrue(robotCaptor.getAllValues().stream()
-        .anyMatch(robot -> robot.getDisplayName() == null || robot.getDisplayName().startsWith("Robot-")));
+    Assertions.assertTrue(
+        robotCaptor.getAllValues().stream().allMatch(robot -> robot.getRobotId() != null));
+  }
+
+  @Test
+  void registerRobot_shouldRegisterProvidedIdentity() {
+    RobotMap robotMap = new RectangularMap(0.0, 100.0, 0.0, 100.0);
+    RobotSimulationOrchestrator orchestrator = new RobotSimulationOrchestrator(
+        simulatorProperties,
+        robotMap,
+        robotRegistry);
+
+    orchestrator.registerRobot("robot-99");
+
+    verify(robotRegistry, times(1)).register(any());
+  }
+
+  @Test
+  void registerRobot_shouldSkipWhenAlreadyRegistered() {
+    RobotMap robotMap = new RectangularMap(0.0, 100.0, 0.0, 100.0);
+    RobotSimulationOrchestrator orchestrator = new RobotSimulationOrchestrator(
+        simulatorProperties,
+        robotMap,
+        robotRegistry);
+    when(robotRegistry.getRegisteredRobots()).thenReturn(List.of(
+        RobotActor.builder()
+            .robotId("robot-99")
+            .positionX(1.0)
+            .positionY(1.0)
+            .battery(80.0)
+            .status(RobotStatus.IDLE)
+            .build()
+    ));
+
+    orchestrator.registerRobot("robot-99");
+
+    verify(robotRegistry, times(0)).register(any());
   }
 }

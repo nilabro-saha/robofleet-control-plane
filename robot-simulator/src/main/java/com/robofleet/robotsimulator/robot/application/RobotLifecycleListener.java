@@ -3,6 +3,7 @@ package com.robofleet.robotsimulator.robot.application;
 import com.robofleet.robotsimulator.robot.application.event.RobotAdvancedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotStateChangedEvent;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,6 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishTelemetry(
         RobotStateChangedEvent.builder()
             .robotId(lastStateView.robotId())
-            .displayName(lastStateView.displayName())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
             .battery(lastStateView.battery())
@@ -46,12 +46,11 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .robotId(lastStateView.robotId())
-            .displayName(lastStateView.displayName())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
             .battery(lastStateView.battery())
             .status(lastStateView.status())
-            .eventType("CREATED")
+            .eventType(LifecycleEventType.CREATED)
             .timestamp(lastStateView.timestamp())
             .build());
   }
@@ -65,12 +64,11 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .robotId(lastStateView.robotId())
-            .displayName(lastStateView.displayName())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
             .battery(lastStateView.battery())
             .status(lastStateView.status())
-            .eventType("REMOVED")
+            .eventType(LifecycleEventType.REMOVED)
             .timestamp(lastStateView.timestamp())
             .build());
   }

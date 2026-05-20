@@ -2,6 +2,8 @@ package com.robofleet.fleetstateservice.robot.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -27,4 +29,15 @@ public class Robot {
 
   @Column(name = "display_name", nullable = true, length = 120)
   private String displayName;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "lifecycle_status", nullable = false, length = 30)
+  private RobotLifecycleStatus lifecycleStatus;
+
+  /**
+   * Marks this robot as active.
+   */
+  public void markAsActive() {
+    this.lifecycleStatus = RobotLifecycleStatus.ACTIVE;
+  }
 }

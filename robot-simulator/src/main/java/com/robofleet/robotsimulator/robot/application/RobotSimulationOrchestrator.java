@@ -35,7 +35,6 @@ public class RobotSimulationOrchestrator {
 
       RobotActor robotActor = RobotActor.builder()
           .robotId(UUID.randomUUID().toString())
-          .displayName(random.nextBoolean() ? "Robot-" + i : null)
           .positionX(spawnLocation.x())
           .positionY(spawnLocation.y())
           .battery(random.nextDouble(20.0, 100.0))
@@ -59,6 +58,37 @@ public class RobotSimulationOrchestrator {
         simulatorProperties.getRobotCount(),
         removedRobots.size(),
         simulatorProperties.getTelemetryIntervalMs()
+    );
+  }
+
+  /**
+   * Registers one robot requested externally by control-plane command.
+   */
+  public void registerRobot(String robotId) {
+    boolean alreadyRegistered = robotRegistry.getRegisteredRobots().stream()
+        .anyMatch(robot -> robotId.equals(robot.getRobotId()));
+    if (alreadyRegistered) {
+      log.info("Robot {} already registered, skipping create command", robotId);
+      return;
+    }
+
+    ThreadLocalRandom random = ThreadLocalRandom.current();
+    MapLocation spawnLocation = robotMap.randomAvailableLocation(random);
+
+    RobotActor robotActor = RobotActor.builder()
+        .robotId(robotId)
+        .positionX(spawnLocation.x())
+        .positionY(spawnLocation.y())
+        .battery(random.nextDouble(20.0, 100.0))
+        .status(RobotStatus.values()[random.nextInt(RobotStatus.values().length)])
+        .build();
+
+    robotRegistry.register(robotActor);
+    log.info(
+        "Registered command-driven robot {} at ({}, {})",
+        robotActor.getRobotId(),
+        round(robotActor.getPositionX()),
+        round(robotActor.getPositionY())
     );
   }
 

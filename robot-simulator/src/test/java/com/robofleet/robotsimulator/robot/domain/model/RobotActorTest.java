@@ -17,7 +17,6 @@ class RobotActorTest {
   void lastStateView_shouldReflectCurrentState() {
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-1")
-        .displayName("Alpha")
         .positionX(10.126)
         .positionY(20.994)
         .battery(55.678)
@@ -27,7 +26,6 @@ class RobotActorTest {
     RobotActor.LastStateView lastStateView = robotActor.lastStateView();
 
     assertEquals("robot-1", lastStateView.robotId());
-    assertEquals("Alpha", lastStateView.displayName());
     assertEquals(10.13, lastStateView.positionX());
     assertEquals(20.99, lastStateView.positionY());
     assertEquals(55.68, lastStateView.battery());
@@ -40,7 +38,6 @@ class RobotActorTest {
   void advanceState_shouldKeepPositionAndBatteryWithinBounds() {
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-2")
-        .displayName(null)
         .positionX(99.9)
         .positionY(99.9)
         .battery(50.0)
@@ -62,7 +59,6 @@ class RobotActorTest {
   void advanceState_shouldThrowForUnsupportedMapType() {
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-3")
-        .displayName("Gamma")
         .positionX(5.0)
         .positionY(5.0)
         .battery(80.0)

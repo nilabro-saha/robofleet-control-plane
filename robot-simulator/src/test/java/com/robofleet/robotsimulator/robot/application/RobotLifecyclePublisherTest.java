@@ -3,8 +3,8 @@ package com.robofleet.robotsimulator.robot.application;
 import static org.mockito.Mockito.verify;
 
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotStateChangedEvent;
-import java.lang.reflect.Field;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class RobotLifecyclePublisherTest {
@@ -24,26 +25,20 @@ class RobotLifecyclePublisherTest {
   private RobotLifecyclePublisher robotLifecyclePublisher;
 
   @BeforeEach
-  void setUp() throws Exception {
-    Field lifecycleTopicField = RobotLifecyclePublisher.class.getDeclaredField("lifecycleTopic");
-    lifecycleTopicField.setAccessible(true);
-    lifecycleTopicField.set(robotLifecyclePublisher, "robot.lifecycle");
-
-    Field telemetryTopicField = RobotLifecyclePublisher.class.getDeclaredField("telemetryTopic");
-    telemetryTopicField.setAccessible(true);
-    telemetryTopicField.set(robotLifecyclePublisher, "robot.telemetry");
+  void setUp() {
+    ReflectionTestUtils.setField(robotLifecyclePublisher, "lifecycleTopic", "robot.lifecycle");
+    ReflectionTestUtils.setField(robotLifecyclePublisher, "telemetryTopic", "robot.telemetry");
   }
 
   @Test
   void publishLifecycle_shouldSendLifecycleEventWithRobotIdAsKey() {
     RobotLifecycleEvent lifecycleEvent = RobotLifecycleEvent.builder()
         .robotId("robot-1")
-        .displayName("Alpha")
         .positionX(10.0)
         .positionY(20.0)
         .battery(80.0)
         .status("MOVING")
-        .eventType("REMOVED")
+        .eventType(LifecycleEventType.REMOVED)
         .timestamp(Instant.now())
         .build();
 
@@ -56,7 +51,6 @@ class RobotLifecyclePublisherTest {
   void publishTelemetry_shouldSendTelemetryEventWithRobotIdAsKey() {
     RobotStateChangedEvent telemetryEvent = RobotStateChangedEvent.builder()
         .robotId("robot-1")
-        .displayName(null)
         .positionX(10.0)
         .positionY(20.0)
         .battery(80.0)

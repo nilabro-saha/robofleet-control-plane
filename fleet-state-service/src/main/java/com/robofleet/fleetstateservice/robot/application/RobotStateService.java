@@ -1,6 +1,9 @@
 package com.robofleet.fleetstateservice.robot.application;
 
+import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
+import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
+import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotLifecycleEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,14 @@ public interface RobotStateService {
    * @param event telemetry payload emitted by a robot/simulator
    */
   void upsertFromTelemetry(RobotStateChangedEvent event);
+
+  /**
+   * Creates a robot orchestration request and marks robot as pending.
+   *
+   * @param request api payload for robot creation
+   * @return pending creation response
+   */
+  RobotCreationResponse createRobot(CreateRobotRequest request);
 
   /**
    * Returns the current known state for every robot in the fleet snapshot.
@@ -43,4 +54,18 @@ public interface RobotStateService {
    * @param robotId unique robot identifier
    */
   void removeRobotById(String robotId);
+
+  /**
+   * Applies CREATED lifecycle data to materialized state.
+   *
+   * @param event created lifecycle event payload
+   */
+  void applyCreatedLifecycleEvent(RobotLifecycleEvent event);
+
+  /**
+   * Applies REMOVED lifecycle data to materialized state.
+   *
+   * @param event removed lifecycle event payload
+   */
+  void applyRemovedLifecycleEvent(RobotLifecycleEvent event);
 }
