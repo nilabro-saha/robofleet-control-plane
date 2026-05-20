@@ -49,15 +49,6 @@ if ! command -v mvn >/dev/null 2>&1; then
   exit 1
 fi
 
-if command -v python3.10 >/dev/null 2>&1; then
-  PYTHON_BIN="python3.10"
-elif command -v python3 >/dev/null 2>&1; then
-  PYTHON_BIN="python3"
-else
-  echo "[mvp-up] Python 3 is required but not found in PATH."
-  exit 1
-fi
-
 kafka_reachable() {
   if command -v nc >/dev/null 2>&1; then
     nc -z localhost 9092 >/dev/null 2>&1
@@ -85,13 +76,6 @@ else
   "$ROOT_DIR/scripts/kafka-local-up.sh"
 fi
 
-echo "[mvp-up] Preparing simulator virtualenv..."
-if [[ ! -d "$ROOT_DIR/robot-simulator/.venv" ]]; then
-  "$PYTHON_BIN" -m venv "$ROOT_DIR/robot-simulator/.venv"
-fi
-
-"$ROOT_DIR/robot-simulator/.venv/bin/python" -m pip install -r "$ROOT_DIR/robot-simulator/requirements.txt" >/dev/null
-
 echo "[mvp-up] Starting fleet-state-service..."
 SERVICE_PORT=8080
 if port_in_use "$SERVICE_PORT"; then
@@ -108,9 +92,19 @@ nohup mvn -q -DskipTests spring-boot:run \
 echo $! > "$SERVICE_PID_FILE"
 
 echo "[mvp-up] Starting robot-simulator..."
-nohup "$ROOT_DIR/robot-simulator/.venv/bin/python" "$ROOT_DIR/robot-simulator/src/robot_simulator.py" \
+nohup mvn -q -DskipTests spring-boot:run \
+  --file "$ROOT_DIR/robot-simulator/pom.xml" \
   > "$RUN_DIR/robot-simulator.log" 2>&1 &
 echo $! > "$SIM_PID_FILE"
+
+if command -v python3.10 >/dev/null 2>&1; then
+  PYTHON_BIN="python3.10"
+elif command -v python3 >/dev/null 2>&1; then
+  PYTHON_BIN="python3"
+else
+  echo "[mvp-up] Python 3 is required but not found in PATH."
+  exit 1
+fi
 
 echo "[mvp-up] Starting fleet-dashboard-ui..."
 UI_PORT=5173

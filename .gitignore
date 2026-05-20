@@ -10,6 +10,7 @@ fleet-state-service/*.db
 fleet-state-service/*.log
 
 robot-simulator/.env
+robot-simulator/target/
 
 .run/
 .local/

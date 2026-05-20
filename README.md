@@ -22,7 +22,7 @@ This MVP intentionally focuses on **current state materialization** rather than 
 
 ```text
 .
-├── robot-simulator/        # Python telemetry producer
+├── robot-simulator/        # Spring Boot robot actor telemetry producer
 ├── fleet-state-service/    # Spring Boot Kafka consumer + REST API
 ├── fleet-dashboard-ui/     # Vanilla JS dashboard consuming /api/robots
 ├── scripts/                # One-command orchestration helpers
@@ -68,13 +68,10 @@ Open a second terminal:
 
 ```bash
 cd robot-simulator
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python robot_simulator.py
+mvn spring-boot:run
 ```
 
-The simulator continuously emits synthetic state for three robots and is intentionally simple so you can quickly change behavior (movement, battery model, status transitions).
+The simulator continuously emits synthetic state for robot actors and is intentionally configurable so you can quickly tune behavior (spawn count, map bounds, publish interval).
 
 ## Verify
 

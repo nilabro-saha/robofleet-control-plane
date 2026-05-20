@@ -16,7 +16,7 @@ These scripts make the demo reproducible across different machine constraints (D
 - `mvp-up.sh`
   - starts (or reuses) Kafka
   - starts fleet-state-service
-  - starts robot-simulator
+  - starts Spring robot-simulator service
   - starts dashboard UI static server
   - records PIDs/ports/logs under `.run/`
 
