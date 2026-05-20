@@ -20,14 +20,18 @@ It models each robot as an in-memory actor with internal mutable state and regis
 
 ## Instrumentation flow
 
-Each robot actor requests instrumentation itself:
+Instrumentation is orchestrated at the application layer:
 
-1. Bootstrap spawns/registers robot actor
-2. Robot calls `instrument(...)` with a shared `RobotContext`
-3. Robot publishes a Spring instrumentation event
-4. Event listener registers fixed-rate telemetry schedule for that robot
+1. `RobotFleetBootstrap` triggers `RobotSimulationOrchestrator` at `ApplicationReadyEvent`
+2. Orchestrator spawns robot actors and registers them in `RobotRegistry`
+3. Orchestrator publishes two events per robot:
+   - `RobotTelemetryInstrumentationRequestedEvent`
+   - `RobotStateAdvancementRequestedEvent`
+4. Dedicated listeners register fixed-rate schedules for:
+   - telemetry publishing
+   - random state advancement
 
-This keeps telemetry scheduling robot-driven and event-based.
+This keeps domain entities focused on state/behavior while orchestration stays in the application layer.
 
 ## Runtime contract
 

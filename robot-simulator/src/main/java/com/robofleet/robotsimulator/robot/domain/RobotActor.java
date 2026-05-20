@@ -1,9 +1,8 @@
 package com.robofleet.robotsimulator.robot.domain;
 
-import com.robofleet.robotsimulator.robot.application.RobotContext;
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotTelemetryEvent;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotTelemetryEvent;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -31,33 +30,12 @@ public class RobotActor {
 
   private final String robotId;
 
-  private double x;
-  private double y;
+  private double positionX;
+  private double positionY;
   private double battery;
   private RobotStatus status;
   @Builder.Default
   private final Lock stateLock = new ReentrantLock();
-
-  /**
-   * Requests simulator instrumentation (telemetry scheduling) for this robot.
-   */
-  public void instrument(RobotContext robotContext) {
-    robotContext.instrumentalize(this);
-  }
-
-  /**
-   * Requests simulator scheduling for random state advancement for this robot.
-   */
-  public void scheduleRandomAdvancement(RobotContext robotContext) {
-    robotContext.requestStateAdvancement(this);
-  }
-
-  /**
-   * Registers this robot actor with the central registry via context.
-   */
-  public void registerWith(RobotContext robotContext) {
-    robotContext.register(this);
-  }
 
   /**
    * Produces telemetry for the current in-memory state without advancing it.
@@ -67,8 +45,8 @@ public class RobotActor {
     try {
       return RobotTelemetryEvent.builder()
           .robotId(robotId)
-          .positionX(roundTwo(x))
-          .positionY(roundTwo(y))
+          .positionX(roundTwo(positionX))
+          .positionY(roundTwo(positionY))
           .battery(roundTwo(battery))
           .status(status.name())
           .timestamp(Instant.now())
@@ -81,18 +59,17 @@ public class RobotActor {
   /**
    * Advances robot state for the next publish cycle.
    */
-  public void advanceState(RobotContext robotContext) {
+  public void advanceState(RobotMap map) {
     stateLock.lock();
     try {
       ThreadLocalRandom random = ThreadLocalRandom.current();
-      RobotMap map = robotContext.robotMap();
       if (!(map instanceof RectangularMap rectangularMap)) {
         throw new IllegalStateException("Unsupported map type for robot movement: " + map);
       }
 
       if (status == RobotStatus.MOVING) {
-        x = rectangularMap.clampX(x + random.nextDouble(-3.0, 3.0));
-        y = rectangularMap.clampY(y + random.nextDouble(-3.0, 3.0));
+        positionX = rectangularMap.clampX(positionX + random.nextDouble(-3.0, 3.0));
+        positionY = rectangularMap.clampY(positionY + random.nextDouble(-3.0, 3.0));
         battery = clamp(battery - random.nextDouble(0.3, 1.5), 0.0, 100.0);
       } else if (status == RobotStatus.CHARGING) {
         battery = clamp(battery + random.nextDouble(1.0, 3.0), 0.0, 100.0);

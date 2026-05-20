@@ -10,7 +10,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @param minY minimum allowed Y coordinate in map space
  * @param maxY maximum allowed Y coordinate in map space
  */
-public record RectangularMap(double minX, double maxX, double minY, double maxY) implements RobotMap {
+public record RectangularMap(double minX, double maxX, double minY, double maxY)
+    implements RobotMap {
 
   /**
    * Clamps X coordinate to this rectangular map boundary.

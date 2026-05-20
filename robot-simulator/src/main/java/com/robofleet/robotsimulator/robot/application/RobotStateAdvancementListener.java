@@ -2,6 +2,7 @@ package com.robofleet.robotsimulator.robot.application;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
 import com.robofleet.robotsimulator.robot.domain.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class RobotStateAdvancementListener {
 
   private final ScheduledExecutorService robotTelemetryScheduler;
   private final SimulatorProperties simulatorProperties;
-  private final RobotContext robotContext;
+  private final RobotMap robotMap;
 
   /**
    * Registers fixed-rate state advancement for the requested robot actor.
@@ -44,7 +45,7 @@ public class RobotStateAdvancementListener {
 
   private void advanceState(RobotActor robotActor) {
     try {
-      robotActor.advanceState(robotContext);
+      robotActor.advanceState(robotMap);
     } catch (Exception exception) {
       log.error("Failed to advance state for {}", robotActor.getRobotId(), exception);
     }
