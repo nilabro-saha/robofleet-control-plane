@@ -1,7 +1,10 @@
 package com.robofleet.robotsimulator.robot.application;
 
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotLifecycleEvent;
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotStateChangedEvent;
+import com.robofleet.robotsimulator.robot.application.event.RobotAdvancedEvent;
+import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
+import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotStateChangedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

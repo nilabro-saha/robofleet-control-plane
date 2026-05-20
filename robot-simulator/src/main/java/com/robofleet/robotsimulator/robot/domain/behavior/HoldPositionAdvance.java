@@ -1,4 +1,4 @@
-package com.robofleet.robotsimulator.robot.domain;
+package com.robofleet.robotsimulator.robot.domain.behavior;
 
 /**
  * Skeleton advancement mode indicating robot should maintain current position.

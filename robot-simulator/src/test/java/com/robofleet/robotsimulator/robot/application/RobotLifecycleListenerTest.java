@@ -2,9 +2,12 @@ package com.robofleet.robotsimulator.robot.application;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import com.robofleet.robotsimulator.robot.application.event.RobotAdvancedEvent;
+import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
+import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
 
-import com.robofleet.robotsimulator.robot.domain.RobotActor;
-import com.robofleet.robotsimulator.robot.domain.RobotStatus;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

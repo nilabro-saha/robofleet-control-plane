@@ -8,10 +8,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.same;
 
-import com.robofleet.robotsimulator.robot.domain.AdvancementMode;
-import com.robofleet.robotsimulator.robot.domain.RandomAdvance;
-import com.robofleet.robotsimulator.robot.domain.RobotActor;
-import com.robofleet.robotsimulator.robot.domain.RobotStatus;
+import com.robofleet.robotsimulator.robot.application.command.AdvanceRobotStateRequest;
+import com.robofleet.robotsimulator.robot.application.event.RobotAdvancedEvent;
+import com.robofleet.robotsimulator.robot.domain.behavior.AdvancementMode;
+import com.robofleet.robotsimulator.robot.domain.behavior.RandomAdvance;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.concurrent.ThreadLocalRandom;

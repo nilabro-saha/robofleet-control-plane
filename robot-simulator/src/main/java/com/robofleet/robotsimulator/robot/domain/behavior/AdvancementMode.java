@@ -1,4 +1,4 @@
-package com.robofleet.robotsimulator.robot.domain;
+package com.robofleet.robotsimulator.robot.domain.behavior;
 
 /**
  * Marker for robot state advancement strategies.

@@ -1,8 +1,9 @@
 package com.robofleet.robotsimulator.robot.application;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
-import com.robofleet.robotsimulator.robot.domain.RandomAdvance;
-import com.robofleet.robotsimulator.robot.domain.RobotActor;
+import com.robofleet.robotsimulator.robot.application.command.AdvanceRobotStateRequest;
+import com.robofleet.robotsimulator.robot.domain.behavior.RandomAdvance;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;

@@ -1,6 +1,5 @@
 package com.robofleet.robotsimulator.config;
 
-import com.robofleet.robotsimulator.robot.application.RobotLifecyclePublisher;
 import com.robofleet.robotsimulator.robot.application.RobotRegistry;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;

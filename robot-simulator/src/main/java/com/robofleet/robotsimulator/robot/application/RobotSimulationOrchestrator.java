@@ -1,10 +1,10 @@
 package com.robofleet.robotsimulator.robot.application;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
-import com.robofleet.robotsimulator.robot.domain.RobotActor;
-import com.robofleet.robotsimulator.robot.domain.RobotStatus;
 import com.robofleet.robotsimulator.robot.domain.map.MapLocation;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;

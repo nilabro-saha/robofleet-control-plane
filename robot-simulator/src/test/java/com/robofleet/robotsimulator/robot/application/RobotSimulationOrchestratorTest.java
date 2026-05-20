@@ -6,8 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
-import com.robofleet.robotsimulator.robot.domain.RobotActor;
-import com.robofleet.robotsimulator.robot.domain.RobotStatus;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.List;

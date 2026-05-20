@@ -1,10 +1,11 @@
-package com.robofleet.robotsimulator.robot.domain;
+package com.robofleet.robotsimulator.robot.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.robofleet.robotsimulator.robot.domain.behavior.RandomAdvance;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import java.time.Instant;
 import java.util.concurrent.ThreadLocalRandom;

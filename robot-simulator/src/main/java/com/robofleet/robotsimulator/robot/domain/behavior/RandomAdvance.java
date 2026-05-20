@@ -1,4 +1,4 @@
-package com.robofleet.robotsimulator.robot.domain;
+package com.robofleet.robotsimulator.robot.domain.behavior;
 
 import java.util.Objects;
 import java.util.random.RandomGenerator;

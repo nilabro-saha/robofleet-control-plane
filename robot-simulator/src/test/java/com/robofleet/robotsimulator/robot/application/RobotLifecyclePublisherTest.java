@@ -2,8 +2,8 @@ package com.robofleet.robotsimulator.robot.application;
 
 import static org.mockito.Mockito.verify;
 
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotLifecycleEvent;
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotStateChangedEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotStateChangedEvent;
 import java.lang.reflect.Field;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,7 @@
 package com.robofleet.robotsimulator.robot.application;
 
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotLifecycleEvent;
-import com.robofleet.robotsimulator.robot.infrastructure.messaging.RobotStateChangedEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
+import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotStateChangedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

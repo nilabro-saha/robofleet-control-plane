@@ -1,4 +1,4 @@
-package com.robofleet.robotsimulator.robot.infrastructure.messaging;
+package com.robofleet.robotsimulator.robot.infrastructure.messaging.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
@@ -7,12 +7,12 @@ import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Outgoing telemetry contract emitted to Kafka.
+ * Lifecycle contract emitted to Kafka for create/remove state changes.
  */
 @Value
 @Builder
 @Jacksonized
-public class RobotStateChangedEvent {
+public class RobotLifecycleEvent {
   String robotId;
   @JsonProperty("x")
   double positionX;
@@ -20,5 +20,6 @@ public class RobotStateChangedEvent {
   double positionY;
   double battery;
   String status;
+  String eventType;
   Instant timestamp;
 }

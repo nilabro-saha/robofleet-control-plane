@@ -1,5 +1,7 @@
-package com.robofleet.robotsimulator.robot.domain;
+package com.robofleet.robotsimulator.robot.domain.model;
 
+import com.robofleet.robotsimulator.robot.domain.behavior.AdvancementMode;
+import com.robofleet.robotsimulator.robot.domain.behavior.RandomAdvance;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.time.Instant;

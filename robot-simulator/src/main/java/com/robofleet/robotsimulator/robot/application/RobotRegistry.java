@@ -1,6 +1,8 @@
 package com.robofleet.robotsimulator.robot.application;
 
-import com.robofleet.robotsimulator.robot.domain.RobotActor;
+import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
+import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
