@@ -1,8 +1,10 @@
 package com.robofleet.fleetstateservice.robot.application;
 
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
+import com.robofleet.fleetstateservice.robot.domain.Robot;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
+import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotRepository;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RobotStateServiceImpl implements RobotStateService {
 
+  private final RobotRepository robotRepository;
   private final RobotStateRepository robotStateRepository;
 
   /**
@@ -29,6 +32,18 @@ public class RobotStateServiceImpl implements RobotStateService {
    */
   @Override
   public void upsertFromTelemetry(RobotStateChangedEvent event) {
+    String normalizedDisplayName = robotRepository.findById(event.getRobotId())
+        .map(existingRobot -> event.getDisplayName() == null
+            ? existingRobot.getDisplayName()
+            : event.getDisplayName())
+        .orElse(event.getDisplayName());
+
+    Robot robot = Robot.builder()
+        .robotId(event.getRobotId())
+        .displayName(normalizedDisplayName)
+        .build();
+    robotRepository.save(robot);
+
     RobotState entity = RobotState.builder()
         .robotId(event.getRobotId())
         .positionX(event.getPositionX())
@@ -75,6 +90,7 @@ public class RobotStateServiceImpl implements RobotStateService {
   @Override
   public void removeRobotById(String robotId) {
     robotStateRepository.deleteById(robotId);
+    robotRepository.deleteById(robotId);
   }
 
   /**
@@ -84,8 +100,13 @@ public class RobotStateServiceImpl implements RobotStateService {
    * @return response DTO for API consumers
    */
   private RobotStateResponse toResponse(RobotState entity) {
+    String displayName = robotRepository.findById(entity.getRobotId())
+        .map(Robot::getDisplayName)
+        .orElse(null);
+
     return RobotStateResponse.builder()
         .robotId(entity.getRobotId())
+        .displayName(displayName)
         .positionX(entity.getPositionX())
         .positionY(entity.getPositionY())
         .battery(entity.getBattery())

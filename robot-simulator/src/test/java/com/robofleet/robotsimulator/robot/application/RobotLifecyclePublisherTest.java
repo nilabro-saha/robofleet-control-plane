@@ -38,6 +38,7 @@ class RobotLifecyclePublisherTest {
   void publishLifecycle_shouldSendLifecycleEventWithRobotIdAsKey() {
     RobotLifecycleEvent lifecycleEvent = RobotLifecycleEvent.builder()
         .robotId("robot-1")
+        .displayName("Alpha")
         .positionX(10.0)
         .positionY(20.0)
         .battery(80.0)
@@ -55,6 +56,7 @@ class RobotLifecyclePublisherTest {
   void publishTelemetry_shouldSendTelemetryEventWithRobotIdAsKey() {
     RobotStateChangedEvent telemetryEvent = RobotStateChangedEvent.builder()
         .robotId("robot-1")
+        .displayName(null)
         .positionX(10.0)
         .positionY(20.0)
         .battery(80.0)

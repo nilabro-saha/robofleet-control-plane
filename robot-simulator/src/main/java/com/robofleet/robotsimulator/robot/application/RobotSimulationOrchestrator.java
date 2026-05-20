@@ -35,6 +35,7 @@ public class RobotSimulationOrchestrator {
 
       RobotActor robotActor = RobotActor.builder()
           .robotId(UUID.randomUUID().toString())
+          .displayName(random.nextBoolean() ? "Robot-" + i : null)
           .positionX(spawnLocation.x())
           .positionY(spawnLocation.y())
           .battery(random.nextDouble(20.0, 100.0))

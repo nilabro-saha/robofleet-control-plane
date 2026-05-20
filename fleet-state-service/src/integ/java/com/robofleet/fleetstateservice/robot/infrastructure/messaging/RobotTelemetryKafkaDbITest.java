@@ -39,6 +39,7 @@ class RobotTelemetryKafkaDbITest {
 
     RobotStateChangedEvent first = RobotStateChangedEvent.builder()
         .robotId(robotId)
+        .displayName("Gamma")
         .positionX(10.0)
         .positionY(20.0)
         .battery(90.0)
@@ -56,12 +57,14 @@ class RobotTelemetryKafkaDbITest {
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.x").value(10.0))
               .andExpect(jsonPath("$.y").value(20.0))
+              .andExpect(jsonPath("$.displayName").value("Gamma"))
               .andExpect(jsonPath("$.battery").value(90.0))
               .andExpect(jsonPath("$.status").value("IDLE"));
         });
 
     RobotStateChangedEvent second = RobotStateChangedEvent.builder()
         .robotId(robotId)
+        .displayName(null)
         .positionX(30.0)
         .positionY(40.0)
         .battery(55.5)
@@ -79,6 +82,7 @@ class RobotTelemetryKafkaDbITest {
               .andExpect(status().isOk())
               .andExpect(jsonPath("$.x").value(30.0))
               .andExpect(jsonPath("$.y").value(40.0))
+              .andExpect(jsonPath("$.displayName").value("Gamma"))
               .andExpect(jsonPath("$.battery").value(55.5))
               .andExpect(jsonPath("$.status").value("MOVING"));
         });

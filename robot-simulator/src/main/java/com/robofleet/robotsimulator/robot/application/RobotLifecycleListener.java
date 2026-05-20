@@ -27,6 +27,7 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishTelemetry(
         RobotStateChangedEvent.builder()
             .robotId(lastStateView.robotId())
+            .displayName(lastStateView.displayName())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
             .battery(lastStateView.battery())
@@ -45,6 +46,7 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .robotId(lastStateView.robotId())
+            .displayName(lastStateView.displayName())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
             .battery(lastStateView.battery())
@@ -63,6 +65,7 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .robotId(lastStateView.robotId())
+            .displayName(lastStateView.displayName())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
             .battery(lastStateView.battery())

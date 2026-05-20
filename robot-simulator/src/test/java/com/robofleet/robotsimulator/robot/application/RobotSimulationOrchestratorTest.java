@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
 import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
 
 @ExtendWith(MockitoExtension.class)
 class RobotSimulationOrchestratorTest {
@@ -55,5 +57,10 @@ class RobotSimulationOrchestratorTest {
 
     verify(robotRegistry).clearAndGetRemovedRobots();
     verify(robotRegistry, times(3)).register(any());
+
+    ArgumentCaptor<RobotActor> robotCaptor = ArgumentCaptor.forClass(RobotActor.class);
+    verify(robotRegistry, times(3)).register(robotCaptor.capture());
+    assertTrue(robotCaptor.getAllValues().stream()
+        .anyMatch(robot -> robot.getDisplayName() == null || robot.getDisplayName().startsWith("Robot-")));
   }
 }

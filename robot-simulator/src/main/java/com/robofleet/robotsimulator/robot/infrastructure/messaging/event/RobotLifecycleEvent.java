@@ -14,6 +14,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class RobotLifecycleEvent {
   String robotId;
+  String displayName;
   @JsonProperty("x")
   double positionX;
   @JsonProperty("y")

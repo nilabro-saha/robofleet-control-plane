@@ -24,6 +24,7 @@ class RobotLifecycleListenerTest {
     RobotLifecycleListener listener = new RobotLifecycleListener(robotLifecyclePublisher);
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-1")
+        .displayName("Alpha")
         .positionX(1.0)
         .positionY(2.0)
         .battery(50.0)
@@ -40,6 +41,7 @@ class RobotLifecycleListenerTest {
     RobotLifecycleListener listener = new RobotLifecycleListener(robotLifecyclePublisher);
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-1")
+        .displayName(null)
         .positionX(1.0)
         .positionY(2.0)
         .battery(50.0)
@@ -56,6 +58,7 @@ class RobotLifecycleListenerTest {
     RobotLifecycleListener listener = new RobotLifecycleListener(robotLifecyclePublisher);
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-1")
+        .displayName("Gamma")
         .positionX(1.0)
         .positionY(2.0)
         .battery(50.0)

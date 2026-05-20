@@ -39,6 +39,7 @@ class RobotApiControllerTest {
 
     assertEquals(1, response.size());
     assertEquals("robot-1", response.get(0).getRobotId());
+    assertEquals("Alpha", response.get(0).getDisplayName());
     verify(robotStateService).getAllRobots(pageable);
   }
 
@@ -50,6 +51,7 @@ class RobotApiControllerTest {
 
     assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
     assertEquals("robot-1", response.getBody().getRobotId());
+    assertEquals("Alpha", response.getBody().getDisplayName());
   }
 
   @Test
@@ -64,6 +66,7 @@ class RobotApiControllerTest {
   private RobotStateResponse sampleResponse() {
     return RobotStateResponse.builder()
         .robotId("robot-1")
+        .displayName("Alpha")
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)

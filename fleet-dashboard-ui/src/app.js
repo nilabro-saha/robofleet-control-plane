@@ -89,7 +89,7 @@ async function fetchRobots() {
 function renderRows(robots) {
   if (!Array.isArray(robots) || robots.length === 0) {
     closeSidebar();
-    tbody.innerHTML = `<tr><td colspan="6">No telemetry received yet.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7">No telemetry received yet.</td></tr>`;
     return;
   }
 
@@ -101,6 +101,7 @@ function renderRows(robots) {
       return `
         <tr class="${selectedClass}" data-robot-id="${robot.robotId}">
           <td>${robot.robotId}</td>
+          <td>${robot.displayName ?? "-"}</td>
           <td>${Number(robot.x).toFixed(2)}</td>
           <td>${Number(robot.y).toFixed(2)}</td>
           <td>${Number(robot.battery).toFixed(2)}%</td>
@@ -125,6 +126,7 @@ function formatRobotDetails(robot) {
   return `
     <dl class="details-grid">
       <dt>Robot ID</dt><dd>${robot.robotId}</dd>
+      <dt>Display Name</dt><dd>${robot.displayName ?? "-"}</dd>
       <dt>Status</dt><dd>${robot.status ?? "UNKNOWN"}</dd>
       <dt>Battery</dt><dd>${Number(robot.battery).toFixed(2)}%</dd>
       <dt>X</dt><dd>${Number(robot.x).toFixed(2)}</dd>
@@ -136,7 +138,9 @@ function formatRobotDetails(robot) {
 
 function openSidebar(robot) {
   selectedRobotId = robot.robotId;
-  sidebarTitleEl.textContent = `Robot ${robot.robotId}`;
+  sidebarTitleEl.textContent = robot.displayName
+    ? `${robot.displayName} (${robot.robotId})`
+    : `Robot ${robot.robotId}`;
   sidebarContentEl.innerHTML = formatRobotDetails(robot);
   sidebarEl.classList.add("open");
   sidebarEl.setAttribute("aria-hidden", "false");

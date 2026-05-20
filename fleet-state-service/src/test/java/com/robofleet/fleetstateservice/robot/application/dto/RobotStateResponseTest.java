@@ -19,6 +19,7 @@ class RobotStateResponseTest {
   void shouldSerializeToExpectedJsonPayload() throws Exception {
     RobotStateResponse response = RobotStateResponse.builder()
         .robotId("robot-1")
+        .displayName("Alpha")
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -29,6 +30,7 @@ class RobotStateResponseTest {
     JsonNode node = objectMapper.readTree(objectMapper.writeValueAsString(response));
 
     assertEquals("robot-1", node.get("robotId").asText());
+    assertEquals("Alpha", node.get("displayName").asText());
     assertEquals(12.34, node.get("x").asDouble());
     assertEquals(56.78, node.get("y").asDouble());
     assertEquals(87.1, node.get("battery").asDouble());

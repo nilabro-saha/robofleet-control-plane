@@ -28,6 +28,7 @@ class RobotRegistryTest {
     RobotRegistry robotRegistry = new RobotRegistry(applicationEventPublisher);
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-1")
+        .displayName("Alpha")
         .positionX(1.0)
         .positionY(2.0)
         .battery(50.0)
@@ -47,6 +48,7 @@ class RobotRegistryTest {
     RobotRegistry robotRegistry = new RobotRegistry(applicationEventPublisher);
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-2")
+        .displayName(null)
         .positionX(1.0)
         .positionY(2.0)
         .battery(50.0)
@@ -64,6 +66,7 @@ class RobotRegistryTest {
     RobotRegistry robotRegistry = new RobotRegistry(applicationEventPublisher);
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-3")
+        .displayName("Gamma")
         .positionX(1.0)
         .positionY(2.0)
         .battery(50.0)
@@ -86,6 +89,7 @@ class RobotRegistryTest {
     RobotRegistry robotRegistry = new RobotRegistry(applicationEventPublisher);
     RobotActor robotActor = RobotActor.builder()
         .robotId("robot-4")
+        .displayName("Delta")
         .positionX(1.0)
         .positionY(2.0)
         .battery(50.0)

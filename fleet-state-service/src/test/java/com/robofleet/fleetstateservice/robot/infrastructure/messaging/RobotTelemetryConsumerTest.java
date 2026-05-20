@@ -26,6 +26,7 @@ class RobotTelemetryConsumerTest {
   void shouldDelegateConsumedEventToService() {
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
         .robotId("robot-1")
+        .displayName("Alpha")
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -42,6 +43,7 @@ class RobotTelemetryConsumerTest {
   void shouldNotThrowWhenServiceFails() {
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
         .robotId("robot-1")
+        .displayName(null)
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -59,6 +61,7 @@ class RobotTelemetryConsumerTest {
   void shouldDelegateLifecycleRemovalToService() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
         .robotId("robot-1")
+        .displayName("Alpha")
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)
@@ -76,6 +79,7 @@ class RobotTelemetryConsumerTest {
   void shouldIgnoreNonRemovalLifecycleEvents() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
         .robotId("robot-1")
+        .displayName(null)
         .positionX(12.34)
         .positionY(56.78)
         .battery(87.1)

@@ -15,6 +15,7 @@ import lombok.Value;
 @Builder
 public class RobotStateResponse {
   String robotId;
+  String displayName;
   @JsonProperty("x")
   double positionX;
   @JsonProperty("y")

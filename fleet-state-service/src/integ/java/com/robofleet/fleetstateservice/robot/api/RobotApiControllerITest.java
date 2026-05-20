@@ -27,6 +27,7 @@ class RobotApiControllerITest {
     mockMvc.perform(get("/api/robots").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].robotId").value("robot-1"))
+        .andExpect(jsonPath("$[0].displayName").value("Alpha"))
         .andExpect(jsonPath("$[0].x").value(12.34))
         .andExpect(jsonPath("$[0].y").value(56.78));
   }
@@ -45,7 +46,8 @@ class RobotApiControllerITest {
   void shouldReturnSingleRobotWhenPresent() throws Exception {
     mockMvc.perform(get("/api/robots/robot-1").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.robotId").value("robot-1"));
+        .andExpect(jsonPath("$.robotId").value("robot-1"))
+        .andExpect(jsonPath("$.displayName").value("Alpha"));
   }
 
   @Test

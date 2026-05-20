@@ -29,6 +29,7 @@ public class RobotActor {
   );
 
   private final String robotId;
+  private final String displayName;
 
   private double positionX;
   private double positionY;
@@ -45,6 +46,7 @@ public class RobotActor {
     try {
       return new LastStateView(
           robotId,
+          displayName,
           roundTwo(positionX),
           roundTwo(positionY),
           roundTwo(battery),
@@ -61,6 +63,7 @@ public class RobotActor {
    */
   public record LastStateView(
       String robotId,
+      String displayName,
       double positionX,
       double positionY,
       double battery,
