@@ -8,7 +8,7 @@ It models each robot as an in-memory actor with internal mutable state and regis
 
 ## What it does
 
-- Spawns configurable robot actors at startup (default: 3)
+- Spawns configurable robot actors at startup (default: 0)
 - Places all robots on a bounded rectangular map registry
 - Initializes each robot with random:
   - location (`x`, `y`)
@@ -43,7 +43,7 @@ This keeps domain entities focused on state/behavior while orchestration stays i
 
 From `src/main/resources/application.properties`:
 
-- `robot.simulator.robot-count=3`
+- `robot.simulator.robot-count=0`
 - `robot.simulator.telemetry-interval-ms=1000`
 - `robot.simulator.map-min-x=0`
 - `robot.simulator.map-max-x=100`

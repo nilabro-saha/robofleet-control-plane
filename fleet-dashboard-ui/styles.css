@@ -40,6 +40,16 @@ h1 {
   cursor: pointer;
 }
 
+.controls .button-add {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #15803d;
+}
+
+.controls .button-add:hover {
+  background: #15803d;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;

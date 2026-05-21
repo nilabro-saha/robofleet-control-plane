@@ -1,6 +1,7 @@
 const connectionEl = document.getElementById("connection");
 const tbody = document.getElementById("robots-body");
 const headerCells = document.querySelectorAll("th[data-sort-field]");
+const addRobotButton = document.getElementById("add-robot");
 const toggleLiveButton = document.getElementById("toggle-live");
 const intervalSelect = document.getElementById("interval-select");
 const refreshNowButton = document.getElementById("refresh-now");
@@ -27,6 +28,23 @@ let selectedRobotId = null;
 let latestRobots = [];
 let sortBy = "robotId";
 let sortDir = "asc";
+
+async function createRobot(displayName) {
+  const response = await fetch(`${apiBase}/api/robots`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ displayName })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Create robot failed with status ${response.status}`);
+  }
+
+  return response.json();
+}
 
 async function fetchRobotById(robotId) {
   const response = await fetch(`${apiBase}/api/robot-statuses/${encodeURIComponent(robotId)}`, {
@@ -283,6 +301,29 @@ headerCells.forEach((headerCell) => {
 
 refreshNowButton.addEventListener("click", async () => {
   await refresh();
+});
+
+addRobotButton.addEventListener("click", async () => {
+  const displayNameInput = window.prompt("Enter display name for new robot:");
+  if (displayNameInput === null) {
+    return;
+  }
+
+  const displayName = displayNameInput.trim();
+  if (!displayName) {
+    window.alert("Display name is required.");
+    return;
+  }
+
+  try {
+    const createdRobot = await createRobot(displayName);
+    connectionEl.classList.add("muted");
+    connectionEl.style.color = "";
+    connectionEl.textContent = `Create request accepted for ${createdRobot.displayName} (${createdRobot.robotId}). Awaiting simulator lifecycle event...`;
+    await refresh();
+  } catch (error) {
+    window.alert(`Unable to create robot. ${error.message}`);
+  }
 });
 
 tbody.addEventListener("click", handleRobotRowClick);

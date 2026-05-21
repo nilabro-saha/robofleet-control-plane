@@ -19,8 +19,8 @@ public class SimulatorProperties {
   /**
    * Number of robots to spawn during startup.
    */
-  @Min(1)
-  private int robotCount = 3;
+  @Min(0)
+  private int robotCount = 0;
 
   /**
    * Telemetry publish interval in milliseconds.

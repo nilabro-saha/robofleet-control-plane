@@ -15,6 +15,7 @@ This UI converts API responses into an at-a-glance operations view.
 
 - Poll `GET /api/robot-statuses` and render current robot state
 - Offer operator controls for:
+  - create robot via green **Add** button and display-name prompt dialog
   - live refresh on/off
   - refresh interval selection
   - manual refresh

@@ -30,17 +30,17 @@ public interface RobotStateRepository extends JpaRepository<RobotState, String> 
    */
   @Query("""
       select new com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse(
-        rs.robotId,
-        r.displayName,
-        rs.positionX,
-        rs.positionY,
-        rs.battery,
-        r.lifecycleStatus,
-        rs.status,
-        rs.timestamp
+        robot.robotId,
+        robot.displayName,
+        state.positionX,
+        state.positionY,
+        state.battery,
+        robot.lifecycleStatus,
+        state.status,
+        state.timestamp
       )
-      from RobotState rs
-      left join Robot r on r.robotId = rs.robotId
+      from Robot robot
+      left join RobotState state on state.robotId = robot.robotId
       """)
   Page<RobotStateResponse> findAllRobotStatuses(Pageable pageable);
 
@@ -49,18 +49,18 @@ public interface RobotStateRepository extends JpaRepository<RobotState, String> 
    */
   @Query("""
       select new com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse(
-        rs.robotId,
-        r.displayName,
-        rs.positionX,
-        rs.positionY,
-        rs.battery,
-        r.lifecycleStatus,
-        rs.status,
-        rs.timestamp
+        robot.robotId,
+        robot.displayName,
+        state.positionX,
+        state.positionY,
+        state.battery,
+        robot.lifecycleStatus,
+        state.status,
+        state.timestamp
       )
-      from RobotState rs
-      left join Robot r on r.robotId = rs.robotId
-      where rs.robotId = :robotId
+      from Robot robot
+      left join RobotState state on state.robotId = robot.robotId
+      where robot.robotId = :robotId
       """)
   Optional<RobotStateResponse> findRobotStatusByRobotId(@Param("robotId") String robotId);
 }
