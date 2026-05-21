@@ -255,6 +255,27 @@ class RobotStateServiceImplTest {
   }
 
   @Test
+  void shouldUpsertWithActiveLifecycleWhenNoExistingRobot() {
+    Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
+    RobotStateChangedEvent event = RobotStateChangedEvent.builder()
+        .robotId("robot-new")
+        .positionX(10.0)
+        .positionY(20.0)
+        .battery(30.0)
+        .status("IDLE")
+        .timestamp(timestamp)
+        .build();
+
+    when(robotRepository.findById("robot-new")).thenReturn(Optional.empty());
+
+    robotStateService.upsertFromTelemetry(event);
+
+    ArgumentCaptor<Robot> robotCaptor = ArgumentCaptor.forClass(Robot.class);
+    verify(robotRepository).save(robotCaptor.capture());
+    assertEquals(RobotLifecycleStatus.ACTIVE, robotCaptor.getValue().getLifecycleStatus());
+  }
+
+  @Test
   void shouldDoNothingWhenCreatedLifecycleEventRobotIsUnknown() {
     Instant now = Instant.parse("2026-05-19T16:40:03Z");
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()

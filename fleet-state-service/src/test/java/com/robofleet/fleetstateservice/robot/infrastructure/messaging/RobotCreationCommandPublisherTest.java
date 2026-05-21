@@ -44,6 +44,21 @@ class RobotCreationCommandPublisherTest {
     assertSame(command, kafkaTemplate.value);
   }
 
+  @Test
+  void publishLifecycleEvent_shouldSupportRehydrateActiveType() {
+    RobotLifecycleEvent command = RobotLifecycleEvent.builder()
+        .robotId("robot-2")
+        .eventType(LifecycleEventType.REHYDRATE_ACTIVE)
+        .timestamp(Instant.parse("2026-05-19T16:50:03Z"))
+        .build();
+
+    publisher.publishLifecycleEvent(command);
+
+    assertEquals("robot.lifecycle", kafkaTemplate.topic);
+    assertEquals("robot-2", kafkaTemplate.key);
+    assertSame(command, kafkaTemplate.value);
+  }
+
   private static final class CapturingKafkaTemplate extends KafkaTemplate<String, Object> {
 
     private String topic;

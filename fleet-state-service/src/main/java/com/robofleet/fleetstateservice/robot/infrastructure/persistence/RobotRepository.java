@@ -2,6 +2,8 @@ package com.robofleet.fleetstateservice.robot.infrastructure.persistence;
 
 import com.robofleet.fleetstateservice.robot.application.dto.RobotSummaryResponse;
 import com.robofleet.fleetstateservice.robot.domain.Robot;
+import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,11 @@ import org.springframework.data.repository.query.Param;
  * Persistence access point for master robot identity rows.
  */
 public interface RobotRepository extends JpaRepository<Robot, String> {
+
+  /**
+   * Returns all robots with the given lifecycle status.
+   */
+  List<Robot> findByLifecycleStatus(RobotLifecycleStatus lifecycleStatus);
 
   /**
    * Returns projected robots identity + lifecycle information.

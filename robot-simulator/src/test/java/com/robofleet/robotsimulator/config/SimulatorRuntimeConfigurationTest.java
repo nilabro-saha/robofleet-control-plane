@@ -47,4 +47,5 @@ class SimulatorRuntimeConfigurationTest {
 
     assertNotNull(robotRegistry);
   }
+
 }

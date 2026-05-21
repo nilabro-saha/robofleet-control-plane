@@ -46,6 +46,17 @@ class CreatePendingLifecycleEventHandlerTest {
   }
 
   @Test
+  void canHandle_shouldReturnTrueForRehydrateActive() {
+    RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .robotId("robot-1")
+        .eventType(LifecycleEventType.REHYDRATE_ACTIVE)
+        .timestamp(Instant.parse("2026-05-20T10:00:00Z"))
+        .build();
+
+    assertTrue(handler.canHandle(event));
+  }
+
+  @Test
   void handleEvent_shouldRegisterRobotById() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
         .robotId("robot-42")

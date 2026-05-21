@@ -5,6 +5,7 @@ package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
  */
 public enum LifecycleEventType {
   CREATE_PENDING,
+  REHYDRATE_ACTIVE,
   CREATED,
   REMOVED,
   DELETE_PENDING

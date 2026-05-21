@@ -55,4 +55,5 @@ public class SimulatorProperties {
    * Rectangular map boundary maximum Y coordinate.
    */
   private double mapMaxY = 100.0;
+
 }

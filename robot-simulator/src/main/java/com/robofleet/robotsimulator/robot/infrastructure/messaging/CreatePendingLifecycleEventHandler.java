@@ -17,7 +17,8 @@ public class CreatePendingLifecycleEventHandler implements RobotLifecycleEventHa
 
   @Override
   public boolean canHandle(RobotLifecycleEvent event) {
-    return LifecycleEventType.CREATE_PENDING == event.getEventType();
+    return LifecycleEventType.CREATE_PENDING == event.getEventType()
+        || LifecycleEventType.REHYDRATE_ACTIVE == event.getEventType();
   }
 
   @Override
