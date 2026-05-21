@@ -1,6 +1,7 @@
 package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -48,7 +49,7 @@ class RobotStateChangedEventTest {
         .positionY(56.78)
         .battery(87.1)
         .status("MOVING")
-        .timestamp(java.time.Instant.parse("2026-05-19T16:40:03Z"))
+        .timestamp(Instant.parse("2026-05-19T16:40:03Z"))
         .build();
 
     String json = objectMapper.writeValueAsString(event);

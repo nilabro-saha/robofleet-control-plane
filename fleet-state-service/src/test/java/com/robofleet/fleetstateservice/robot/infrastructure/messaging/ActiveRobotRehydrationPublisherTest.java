@@ -1,6 +1,11 @@
 package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -76,31 +81,31 @@ class ActiveRobotRehydrationPublisherTest {
     publisher.publishRehydrationCommands();
 
     ArgumentCaptor<RobotLifecycleEvent> captor = ArgumentCaptor.forClass(RobotLifecycleEvent.class);
-    verify(robotCreationCommandGateway, org.mockito.Mockito.times(2))
+    verify(robotCreationCommandGateway, times(2))
         .publishLifecycleEvent(captor.capture());
 
     List<RobotLifecycleEvent> events = captor.getAllValues();
-    org.junit.jupiter.api.Assertions.assertEquals("robot-1", events.get(0).getRobotId());
-    org.junit.jupiter.api.Assertions.assertEquals("robot-2", events.get(1).getRobotId());
-    org.junit.jupiter.api.Assertions.assertEquals(
+    assertEquals("robot-1", events.get(0).getRobotId());
+    assertEquals("robot-2", events.get(1).getRobotId());
+    assertEquals(
         LifecycleEventType.REHYDRATE_ACTIVE,
         events.get(0).getEventType());
-    org.junit.jupiter.api.Assertions.assertEquals(
+    assertEquals(
         "robot-lifecycle-changed",
         events.get(0).getEventName());
-    org.junit.jupiter.api.Assertions.assertEquals(
+    assertEquals(
         LifecycleEventType.REHYDRATE_ACTIVE,
         events.get(1).getEventType());
-    org.junit.jupiter.api.Assertions.assertEquals(
+    assertEquals(
         "robot-lifecycle-changed",
         events.get(1).getEventName());
-    org.junit.jupiter.api.Assertions.assertEquals(12.34, events.get(0).getPositionX());
-    org.junit.jupiter.api.Assertions.assertEquals(56.78, events.get(0).getPositionY());
-    org.junit.jupiter.api.Assertions.assertEquals(87.1, events.get(0).getBattery());
-    org.junit.jupiter.api.Assertions.assertEquals("MOVING", events.get(0).getStatus());
-    org.junit.jupiter.api.Assertions.assertEquals(firstTimestamp, events.get(0).getTimestamp());
-    org.junit.jupiter.api.Assertions.assertNotNull(events.get(0).getCorrelationId());
-    org.junit.jupiter.api.Assertions.assertNotNull(events.get(1).getCorrelationId());
+    assertEquals(12.34, events.get(0).getPositionX());
+    assertEquals(56.78, events.get(0).getPositionY());
+    assertEquals(87.1, events.get(0).getBattery());
+    assertEquals("MOVING", events.get(0).getStatus());
+    assertEquals(firstTimestamp, events.get(0).getTimestamp());
+    assertNotNull(events.get(0).getCorrelationId());
+    assertNotNull(events.get(1).getCorrelationId());
   }
 
   @Test
@@ -109,7 +114,7 @@ class ActiveRobotRehydrationPublisherTest {
 
     publisher.publishRehydrationCommands();
 
-    verify(robotCreationCommandGateway, never()).publishLifecycleEvent(org.mockito.ArgumentMatchers.any());
+    verify(robotCreationCommandGateway, never()).publishLifecycleEvent(any());
   }
 
   @Test
@@ -128,12 +133,12 @@ class ActiveRobotRehydrationPublisherTest {
     ArgumentCaptor<RobotLifecycleEvent> captor = ArgumentCaptor.forClass(RobotLifecycleEvent.class);
     verify(robotCreationCommandGateway).publishLifecycleEvent(captor.capture());
     RobotLifecycleEvent event = captor.getValue();
-    org.junit.jupiter.api.Assertions.assertEquals("robot-1", event.getRobotId());
-    org.junit.jupiter.api.Assertions.assertNull(event.getPositionX());
-    org.junit.jupiter.api.Assertions.assertNull(event.getPositionY());
-    org.junit.jupiter.api.Assertions.assertNull(event.getBattery());
-    org.junit.jupiter.api.Assertions.assertNull(event.getStatus());
-    org.junit.jupiter.api.Assertions.assertEquals("robot-lifecycle-changed", event.getEventName());
-    org.junit.jupiter.api.Assertions.assertNotNull(event.getCorrelationId());
+    assertEquals("robot-1", event.getRobotId());
+    assertNull(event.getPositionX());
+    assertNull(event.getPositionY());
+    assertNull(event.getBattery());
+    assertNull(event.getStatus());
+    assertEquals("robot-lifecycle-changed", event.getEventName());
+    assertNotNull(event.getCorrelationId());
   }
 }

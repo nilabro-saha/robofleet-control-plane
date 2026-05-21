@@ -3,6 +3,7 @@ package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
 import com.robofleet.fleetstateservice.robot.application.RobotStateService;
 import java.time.Instant;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +30,7 @@ class RobotLifecycleConsumerTest {
   @Mock
   private RobotLifecycleEventHandler nonMatchingLifecycleHandler;
 
-  @org.junit.jupiter.api.BeforeEach
+  @BeforeEach
   void setUp() {
     consumer = new RobotLifecycleConsumer(
         robotStateService,

@@ -70,7 +70,7 @@ class RobotStateServiceImplTest {
     robotStateService.upsertFromTelemetry(event);
 
     ArgumentCaptor<RobotState> captor = ArgumentCaptor.forClass(RobotState.class);
-    verify(robotRepository).save(org.mockito.ArgumentMatchers.any(Robot.class));
+    verify(robotRepository).save(any(Robot.class));
     verify(robotStateRepository).save(captor.capture());
     RobotState saved = captor.getValue();
     assertEquals("robot-1", saved.getRobotId());

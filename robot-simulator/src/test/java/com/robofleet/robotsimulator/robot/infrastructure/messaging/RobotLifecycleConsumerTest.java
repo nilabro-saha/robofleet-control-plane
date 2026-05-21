@@ -4,6 +4,7 @@ import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLi
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import java.time.Instant;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +28,7 @@ class RobotLifecycleConsumerTest {
   @InjectMocks
   private RobotLifecycleConsumer consumer;
 
-  @org.junit.jupiter.api.BeforeEach
+  @BeforeEach
   void setUp() {
     consumer = new RobotLifecycleConsumer(List.of(matchingHandler, nonMatchingHandler));
   }

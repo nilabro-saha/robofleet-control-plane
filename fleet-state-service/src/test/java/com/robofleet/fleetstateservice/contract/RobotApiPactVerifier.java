@@ -1,7 +1,6 @@
 package com.robofleet.fleetstateservice.contract;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import au.com.dius.pact.consumer.MockServer;
 import au.com.dius.pact.consumer.dsl.LambdaDsl;
@@ -19,6 +18,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 @ExtendWith(PactConsumerTestExt.class)
 @PactTestFor(providerName = "fleet-state-service")
@@ -98,39 +98,64 @@ class RobotApiPactVerifier {
   @Test
   @PactTestFor(pactMethod = "getRobotStatusesPact")
   void shouldMatchGetRobotStatusesContract(MockServer mockServer)
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, Exception {
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(mockServer.getUrl() + "/api/robot-statuses"))
         .GET()
         .build();
     HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     assertEquals(200, response.statusCode());
-    assertTrue(response.body().contains("\"robotId\":\"robot-1\""));
+    JSONAssert.assertEquals(
+        """
+            [
+              {
+                "robotId": "robot-1"
+              }
+            ]
+            """,
+        response.body(),
+        false);
   }
 
   @Test
   @PactTestFor(pactMethod = "getRobotsPact")
   void shouldMatchGetRobotsContract(MockServer mockServer)
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, Exception {
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(mockServer.getUrl() + "/api/robots"))
         .GET()
         .build();
     HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     assertEquals(200, response.statusCode());
-    assertTrue(response.body().contains("\"lifecycleStatus\":\"ACTIVE\""));
+    JSONAssert.assertEquals(
+        """
+            [
+              {
+                "lifecycleStatus": "ACTIVE"
+              }
+            ]
+            """,
+        response.body(),
+        false);
   }
 
   @Test
   @PactTestFor(pactMethod = "getRobotByIdPact")
   void shouldMatchGetRobotByIdContract(MockServer mockServer)
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, Exception {
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(mockServer.getUrl() + "/api/robots/robot-1"))
         .GET()
         .build();
     HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     assertEquals(200, response.statusCode());
-    assertTrue(response.body().contains("\"displayName\":\"Alpha\""));
+    JSONAssert.assertEquals(
+        """
+            {
+              "displayName": "Alpha"
+            }
+            """,
+        response.body(),
+        false);
   }
 }

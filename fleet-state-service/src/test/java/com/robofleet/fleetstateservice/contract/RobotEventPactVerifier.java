@@ -1,7 +1,5 @@
 package com.robofleet.fleetstateservice.contract;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import au.com.dius.pact.consumer.dsl.LambdaDsl;
 import au.com.dius.pact.consumer.dsl.PactBuilder;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
@@ -14,6 +12,7 @@ import au.com.dius.pact.core.model.annotations.Pact;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 /**
  * Consumer-side Pact contracts for Kafka-style robot events consumed by fleet-state-service.
@@ -76,19 +75,33 @@ class RobotEventPactVerifier {
 
   @Test
   @PactTestFor(pactMethod = "telemetryEventPact", providerType = ProviderType.ASYNCH)
-  void shouldMatchTelemetryEventContract(V4Interaction.AsynchronousMessage message) {
+  void shouldMatchTelemetryEventContract(V4Interaction.AsynchronousMessage message) throws Exception {
     String json = message.contentsAsString();
-    assertTrue(json.contains("\"schemaVersion\":\"v1\""));
-    assertTrue(json.contains("\"eventName\":\"robot-state-changed\""));
-    assertTrue(json.contains("\"robotId\":\"robot-1\""));
+    JSONAssert.assertEquals(
+        """
+            {
+              "schemaVersion": "v1",
+              "eventName": "robot-state-changed",
+              "robotId": "robot-1"
+            }
+            """,
+        json,
+        false);
   }
 
   @Test
   @PactTestFor(pactMethod = "lifecycleEventPact", providerType = ProviderType.ASYNCH)
-  void shouldMatchLifecycleEventContract(V4Interaction.AsynchronousMessage message) {
+  void shouldMatchLifecycleEventContract(V4Interaction.AsynchronousMessage message) throws Exception {
     String json = message.contentsAsString();
-    assertTrue(json.contains("\"schemaVersion\":\"v1\""));
-    assertTrue(json.contains("\"eventName\":\"robot-lifecycle-changed\""));
-    assertTrue(json.contains("\"eventType\":\"CREATED\""));
+    JSONAssert.assertEquals(
+        """
+            {
+              "schemaVersion": "v1",
+              "eventName": "robot-lifecycle-changed",
+              "eventType": "CREATED"
+            }
+            """,
+        json,
+        false);
   }
 }

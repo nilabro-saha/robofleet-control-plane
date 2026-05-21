@@ -1,7 +1,5 @@
 package com.robofleet.robotsimulator.contract;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import au.com.dius.pact.consumer.dsl.LambdaDsl;
 import au.com.dius.pact.consumer.dsl.PactBuilder;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
@@ -14,6 +12,7 @@ import au.com.dius.pact.core.model.annotations.PactDirectory;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 @ExtendWith(PactConsumerTestExt.class)
 @PactTestFor(providerName = "fleet-state-service", providerType = ProviderType.ASYNCH)
@@ -74,17 +73,33 @@ class RobotEventPactVerifier {
 
   @Test
   @PactTestFor(pactMethod = "createPendingLifecycleCommandPact", providerType = ProviderType.ASYNCH)
-  void shouldMatchCreatePendingLifecycleCommand(V4Interaction.AsynchronousMessage message) {
+  void shouldMatchCreatePendingLifecycleCommand(V4Interaction.AsynchronousMessage message)
+      throws Exception {
     String json = message.contentsAsString();
-    assertTrue(json.contains("\"eventName\":\"robot-lifecycle-changed\""));
-    assertTrue(json.contains("\"eventType\":\"CREATE_PENDING\""));
+    JSONAssert.assertEquals(
+        """
+            {
+              "eventName": "robot-lifecycle-changed",
+              "eventType": "CREATE_PENDING"
+            }
+            """,
+        json,
+        false);
   }
 
   @Test
   @PactTestFor(pactMethod = "deletePendingLifecycleCommandPact", providerType = ProviderType.ASYNCH)
-  void shouldMatchDeletePendingLifecycleCommand(V4Interaction.AsynchronousMessage message) {
+  void shouldMatchDeletePendingLifecycleCommand(V4Interaction.AsynchronousMessage message)
+      throws Exception {
     String json = message.contentsAsString();
-    assertTrue(json.contains("\"eventName\":\"robot-lifecycle-changed\""));
-    assertTrue(json.contains("\"eventType\":\"DELETE_PENDING\""));
+    JSONAssert.assertEquals(
+        """
+            {
+              "eventName": "robot-lifecycle-changed",
+              "eventType": "DELETE_PENDING"
+            }
+            """,
+        json,
+        false);
   }
 }

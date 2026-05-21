@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -94,7 +95,7 @@ class RobotTelemetryKafkaDbITest {
               .andExpect(jsonPath("$.battery").value(55.5))
               .andExpect(jsonPath("$.status").value("MOVING"));
 
-          org.junit.jupiter.api.Assertions.assertEquals(
+          assertEquals(
               "corr-telemetry-2",
               robotStateRepository.findById(robotId).orElseThrow().getCorrelationId());
         });
