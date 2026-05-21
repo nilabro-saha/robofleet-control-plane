@@ -139,7 +139,7 @@ class RobotStateServiceImplTest {
   void shouldReturnAllRobotStatuses() {
     Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
     Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.ASC, "robotId"));
-    when(robotStateRepository.findAllRobotStatuses(pageable)).thenReturn(new PageImpl<>(List.of(
+    when(robotStateRepository.findAllRobotStatuses(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(
         RobotStateResponse.builder()
             .robotId("robot-1")
             .displayName("Alpha")
@@ -157,7 +157,33 @@ class RobotStateServiceImplTest {
     assertEquals(1, response.size());
     assertEquals("robot-1", response.get(0).getRobotId());
     assertEquals("Alpha", response.get(0).getDisplayName());
-    verify(robotStateRepository).findAllRobotStatuses(pageable);
+
+    ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+    verify(robotStateRepository).findAllRobotStatuses(pageableCaptor.capture());
+    Sort.Order sortOrder = pageableCaptor.getValue().getSort().getOrderFor("robot.robotId");
+    assertEquals(Sort.Direction.ASC, sortOrder.getDirection());
+  }
+
+  @Test
+  void shouldMapRobotStatusSortFieldsAcrossJoinedEntities() {
+    Pageable pageable = PageRequest.of(
+        0,
+        100,
+        Sort.by(
+            Sort.Order.desc("battery"),
+            Sort.Order.asc("displayName")
+        )
+    );
+    when(robotStateRepository.findAllRobotStatuses(any(Pageable.class)))
+        .thenReturn(new PageImpl<>(List.of()));
+
+    robotStateService.getAllRobotStatuses(pageable);
+
+    ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+    verify(robotStateRepository).findAllRobotStatuses(pageableCaptor.capture());
+    Sort mappedSort = pageableCaptor.getValue().getSort();
+    assertEquals(Sort.Direction.DESC, mappedSort.getOrderFor("state.battery").getDirection());
+    assertEquals(Sort.Direction.ASC, mappedSort.getOrderFor("robot.displayName").getDirection());
   }
 
   @Test

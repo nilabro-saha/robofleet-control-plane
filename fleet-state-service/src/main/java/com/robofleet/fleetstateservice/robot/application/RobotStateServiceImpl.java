@@ -13,11 +13,15 @@ import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotState
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotRepository;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,6 +33,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RobotStateServiceImpl implements RobotStateService {
+
+  private static final Map<String, String> ROBOT_STATUS_SORT_FIELD_MAPPING =
+      createRobotStatusSortFieldMapping();
 
   private final RobotRepository robotRepository;
   private final RobotStateRepository robotStateRepository;
@@ -106,7 +113,7 @@ public class RobotStateServiceImpl implements RobotStateService {
    */
   @Override
   public List<RobotStateResponse> getAllRobotStatuses(Pageable pageable) {
-    return robotStateRepository.findAllRobotStatuses(pageable)
+    return robotStateRepository.findAllRobotStatuses(mapRobotStatusPageable(pageable))
         .getContent();
   }
 
@@ -188,5 +195,35 @@ public class RobotStateServiceImpl implements RobotStateService {
               .build();
           robotStateRepository.save(updatedState);
         });
+  }
+
+  private Pageable mapRobotStatusPageable(Pageable pageable) {
+    Sort mappedSort = Sort.unsorted();
+
+    for (Sort.Order order : pageable.getSort()) {
+      String mappedProperty = ROBOT_STATUS_SORT_FIELD_MAPPING.getOrDefault(
+          order.getProperty(),
+          order.getProperty());
+      mappedSort = mappedSort.and(Sort.by(new Sort.Order(order.getDirection(), mappedProperty)));
+    }
+
+    return PageRequest.of(
+        pageable.getPageNumber(),
+        pageable.getPageSize(),
+        mappedSort
+    );
+  }
+
+  private static Map<String, String> createRobotStatusSortFieldMapping() {
+    Map<String, String> mapping = new LinkedHashMap<>();
+    mapping.put("robotId", "robot.robotId");
+    mapping.put("displayName", "robot.displayName");
+    mapping.put("positionX", "state.positionX");
+    mapping.put("positionY", "state.positionY");
+    mapping.put("battery", "state.battery");
+    mapping.put("lifecycleStatus", "robot.lifecycleStatus");
+    mapping.put("status", "state.status");
+    mapping.put("timestamp", "state.timestamp");
+    return mapping;
   }
 }
