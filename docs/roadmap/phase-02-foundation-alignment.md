@@ -102,14 +102,17 @@ Not yet complete:
 
 - [x] Contract docs committed and linked from root README
   - Comment (22-May-26 12:43 am IST): `docs/contracts/*` is present and linked from root README.
+  - Comment (22-May-26 01:14 am IST): Telemetry/lifecycle contracts now also include `schemaVersion`; task contracts remain draft-only and are not yet wired to runtime topics.
 - [ ] Correlation/causation strategy documented and implemented
   - Comment (22-May-26 12:43 am IST): `correlationId` is implemented across active lifecycle/telemetry paths; `eventId` and `causationId` are still deferred.
+  - Comment (22-May-26 01:14 am IST): `schemaVersion` is now implemented in lifecycle/telemetry events via enum-backed return type (`SchemaVersion`), reducing invalid payload risk.
 - [x] Lifecycle/state transition tables approved
   - Comment (22-May-26 12:43 am IST): Robot lifecycle/status and draft task lifecycle semantics are documented in contracts/roadmap docs and reflected in current enums.
 - [ ] API naming policy finalized and documented
   - Comment (22-May-26 12:43 am IST): Endpoints are implemented (`/api/robot-statuses` and `/api/robots`), but module-level docs still need one canonical policy statement.
 - [ ] Compatibility tests green in CI/local verification
   - Comment (22-May-26 12:43 am IST): Core flow tests are green locally, but explicit additive/unknown-field compatibility tests are still missing.
+  - Comment (22-May-26 01:14 am IST): Event-level `schemaVersion` tests are now green, but additive/unknown-field and unknown-enum forward-compat tests are still pending.
 
 ## Exit criteria
 

@@ -12,6 +12,7 @@ Carries robot lifecycle orchestration commands/events between fleet-state-servic
 
 ```json
 {
+  "schemaVersion": "string",
   "eventName": "string",
   "correlationId": "string",
   "robotId": "string",
@@ -34,6 +35,7 @@ Carries robot lifecycle orchestration commands/events between fleet-state-servic
 
 ## Field notes
 
+- `schemaVersion`: required, fixed value `v1`.
 - `eventName`: required, fixed value `robot-lifecycle-changed`.
 - `correlationId`: required in Phase 2 baseline.
 - `x`, `y`, `battery`, `status`: optional, used for state-carrying events (especially rehydration).

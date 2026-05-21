@@ -24,3 +24,18 @@ into phase-by-phase execution plans.
 - Treat each phase plan as the source for sprint/iteration breakdown.
 - Update the `Current status` block in each phase document as work lands.
 - Add links to implemented PRs/issues under each workstream for traceability.
+
+## Checklist update rules (roadmap phase documents)
+
+When updating checklist comments in phase documents (for example under `Suggested deliverables checklist`), use these rules:
+
+- Keep historical comments intact.
+  - Do not edit or remove older comment lines unless explicitly requested.
+- Do not change timestamps on older comments.
+  - Existing timestamps are part of the historical record and must remain unchanged.
+- Use `Comment (...)` label consistently.
+  - Do not use alternate labels such as `Additional comment (...)`.
+- Add a new comment line only when there is a meaningful status delta.
+  - If the new note does not add new information beyond an existing comment, do not add it.
+- Prefer additive updates over rewrites.
+  - Add a new timestamped `Comment (...)` line for new progress while preserving prior context.

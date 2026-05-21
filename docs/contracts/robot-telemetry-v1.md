@@ -12,6 +12,7 @@ Carries latest robot runtime telemetry from simulator/edge producers to fleet-st
 
 ```json
 {
+  "schemaVersion": "string",
   "eventName": "string",
   "correlationId": "string",
   "robotId": "string",
@@ -25,6 +26,7 @@ Carries latest robot runtime telemetry from simulator/edge producers to fleet-st
 
 ## Field notes
 
+- `schemaVersion`: required, fixed value `v1`.
 - `eventName`: required, fixed value `robot-state-changed`.
 - `correlationId`: required in Phase 2 baseline for traceability.
 - `robotId`: stable robot identity.

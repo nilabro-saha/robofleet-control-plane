@@ -26,4 +26,10 @@ public class RobotStateChangedEvent implements KafkaEventMetadata {
   double battery;
   String status;
   Instant timestamp;
+
+  @Override
+  @JsonProperty("schemaVersion")
+  public SchemaVersion getSchemaVersion() {
+    return SchemaVersion.V1;
+  }
 }

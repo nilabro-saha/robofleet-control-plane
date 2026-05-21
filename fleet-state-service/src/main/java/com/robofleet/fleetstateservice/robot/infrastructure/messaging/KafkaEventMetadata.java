@@ -21,4 +21,9 @@ public interface KafkaEventMetadata {
    * Returns the producer event timestamp.
    */
   Instant getTimestamp();
+
+  /**
+   * Returns the payload schema version for compatibility handling.
+   */
+  SchemaVersion getSchemaVersion();
 }

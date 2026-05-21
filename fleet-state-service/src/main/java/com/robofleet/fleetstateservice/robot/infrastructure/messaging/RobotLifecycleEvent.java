@@ -24,4 +24,10 @@ public class RobotLifecycleEvent implements KafkaEventMetadata {
   String status;
   LifecycleEventType eventType;
   Instant timestamp;
+
+  @Override
+  @JsonProperty("schemaVersion")
+  public SchemaVersion getSchemaVersion() {
+    return SchemaVersion.V1;
+  }
 }
