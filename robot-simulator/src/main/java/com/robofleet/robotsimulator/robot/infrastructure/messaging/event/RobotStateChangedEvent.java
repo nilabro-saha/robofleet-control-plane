@@ -12,7 +12,9 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @Builder
 @Jacksonized
-public class RobotStateChangedEvent {
+public class RobotStateChangedEvent implements KafkaEventMetadata {
+  String eventName;
+  String correlationId;
   String robotId;
   @JsonProperty("x")
   double positionX;

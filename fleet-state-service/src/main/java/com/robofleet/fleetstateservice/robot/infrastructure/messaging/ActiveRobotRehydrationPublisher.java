@@ -6,6 +6,7 @@ import com.robofleet.fleetstateservice.robot.domain.RobotState;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotRepository;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
 import java.time.Instant;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Component;
 )
 public class ActiveRobotRehydrationPublisher {
 
+  private static final String LIFECYCLE_EVENT_NAME = "robot-lifecycle-changed";
+
   private final RobotRepository robotRepository;
   private final RobotStateRepository robotStateRepository;
   private final RobotCreationCommandGateway robotCreationCommandGateway;
@@ -43,6 +46,8 @@ public class ActiveRobotRehydrationPublisher {
 
         robotCreationCommandGateway.publishLifecycleEvent(
             RobotLifecycleEvent.builder()
+                .eventName(LIFECYCLE_EVENT_NAME)
+                .correlationId(UUID.randomUUID().toString())
                 .robotId(robot.getRobotId())
                 .positionX(lastState.map(RobotState::getPositionX).orElse(null))
                 .positionY(lastState.map(RobotState::getPositionY).orElse(null))

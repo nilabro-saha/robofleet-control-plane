@@ -39,6 +39,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RobotStateServiceImpl implements RobotStateService {
 
+  private static final String LIFECYCLE_EVENT_NAME = "robot-lifecycle-changed";
+
   private static final Map<String, String> ROBOT_STATUS_SORT_FIELD_MAPPING =
       createRobotStatusSortFieldMapping();
 
@@ -61,10 +63,16 @@ public class RobotStateServiceImpl implements RobotStateService {
     RobotLifecycleStatus lifecycleStatus = existingRobot
         .map(Robot::getLifecycleStatus)
         .orElse(RobotLifecycleStatus.ACTIVE);
+    String robotCorrelationId = existingRobot
+        .map(Robot::getCorrelationId)
+        .orElseGet(() -> event.getCorrelationId() == null || event.getCorrelationId().isBlank()
+            ? UUID.randomUUID().toString()
+            : event.getCorrelationId());
 
     Robot robot = Robot.builder()
         .robotId(event.getRobotId())
         .displayName(normalizedDisplayName)
+        .correlationId(robotCorrelationId)
         .lifecycleStatus(lifecycleStatus)
         .build();
     robotRepository.save(robot);
@@ -75,6 +83,7 @@ public class RobotStateServiceImpl implements RobotStateService {
         .positionY(event.getPositionY())
         .battery(event.getBattery())
         .status(event.getStatus())
+        .correlationId(event.getCorrelationId())
         .timestamp(event.getTimestamp())
         .build();
 
@@ -91,12 +100,15 @@ public class RobotStateServiceImpl implements RobotStateService {
     Robot pendingRobot = Robot.builder()
         .robotId(generatedRobotId)
         .displayName(request.getDisplayName())
+        .correlationId(request.getCorrelationId())
         .lifecycleStatus(RobotLifecycleStatus.CREATE_PENDING)
         .build();
     robotRepository.save(pendingRobot);
 
     robotCreationCommandGateway.publishLifecycleEvent(
         RobotLifecycleEvent.builder()
+            .eventName(LIFECYCLE_EVENT_NAME)
+            .correlationId(request.getCorrelationId())
             .robotId(generatedRobotId)
             .eventType(LifecycleEventType.CREATE_PENDING)
             .timestamp(Instant.now())
@@ -114,7 +126,7 @@ public class RobotStateServiceImpl implements RobotStateService {
    * Marks robot as delete pending and emits lifecycle delete command.
    */
   @Override
-  public Optional<RobotSummaryResponse> requestRobotDeletion(String robotId) {
+  public Optional<RobotSummaryResponse> requestRobotDeletion(String robotId, String correlationId) {
     return robotRepository.findById(robotId)
         .map(robot -> {
           robot.markAsDeletePending();
@@ -122,6 +134,8 @@ public class RobotStateServiceImpl implements RobotStateService {
 
           robotCreationCommandGateway.publishLifecycleEvent(
               RobotLifecycleEvent.builder()
+                  .eventName(LIFECYCLE_EVENT_NAME)
+                  .correlationId(correlationId)
                   .robotId(robotId)
                   .eventType(LifecycleEventType.DELETE_PENDING)
                   .timestamp(Instant.now())
@@ -220,6 +234,7 @@ public class RobotStateServiceImpl implements RobotStateService {
               .status(event.getStatus() == null
                   ? existingState.map(RobotState::getStatus).orElse("UNKNOWN")
                   : event.getStatus())
+              .correlationId(existingState.map(RobotState::getCorrelationId).orElse(null))
               .timestamp(event.getTimestamp() == null
                   ? existingState.map(RobotState::getTimestamp).orElse(Instant.now())
                   : event.getTimestamp())

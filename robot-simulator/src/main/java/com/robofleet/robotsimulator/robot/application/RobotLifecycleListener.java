@@ -6,6 +6,7 @@ import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotStateChangedEvent;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RobotLifecycleListener {
 
+  private static final String TELEMETRY_EVENT_NAME = "robot-state-changed";
+  private static final String LIFECYCLE_EVENT_NAME = "robot-lifecycle-changed";
+
   private final RobotLifecyclePublisher robotLifecyclePublisher;
 
   /**
@@ -27,6 +31,8 @@ public class RobotLifecycleListener {
     var lastStateView = event.robotActor().lastStateView();
     robotLifecyclePublisher.publishTelemetry(
         RobotStateChangedEvent.builder()
+            .eventName(TELEMETRY_EVENT_NAME)
+            .correlationId(UUID.randomUUID().toString())
             .robotId(lastStateView.robotId())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
@@ -45,6 +51,8 @@ public class RobotLifecycleListener {
     var lastStateView = event.robotActor().lastStateView();
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
+            .eventName(LIFECYCLE_EVENT_NAME)
+            .correlationId(UUID.randomUUID().toString())
             .robotId(lastStateView.robotId())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())
@@ -63,6 +71,8 @@ public class RobotLifecycleListener {
     var lastStateView = event.robotActor().lastStateView();
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
+            .eventName(LIFECYCLE_EVENT_NAME)
+            .correlationId(UUID.randomUUID().toString())
             .robotId(lastStateView.robotId())
             .positionX(lastStateView.positionX())
             .positionY(lastStateView.positionY())

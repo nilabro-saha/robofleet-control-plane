@@ -6,6 +6,7 @@ import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationRespon
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotSummaryResponse;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -94,8 +96,13 @@ public class RobotApiController {
    * Requests asynchronous robot deletion via lifecycle workflow.
    */
   @DeleteMapping("/robots/{id}")
-  public ResponseEntity<RobotSummaryResponse> deleteRobot(@PathVariable("id") String id) {
-    return robotStateService.requestRobotDeletion(id)
+  public ResponseEntity<RobotSummaryResponse> deleteRobot(
+      @PathVariable("id") String id,
+      @RequestHeader(value = "X-Correlation-Id", required = false) String correlationId) {
+    String effectiveCorrelationId = correlationId == null || correlationId.isBlank()
+        ? UUID.randomUUID().toString()
+        : correlationId;
+    return robotStateService.requestRobotDeletion(id, effectiveCorrelationId)
         .map(summary -> ResponseEntity.status(HttpStatus.ACCEPTED).body(summary))
         .orElse(ResponseEntity.notFound().build());
   }

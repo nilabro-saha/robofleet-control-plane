@@ -13,6 +13,8 @@ class RobotStateChangedEventTest {
   void shouldDeserializeFromJsonPayload() throws Exception {
     String json = """
         {
+          "eventName": "robot-state-changed",
+          "correlationId": "corr-1",
           "robotId": "robot-1",
           "x": 12.34,
           "y": 56.78,
@@ -24,6 +26,8 @@ class RobotStateChangedEventTest {
 
     RobotStateChangedEvent event = objectMapper.readValue(json, RobotStateChangedEvent.class);
 
+    assertEquals("robot-state-changed", event.getEventName());
+    assertEquals("corr-1", event.getCorrelationId());
     assertEquals("robot-1", event.getRobotId());
     assertEquals(12.34, event.getPositionX());
     assertEquals(56.78, event.getPositionY());

@@ -100,11 +100,16 @@ Not yet complete:
 
 ## Suggested deliverables checklist
 
-- [ ] Contract docs committed and linked from root README
+- [x] Contract docs committed and linked from root README
+  - Comment (22-May-26 12:43 am IST): `docs/contracts/*` is present and linked from root README.
 - [ ] Correlation/causation strategy documented and implemented
-- [ ] Lifecycle/state transition tables approved
+  - Comment (22-May-26 12:43 am IST): `correlationId` is implemented across active lifecycle/telemetry paths; `eventId` and `causationId` are still deferred.
+- [x] Lifecycle/state transition tables approved
+  - Comment (22-May-26 12:43 am IST): Robot lifecycle/status and draft task lifecycle semantics are documented in contracts/roadmap docs and reflected in current enums.
 - [ ] API naming policy finalized and documented
+  - Comment (22-May-26 12:43 am IST): Endpoints are implemented (`/api/robot-statuses` and `/api/robots`), but module-level docs still need one canonical policy statement.
 - [ ] Compatibility tests green in CI/local verification
+  - Comment (22-May-26 12:43 am IST): Core flow tests are green locally, but explicit additive/unknown-field compatibility tests are still missing.
 
 ## Exit criteria
 

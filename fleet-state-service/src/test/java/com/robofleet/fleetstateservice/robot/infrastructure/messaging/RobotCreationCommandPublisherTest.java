@@ -32,6 +32,8 @@ class RobotCreationCommandPublisherTest {
   @Test
   void publishLifecycleEvent_shouldSendToLifecycleTopicWithRobotIdKey() {
     RobotLifecycleEvent command = RobotLifecycleEvent.builder()
+        .eventName("robot-lifecycle-changed")
+        .correlationId("corr-1")
         .robotId("robot-1")
         .eventType(LifecycleEventType.CREATE_PENDING)
         .timestamp(Instant.parse("2026-05-19T16:40:03Z"))
@@ -47,6 +49,8 @@ class RobotCreationCommandPublisherTest {
   @Test
   void publishLifecycleEvent_shouldSupportRehydrateActiveType() {
     RobotLifecycleEvent command = RobotLifecycleEvent.builder()
+        .eventName("robot-lifecycle-changed")
+        .correlationId("corr-2")
         .robotId("robot-2")
         .eventType(LifecycleEventType.REHYDRATE_ACTIVE)
         .timestamp(Instant.parse("2026-05-19T16:50:03Z"))
@@ -62,6 +66,8 @@ class RobotCreationCommandPublisherTest {
   @Test
   void publishLifecycleEvent_shouldSupportDeletePendingType() {
     RobotLifecycleEvent command = RobotLifecycleEvent.builder()
+        .eventName("robot-lifecycle-changed")
+        .correlationId("corr-3")
         .robotId("robot-3")
         .eventType(LifecycleEventType.DELETE_PENDING)
         .timestamp(Instant.parse("2026-05-19T16:55:03Z"))

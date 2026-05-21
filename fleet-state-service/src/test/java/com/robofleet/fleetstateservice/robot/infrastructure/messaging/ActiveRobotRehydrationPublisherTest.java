@@ -86,13 +86,21 @@ class ActiveRobotRehydrationPublisherTest {
         LifecycleEventType.REHYDRATE_ACTIVE,
         events.get(0).getEventType());
     org.junit.jupiter.api.Assertions.assertEquals(
+        "robot-lifecycle-changed",
+        events.get(0).getEventName());
+    org.junit.jupiter.api.Assertions.assertEquals(
         LifecycleEventType.REHYDRATE_ACTIVE,
         events.get(1).getEventType());
+    org.junit.jupiter.api.Assertions.assertEquals(
+        "robot-lifecycle-changed",
+        events.get(1).getEventName());
     org.junit.jupiter.api.Assertions.assertEquals(12.34, events.get(0).getPositionX());
     org.junit.jupiter.api.Assertions.assertEquals(56.78, events.get(0).getPositionY());
     org.junit.jupiter.api.Assertions.assertEquals(87.1, events.get(0).getBattery());
     org.junit.jupiter.api.Assertions.assertEquals("MOVING", events.get(0).getStatus());
     org.junit.jupiter.api.Assertions.assertEquals(firstTimestamp, events.get(0).getTimestamp());
+    org.junit.jupiter.api.Assertions.assertNotNull(events.get(0).getCorrelationId());
+    org.junit.jupiter.api.Assertions.assertNotNull(events.get(1).getCorrelationId());
   }
 
   @Test
@@ -125,5 +133,7 @@ class ActiveRobotRehydrationPublisherTest {
     org.junit.jupiter.api.Assertions.assertNull(event.getPositionY());
     org.junit.jupiter.api.Assertions.assertNull(event.getBattery());
     org.junit.jupiter.api.Assertions.assertNull(event.getStatus());
+    org.junit.jupiter.api.Assertions.assertEquals("robot-lifecycle-changed", event.getEventName());
+    org.junit.jupiter.api.Assertions.assertNotNull(event.getCorrelationId());
   }
 }

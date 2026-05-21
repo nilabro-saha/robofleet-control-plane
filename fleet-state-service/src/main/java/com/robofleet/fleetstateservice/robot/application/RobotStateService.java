@@ -39,7 +39,7 @@ public interface RobotStateService {
    * @param robotId unique robot identifier
    * @return updated robot summary when robot exists
    */
-  Optional<RobotSummaryResponse> requestRobotDeletion(String robotId);
+  Optional<RobotSummaryResponse> requestRobotDeletion(String robotId, String correlationId);
 
   /**
    * Returns the current known state for every robot in the fleet snapshot.

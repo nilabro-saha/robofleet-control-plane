@@ -41,6 +41,9 @@ public class RobotState {
   @Column(name = "status", nullable = false, length = 30)
   private String status;
 
+  @Column(name = "correlation_id", length = 100)
+  private String correlationId;
+
   @Column(name = "timestamp", nullable = false)
   private Instant timestamp;
 }

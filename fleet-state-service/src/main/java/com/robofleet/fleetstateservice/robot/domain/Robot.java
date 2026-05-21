@@ -30,6 +30,9 @@ public class Robot {
   @Column(name = "display_name", nullable = true, length = 120)
   private String displayName;
 
+  @Column(name = "correlation_id", nullable = false, length = 100)
+  private String correlationId;
+
   @Enumerated(EnumType.STRING)
   @Column(name = "lifecycle_status", nullable = false, length = 30)
   private RobotLifecycleStatus lifecycleStatus;

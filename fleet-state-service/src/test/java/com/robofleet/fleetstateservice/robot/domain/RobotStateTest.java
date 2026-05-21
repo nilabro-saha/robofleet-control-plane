@@ -18,6 +18,7 @@ class RobotStateTest {
         .positionY(56.78)
         .battery(87.1)
         .status("MOVING")
+        .correlationId("corr-1")
         .timestamp(timestamp)
         .build();
 
@@ -26,6 +27,7 @@ class RobotStateTest {
     assertEquals(56.78, state.getPositionY());
     assertEquals(87.1, state.getBattery());
     assertEquals("MOVING", state.getStatus());
+    assertEquals("corr-1", state.getCorrelationId());
     assertEquals(timestamp, state.getTimestamp());
   }
 }

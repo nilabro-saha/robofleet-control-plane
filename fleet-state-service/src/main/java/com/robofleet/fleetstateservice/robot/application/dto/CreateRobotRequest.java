@@ -1,5 +1,6 @@
 package com.robofleet.fleetstateservice.robot.application.dto;
 
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -11,5 +12,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class CreateRobotRequest {
+  @Builder.Default
+  String correlationId = UUID.randomUUID().toString();
   String displayName;
 }

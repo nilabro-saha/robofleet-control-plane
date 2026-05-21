@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 class RobotApiControllerTest {
@@ -104,13 +106,20 @@ class RobotApiControllerTest {
     CreateRobotRequest request = CreateRobotRequest.builder()
         .displayName("NinetyNine")
         .build();
-    when(robotStateService.createRobot(request))
+    when(robotStateService.createRobot(argThat(payload -> payload != null
+        && "NinetyNine".equals(payload.getDisplayName())
+        && payload.getCorrelationId() != null
+        && !payload.getCorrelationId().isBlank())))
         .thenReturn(new RobotCreationResponse("generated-id", "NinetyNine", "CREATE_PENDING"));
 
     ResponseEntity<RobotCreationResponse> response = robotApiController.createRobot(request);
 
     assertEquals(HttpStatusCode.valueOf(202), response.getStatusCode());
     assertEquals("generated-id", response.getBody().robotId());
+    verify(robotStateService).createRobot(argThat(payload -> payload != null
+        && "NinetyNine".equals(payload.getDisplayName())
+        && payload.getCorrelationId() != null
+        && !payload.getCorrelationId().isBlank()));
   }
 
   @Test
@@ -120,25 +129,25 @@ class RobotApiControllerTest {
         .displayName("Alpha")
         .lifecycleStatus(RobotLifecycleStatus.DELETE_PENDING)
         .build();
-    when(robotStateService.requestRobotDeletion("robot-1"))
+    when(robotStateService.requestRobotDeletion(eq("robot-1"), anyString()))
         .thenReturn(Optional.of(deletePendingResponse));
 
-    ResponseEntity<RobotSummaryResponse> response = robotApiController.deleteRobot("robot-1");
+    ResponseEntity<RobotSummaryResponse> response = robotApiController.deleteRobot("robot-1", null);
 
     assertEquals(HttpStatusCode.valueOf(202), response.getStatusCode());
     assertEquals("robot-1", response.getBody().getRobotId());
     assertEquals(RobotLifecycleStatus.DELETE_PENDING, response.getBody().getLifecycleStatus());
-    verify(robotStateService).requestRobotDeletion("robot-1");
+    verify(robotStateService).requestRobotDeletion(eq("robot-1"), anyString());
   }
 
   @Test
   void shouldReturn404WhenDeleteRobotRequestTargetsUnknownRobot() {
-    when(robotStateService.requestRobotDeletion(anyString())).thenReturn(Optional.empty());
+    when(robotStateService.requestRobotDeletion(anyString(), anyString())).thenReturn(Optional.empty());
 
-    ResponseEntity<RobotSummaryResponse> response = robotApiController.deleteRobot("missing");
+    ResponseEntity<RobotSummaryResponse> response = robotApiController.deleteRobot("missing", null);
 
     assertEquals(HttpStatusCode.valueOf(404), response.getStatusCode());
-    verify(robotStateService).requestRobotDeletion("missing");
+    verify(robotStateService).requestRobotDeletion(eq("missing"), anyString());
   }
 
   private RobotStateResponse sampleStatusResponse() {

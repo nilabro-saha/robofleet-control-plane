@@ -1,5 +1,6 @@
 package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
 
+import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,11 +34,16 @@ class RobotTelemetryKafkaDbITest {
   @Autowired
   private MockMvc mockMvc;
 
+  @Autowired
+  private RobotStateRepository robotStateRepository;
+
   @Test
   void shouldInsertAndThenUpdateRobotStateFromKafkaTelemetry() {
     String robotId = "robot-kafka-1";
 
     RobotStateChangedEvent first = RobotStateChangedEvent.builder()
+        .eventName("robot-state-changed")
+        .correlationId("corr-telemetry-1")
         .robotId(robotId)
         .positionX(10.0)
         .positionY(20.0)
@@ -63,6 +69,8 @@ class RobotTelemetryKafkaDbITest {
         });
 
     RobotStateChangedEvent second = RobotStateChangedEvent.builder()
+        .eventName("robot-state-changed")
+        .correlationId("corr-telemetry-2")
         .robotId(robotId)
         .positionX(30.0)
         .positionY(40.0)
@@ -85,6 +93,10 @@ class RobotTelemetryKafkaDbITest {
               .andExpect(jsonPath("$.lifecycleStatus").value("ACTIVE"))
               .andExpect(jsonPath("$.battery").value(55.5))
               .andExpect(jsonPath("$.status").value("MOVING"));
+
+          org.junit.jupiter.api.Assertions.assertEquals(
+              "corr-telemetry-2",
+              robotStateRepository.findById(robotId).orElseThrow().getCorrelationId());
         });
   }
 }

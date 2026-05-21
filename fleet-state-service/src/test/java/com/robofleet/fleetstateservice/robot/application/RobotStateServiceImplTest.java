@@ -55,6 +55,8 @@ class RobotStateServiceImplTest {
   void shouldUpsertFromTelemetry() {
     Instant timestamp = Instant.parse("2026-05-19T16:40:03Z");
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
+        .eventName("robot-state-changed")
+        .correlationId("corr-telemetry-1")
         .robotId("robot-1")
         .positionX(12.34)
         .positionY(56.78)
@@ -76,6 +78,7 @@ class RobotStateServiceImplTest {
     assertEquals(56.78, saved.getPositionY());
     assertEquals(87.1, saved.getBattery());
     assertEquals("MOVING", saved.getStatus());
+    assertEquals("corr-telemetry-1", saved.getCorrelationId());
     assertEquals(timestamp, saved.getTimestamp());
   }
 
@@ -269,6 +272,7 @@ class RobotStateServiceImplTest {
   @Test
   void shouldCreateRobotAsPendingAndPublishCommand() {
     CreateRobotRequest request = CreateRobotRequest.builder()
+        .correlationId("corr-create-request-1")
         .displayName("NinetyNine")
         .build();
 
@@ -277,8 +281,18 @@ class RobotStateServiceImplTest {
     assertTrue(response.robotId() != null && !response.robotId().isBlank());
     assertEquals("NinetyNine", response.displayName());
     assertEquals("CREATE_PENDING", response.lifecycleStatus());
-    verify(robotRepository).save(any(Robot.class));
-    verify(robotCreationCommandGateway).publishLifecycleEvent(any());
+    verify(robotRepository).save(argThat(robot ->
+        robot != null
+            && "NinetyNine".equals(robot.getDisplayName())
+            && "corr-create-request-1".equals(robot.getCorrelationId())
+            && RobotLifecycleStatus.CREATE_PENDING == robot.getLifecycleStatus()
+    ));
+    verify(robotCreationCommandGateway).publishLifecycleEvent(argThat(event ->
+        event != null
+            && "robot-lifecycle-changed".equals(event.getEventName())
+            && "corr-create-request-1".equals(event.getCorrelationId())
+            && LifecycleEventType.CREATE_PENDING == event.getEventType()
+    ));
   }
 
   @Test
@@ -290,7 +304,10 @@ class RobotStateServiceImplTest {
         .build();
     when(robotRepository.findById("robot-1")).thenReturn(Optional.of(existingRobot));
 
-    Optional<RobotSummaryResponse> response = robotStateService.requestRobotDeletion("robot-1");
+    Optional<RobotSummaryResponse> response = robotStateService.requestRobotDeletion(
+        "robot-1",
+        "corr-delete-request-1"
+    );
 
     assertTrue(response.isPresent());
     assertEquals("robot-1", response.get().getRobotId());
@@ -298,6 +315,8 @@ class RobotStateServiceImplTest {
     verify(robotRepository).save(existingRobot);
     verify(robotCreationCommandGateway).publishLifecycleEvent(argThat(event ->
         event != null
+            && "robot-lifecycle-changed".equals(event.getEventName())
+            && "corr-delete-request-1".equals(event.getCorrelationId())
             && "robot-1".equals(event.getRobotId())
             && LifecycleEventType.DELETE_PENDING == event.getEventType()
     ));
@@ -307,7 +326,10 @@ class RobotStateServiceImplTest {
   void shouldNotPublishDeleteCommandWhenRobotIsUnknown() {
     when(robotRepository.findById("missing")).thenReturn(Optional.empty());
 
-    Optional<RobotSummaryResponse> response = robotStateService.requestRobotDeletion("missing");
+    Optional<RobotSummaryResponse> response = robotStateService.requestRobotDeletion(
+        "missing",
+        "corr-delete-request-missing"
+    );
 
     assertTrue(response.isEmpty());
     verify(robotCreationCommandGateway, never()).publishLifecycleEvent(any());
