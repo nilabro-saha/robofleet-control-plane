@@ -45,8 +45,8 @@ Supported sort fields used by the UI:
 - `robotId`
 - `displayName`
 - `lifecycleStatus`
-- `positionX`
-- `positionY`
+- `x`
+- `y`
 - `battery`
 - `status`
 - `timestamp`
