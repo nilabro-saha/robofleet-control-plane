@@ -84,10 +84,10 @@ mvn -Ppact-verify test
 From repository root:
 
 ```bash
-bash ./run-pact-contracts-local.sh
+mvn -f pom.xml verify
 ```
 
-This script executes:
+This root Maven flow executes:
 
 1. Fleet consumer pact generation
 2. Simulator consumer pact generation

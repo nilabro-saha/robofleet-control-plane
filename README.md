@@ -146,22 +146,48 @@ This repository includes local Pact-based contract testing for:
 From repository root:
 
 ```bash
-bash ./run-pact-contracts-local.sh
+mvn -f pom.xml verify
 ```
 
-This script runs:
+This runs contract flow in order:
 
 1. Consumer pact generation in `fleet-state-service`
 2. Consumer pact generation in `robot-simulator`
 3. Provider verification in `fleet-state-service`
 4. Provider verification in `robot-simulator`
 
-Pact files are stored in the shared top-level `pacts/` folder.
+Pact files are generated in top-level `pacts/` (gitignored).
 
 For module-level details and class mapping, see:
 
 - `fleet-state-service/README.md`
 - `robot-simulator/README.md`
+
+### One-click Maven options from repository root
+
+With the root selector `pom.xml`, you can now run both modules together from one command.
+
+- Run full verification in one click (module lifecycle + contract flow):
+
+```bash
+mvn -f pom.xml verify
+```
+
+  - Runs each module's normal Maven lifecycle.
+  - Runs `fleet-state-service` integration tests (`*ITest`) via Failsafe during `package/verify`.
+  - Also runs Pact orchestration in this order:
+    1. fleet-state-service pact generation
+    2. robot-simulator pact generation
+    3. fleet-state-service pact verification
+    4. robot-simulator pact verification
+
+- Run only module lifecycle (skip root contract orchestration):
+
+```bash
+mvn -f pom.xml -DskipContractTests=true verify
+```
+
+- Pact files are written to top-level `pacts/`.
 
 ## Evolution Plan: Control Plane + Kafka + ROS2 + Gazebo
 
