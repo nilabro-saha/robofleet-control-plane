@@ -1,9 +1,11 @@
 package com.robofleet.fleetstateservice.robot.application;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.robofleet.fleetstateservice.robot.application.dto.CreateRobotRequest;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotCreationResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotStateResponse;
 import com.robofleet.fleetstateservice.robot.application.dto.RobotSummaryResponse;
+import com.robofleet.fleetstateservice.robot.application.dto.SortableFieldMapping;
 import com.robofleet.fleetstateservice.robot.domain.Robot;
 import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
 import com.robofleet.fleetstateservice.robot.domain.RobotState;
@@ -12,12 +14,15 @@ import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotLifec
 import com.robofleet.fleetstateservice.robot.infrastructure.messaging.RobotStateChangedEvent;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotRepository;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
+import java.lang.reflect.Field;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -215,15 +220,31 @@ public class RobotStateServiceImpl implements RobotStateService {
   }
 
   private static Map<String, String> createRobotStatusSortFieldMapping() {
-    Map<String, String> mapping = new LinkedHashMap<>();
-    mapping.put("robotId", "robot.robotId");
-    mapping.put("displayName", "robot.displayName");
-    mapping.put("positionX", "state.positionX");
-    mapping.put("positionY", "state.positionY");
-    mapping.put("battery", "state.battery");
-    mapping.put("lifecycleStatus", "robot.lifecycleStatus");
-    mapping.put("status", "state.status");
-    mapping.put("timestamp", "state.timestamp");
-    return mapping;
+    return Arrays.stream(RobotStateResponse.class.getDeclaredFields())
+        .filter(field -> field.isAnnotationPresent(SortableFieldMapping.class))
+        .collect(Collectors.toMap(
+            RobotStateServiceImpl::resolveEffectiveJsonFieldName,
+            RobotStateServiceImpl::resolveAliasedEntityFieldName,
+            (left, right) -> left,
+            LinkedHashMap::new
+        ));
+  }
+
+  private static String resolveEffectiveJsonFieldName(Field field) {
+    JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
+    if (jsonProperty == null || jsonProperty.value().isBlank()) {
+      return field.getName();
+    }
+
+    return jsonProperty.value();
+  }
+
+  private static String resolveAliasedEntityFieldName(Field field) {
+    SortableFieldMapping sortableFieldMapping = field.getAnnotation(SortableFieldMapping.class);
+    String entityField = sortableFieldMapping.entityField().isBlank()
+        ? field.getName()
+        : sortableFieldMapping.entityField();
+
+    return sortableFieldMapping.entityAlias() + "." + entityField;
   }
 }

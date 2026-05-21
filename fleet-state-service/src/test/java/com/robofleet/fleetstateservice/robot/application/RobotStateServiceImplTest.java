@@ -170,7 +170,7 @@ class RobotStateServiceImplTest {
         0,
         100,
         Sort.by(
-            Sort.Order.desc("battery"),
+            Sort.Order.desc("x"),
             Sort.Order.asc("displayName")
         )
     );
@@ -182,7 +182,7 @@ class RobotStateServiceImplTest {
     ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
     verify(robotStateRepository).findAllRobotStatuses(pageableCaptor.capture());
     Sort mappedSort = pageableCaptor.getValue().getSort();
-    assertEquals(Sort.Direction.DESC, mappedSort.getOrderFor("state.battery").getDirection());
+    assertEquals(Sort.Direction.DESC, mappedSort.getOrderFor("state.positionX").getDirection());
     assertEquals(Sort.Direction.ASC, mappedSort.getOrderFor("robot.displayName").getDirection());
   }
 

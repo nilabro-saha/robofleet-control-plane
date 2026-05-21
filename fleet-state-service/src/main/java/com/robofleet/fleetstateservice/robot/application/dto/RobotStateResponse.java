@@ -15,14 +15,29 @@ import lombok.Value;
 @Value
 @Builder
 public class RobotStateResponse {
+  @SortableFieldMapping(entityAlias = "robot")
   String robotId;
+
+  @SortableFieldMapping(entityAlias = "robot")
   String displayName;
+
+  @SortableFieldMapping(entityAlias = "state")
   @JsonProperty("x")
   double positionX;
+
+  @SortableFieldMapping(entityAlias = "state")
   @JsonProperty("y")
   double positionY;
+
+  @SortableFieldMapping(entityAlias = "state")
   double battery;
+
+  @SortableFieldMapping(entityAlias = "robot")
   RobotLifecycleStatus lifecycleStatus;
+
+  @SortableFieldMapping(entityAlias = "state")
   String status;
+
+  @SortableFieldMapping(entityAlias = "state")
   Instant timestamp;
 }
