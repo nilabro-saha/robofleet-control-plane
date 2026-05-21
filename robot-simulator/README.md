@@ -57,3 +57,47 @@ From `src/main/resources/application.properties`:
 cd robot-simulator
 mvn spring-boot:run
 ```
+
+## Local Pact contract testing
+
+This module participates in event pact flows in both roles.
+
+### Classes in this module
+
+- Consumer-side pact generation (`pact-generate` profile):
+  - `com.robofleet.robotsimulator.contract.RobotEventPactVerifier`
+- Provider-side pact verification (`pact-verify` profile):
+  - `com.robofleet.robotsimulator.contract.RobotEventPactProvider`
+
+### Pact location
+
+- Shared top-level pact folder: `../pacts` (from module root)
+
+### Run locally (module-level)
+
+Generate this module's consumer pacts:
+
+```bash
+mvn -Ppact-generate test
+```
+
+Verify this module as pact provider:
+
+```bash
+mvn -Ppact-verify test
+```
+
+### Run full cross-module pact flow (recommended)
+
+From repository root:
+
+```bash
+bash ./run-pact-contracts-local.sh
+```
+
+This script executes:
+
+1. Fleet consumer pact generation
+2. Simulator consumer pact generation
+3. Fleet provider verification
+4. Simulator provider verification

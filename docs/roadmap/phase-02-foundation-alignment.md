@@ -106,13 +106,16 @@ Not yet complete:
 - [ ] Correlation/causation strategy documented and implemented
   - Comment (22-May-26 12:43 am IST): `correlationId` is implemented across active lifecycle/telemetry paths; `eventId` and `causationId` are still deferred.
   - Comment (22-May-26 01:14 am IST): `schemaVersion` is now implemented in lifecycle/telemetry events via enum-backed return type (`SchemaVersion`), reducing invalid payload risk.
+  - Comment (22-May-26 02:42 am IST): Bidirectional event pact tests are now in place for fleet-state-service and robot-simulator, but checklist remains open until `eventId` and `causationId` are implemented end-to-end.
 - [x] Lifecycle/state transition tables approved
   - Comment (22-May-26 12:43 am IST): Robot lifecycle/status and draft task lifecycle semantics are documented in contracts/roadmap docs and reflected in current enums.
 - [ ] API naming policy finalized and documented
   - Comment (22-May-26 12:43 am IST): Endpoints are implemented (`/api/robot-statuses` and `/api/robots`), but module-level docs still need one canonical policy statement.
+  - Comment (22-May-26 02:42 am IST): Endpoint usage is still documented inconsistently between root and UI module docs (`/api/robots` vs `/api/robot-statuses`), so policy is not yet finalized.
 - [ ] Compatibility tests green in CI/local verification
   - Comment (22-May-26 12:43 am IST): Core flow tests are green locally, but explicit additive/unknown-field compatibility tests are still missing.
   - Comment (22-May-26 01:14 am IST): Event-level `schemaVersion` tests are now green, but additive/unknown-field and unknown-enum forward-compat tests are still pending.
+  - Comment (22-May-26 02:42 am IST): Event contracts are now pact-verified in both directions (`RobotEventPactVerifier` and `RobotEventPactProvider` in both modules), while forward-compat edge-case coverage remains pending.
 
 ## Exit criteria
 

@@ -132,6 +132,37 @@ These logs are operational artifacts only and are intentionally ignored by git.
 }
 ```
 
+## Contract testing (Pact)
+
+This repository includes local Pact-based contract testing for:
+
+- API contracts (`fleet-dashboard-ui` -> `fleet-state-service`)
+- Event/message contracts in both directions:
+  - `robot-simulator` -> `fleet-state-service`
+  - `fleet-state-service` -> `robot-simulator`
+
+### Run full contract flow
+
+From repository root:
+
+```bash
+bash ./run-pact-contracts-local.sh
+```
+
+This script runs:
+
+1. Consumer pact generation in `fleet-state-service`
+2. Consumer pact generation in `robot-simulator`
+3. Provider verification in `fleet-state-service`
+4. Provider verification in `robot-simulator`
+
+Pact files are stored in the shared top-level `pacts/` folder.
+
+For module-level details and class mapping, see:
+
+- `fleet-state-service/README.md`
+- `robot-simulator/README.md`
+
 ## Evolution Plan: Control Plane + Kafka + ROS2 + Gazebo
 
 This section captures the intended path from the current MVP into a task-driven
