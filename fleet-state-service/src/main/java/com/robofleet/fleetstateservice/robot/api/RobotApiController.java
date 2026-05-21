@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,5 +88,15 @@ public class RobotApiController {
       @RequestBody CreateRobotRequest request) {
     RobotCreationResponse response = robotStateService.createRobot(request);
     return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+  }
+
+  /**
+   * Requests asynchronous robot deletion via lifecycle workflow.
+   */
+  @DeleteMapping("/robots/{id}")
+  public ResponseEntity<RobotSummaryResponse> deleteRobot(@PathVariable("id") String id) {
+    return robotStateService.requestRobotDeletion(id)
+        .map(summary -> ResponseEntity.status(HttpStatus.ACCEPTED).body(summary))
+        .orElse(ResponseEntity.notFound().build());
   }
 }

@@ -92,6 +92,19 @@ public class RobotSimulationOrchestrator {
     );
   }
 
+  /**
+   * Deregisters one robot requested by control-plane delete command.
+   */
+  public void deregisterRobot(String robotId) {
+    boolean removed = robotRegistry.deregisterById(robotId);
+    if (removed) {
+      log.info("Deregistered command-driven robot {}", robotId);
+      return;
+    }
+
+    log.info("Robot {} not registered, skipping delete command", robotId);
+  }
+
   private double round(double value) {
     return Math.round(value * 100.0) / 100.0;
   }

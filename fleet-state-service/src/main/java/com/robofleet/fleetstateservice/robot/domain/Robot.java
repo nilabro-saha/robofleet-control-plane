@@ -40,4 +40,11 @@ public class Robot {
   public void markAsActive() {
     this.lifecycleStatus = RobotLifecycleStatus.ACTIVE;
   }
+
+  /**
+   * Marks this robot as pending deletion.
+   */
+  public void markAsDeletePending() {
+    this.lifecycleStatus = RobotLifecycleStatus.DELETE_PENDING;
+  }
 }

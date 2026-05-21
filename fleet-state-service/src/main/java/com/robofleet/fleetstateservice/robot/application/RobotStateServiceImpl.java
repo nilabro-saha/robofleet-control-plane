@@ -111,6 +111,32 @@ public class RobotStateServiceImpl implements RobotStateService {
   }
 
   /**
+   * Marks robot as delete pending and emits lifecycle delete command.
+   */
+  @Override
+  public Optional<RobotSummaryResponse> requestRobotDeletion(String robotId) {
+    return robotRepository.findById(robotId)
+        .map(robot -> {
+          robot.markAsDeletePending();
+          robotRepository.save(robot);
+
+          robotCreationCommandGateway.publishLifecycleEvent(
+              RobotLifecycleEvent.builder()
+                  .robotId(robotId)
+                  .eventType(LifecycleEventType.DELETE_PENDING)
+                  .timestamp(Instant.now())
+                  .build()
+          );
+
+          return RobotSummaryResponse.builder()
+              .robotId(robot.getRobotId())
+              .displayName(robot.getDisplayName())
+              .lifecycleStatus(robot.getLifecycleStatus())
+              .build();
+        });
+  }
+
+  /**
    * Retrieves latest-state rows for all robots.
    *
    * @param pageable pagination and sorting request

@@ -98,4 +98,32 @@ class RobotSimulationOrchestratorTest {
 
     verify(robotRegistry, times(0)).register(any());
   }
+
+  @Test
+  void deregisterRobot_shouldDelegateToRegistry() {
+    RobotMap robotMap = new RectangularMap(0.0, 100.0, 0.0, 100.0);
+    RobotSimulationOrchestrator orchestrator = new RobotSimulationOrchestrator(
+        simulatorProperties,
+        robotMap,
+        robotRegistry);
+    when(robotRegistry.deregisterById("robot-99")).thenReturn(true);
+
+    orchestrator.deregisterRobot("robot-99");
+
+    verify(robotRegistry, times(1)).deregisterById("robot-99");
+  }
+
+  @Test
+  void deregisterRobot_shouldNoOpWhenRobotMissing() {
+    RobotMap robotMap = new RectangularMap(0.0, 100.0, 0.0, 100.0);
+    RobotSimulationOrchestrator orchestrator = new RobotSimulationOrchestrator(
+        simulatorProperties,
+        robotMap,
+        robotRegistry);
+    when(robotRegistry.deregisterById("missing")).thenReturn(false);
+
+    orchestrator.deregisterRobot("missing");
+
+    verify(robotRegistry, times(1)).deregisterById("missing");
+  }
 }

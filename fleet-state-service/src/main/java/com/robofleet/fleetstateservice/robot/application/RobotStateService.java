@@ -34,6 +34,14 @@ public interface RobotStateService {
   RobotCreationResponse createRobot(CreateRobotRequest request);
 
   /**
+   * Marks a robot as pending deletion and publishes a delete lifecycle command.
+   *
+   * @param robotId unique robot identifier
+   * @return updated robot summary when robot exists
+   */
+  Optional<RobotSummaryResponse> requestRobotDeletion(String robotId);
+
+  /**
    * Returns the current known state for every robot in the fleet snapshot.
    *
    * @param pageable paging and sorting request

@@ -46,6 +46,21 @@ async function createRobot(displayName) {
   return response.json();
 }
 
+async function deleteRobot(robotId) {
+  const response = await fetch(`${apiBase}/api/robots/${encodeURIComponent(robotId)}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Delete robot failed with status ${response.status}`);
+  }
+
+  return response.json();
+}
+
 async function fetchRobotById(robotId) {
   const response = await fetch(`${apiBase}/api/robot-statuses/${encodeURIComponent(robotId)}`, {
     headers: {
@@ -114,13 +129,14 @@ function renderRows(robots) {
   tbody.innerHTML = robots
     .map((robot) => {
       const status = robot.status ?? "UNKNOWN";
+      const lifecycle = robot.lifecycleStatus ?? "UNKNOWN";
       const timestamp = formatLocalTimestamp(robot.timestamp);
       const selectedClass = selectedRobotId === robot.robotId ? "selected-row" : "";
       return `
         <tr class="${selectedClass}" data-robot-id="${robot.robotId}">
           <td>${robot.robotId}</td>
           <td>${robot.displayName ?? "-"}</td>
-          <td>${robot.lifecycleStatus ?? "UNKNOWN"}</td>
+          <td><span class="lifecycle-${lifecycle}">${lifecycle}</span></td>
           <td>${Number(robot.x).toFixed(2)}</td>
           <td>${Number(robot.y).toFixed(2)}</td>
           <td>${Number(robot.battery).toFixed(2)}%</td>
@@ -142,17 +158,30 @@ function updateHeaderSortIndicators() {
 
 function formatRobotDetails(robot) {
   const timestamp = formatLocalTimestamp(robot.timestamp);
+  const lifecycleStatus = robot.lifecycleStatus ?? "UNKNOWN";
+  const isDeletePending = lifecycleStatus === "DELETE_PENDING";
   return `
     <dl class="details-grid">
       <dt>Robot ID</dt><dd>${robot.robotId}</dd>
       <dt>Display Name</dt><dd>${robot.displayName ?? "-"}</dd>
-      <dt>Lifecycle</dt><dd>${robot.lifecycleStatus ?? "UNKNOWN"}</dd>
+      <dt>Lifecycle</dt><dd>${lifecycleStatus}</dd>
       <dt>Status</dt><dd>${robot.status ?? "UNKNOWN"}</dd>
       <dt>Battery</dt><dd>${Number(robot.battery).toFixed(2)}%</dd>
       <dt>X</dt><dd>${Number(robot.x).toFixed(2)}</dd>
       <dt>Y</dt><dd>${Number(robot.y).toFixed(2)}</dd>
       <dt>Timestamp</dt><dd>${timestamp}</dd>
     </dl>
+    <div class="sidebar-actions">
+      <button
+        id="delete-robot"
+        class="button-delete"
+        type="button"
+        data-robot-id="${robot.robotId}"
+        ${isDeletePending ? "disabled" : ""}
+      >
+        ${isDeletePending ? "Deletion Pending" : "Delete Robot"}
+      </button>
+    </div>
   `;
 }
 
@@ -323,6 +352,38 @@ addRobotButton.addEventListener("click", async () => {
     await refresh();
   } catch (error) {
     window.alert(`Unable to create robot. ${error.message}`);
+  }
+});
+
+sidebarContentEl.addEventListener("click", async (event) => {
+  const deleteButton = event.target.closest("#delete-robot");
+  if (!deleteButton) {
+    return;
+  }
+
+  const robotId = deleteButton.dataset.robotId;
+  if (!robotId) {
+    return;
+  }
+
+  const confirmed = window.confirm(`Delete robot ${robotId}?`);
+  if (!confirmed) {
+    return;
+  }
+
+  deleteButton.disabled = true;
+  deleteButton.textContent = "Deleting...";
+
+  try {
+    const deletionResponse = await deleteRobot(robotId);
+    connectionEl.classList.add("muted");
+    connectionEl.style.color = "";
+    connectionEl.textContent = `Delete request accepted for ${deletionResponse.robotId}. Awaiting simulator removal lifecycle event...`;
+    await refresh();
+  } catch (error) {
+    deleteButton.disabled = false;
+    deleteButton.textContent = "Delete Robot";
+    window.alert(`Unable to delete robot. ${error.message}`);
   }
 });
 

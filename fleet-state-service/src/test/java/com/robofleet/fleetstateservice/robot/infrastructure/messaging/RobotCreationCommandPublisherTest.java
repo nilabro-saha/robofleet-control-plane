@@ -59,6 +59,21 @@ class RobotCreationCommandPublisherTest {
     assertSame(command, kafkaTemplate.value);
   }
 
+  @Test
+  void publishLifecycleEvent_shouldSupportDeletePendingType() {
+    RobotLifecycleEvent command = RobotLifecycleEvent.builder()
+        .robotId("robot-3")
+        .eventType(LifecycleEventType.DELETE_PENDING)
+        .timestamp(Instant.parse("2026-05-19T16:55:03Z"))
+        .build();
+
+    publisher.publishLifecycleEvent(command);
+
+    assertEquals("robot.lifecycle", kafkaTemplate.topic);
+    assertEquals("robot-3", kafkaTemplate.key);
+    assertSame(command, kafkaTemplate.value);
+  }
+
   private static final class CapturingKafkaTemplate extends KafkaTemplate<String, Object> {
 
     private String topic;

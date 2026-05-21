@@ -24,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString;
 
 @ExtendWith(MockitoExtension.class)
 class RobotApiControllerTest {
@@ -110,6 +111,34 @@ class RobotApiControllerTest {
 
     assertEquals(HttpStatusCode.valueOf(202), response.getStatusCode());
     assertEquals("generated-id", response.getBody().robotId());
+  }
+
+  @Test
+  void shouldAcceptDeleteRobotRequest() {
+    RobotSummaryResponse deletePendingResponse = RobotSummaryResponse.builder()
+        .robotId("robot-1")
+        .displayName("Alpha")
+        .lifecycleStatus(RobotLifecycleStatus.DELETE_PENDING)
+        .build();
+    when(robotStateService.requestRobotDeletion("robot-1"))
+        .thenReturn(Optional.of(deletePendingResponse));
+
+    ResponseEntity<RobotSummaryResponse> response = robotApiController.deleteRobot("robot-1");
+
+    assertEquals(HttpStatusCode.valueOf(202), response.getStatusCode());
+    assertEquals("robot-1", response.getBody().getRobotId());
+    assertEquals(RobotLifecycleStatus.DELETE_PENDING, response.getBody().getLifecycleStatus());
+    verify(robotStateService).requestRobotDeletion("robot-1");
+  }
+
+  @Test
+  void shouldReturn404WhenDeleteRobotRequestTargetsUnknownRobot() {
+    when(robotStateService.requestRobotDeletion(anyString())).thenReturn(Optional.empty());
+
+    ResponseEntity<RobotSummaryResponse> response = robotApiController.deleteRobot("missing");
+
+    assertEquals(HttpStatusCode.valueOf(404), response.getStatusCode());
+    verify(robotStateService).requestRobotDeletion("missing");
   }
 
   private RobotStateResponse sampleStatusResponse() {

@@ -133,6 +133,26 @@ th.sort-active.sort-desc::after {
   font-weight: bold;
 }
 
+.lifecycle-ACTIVE {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.lifecycle-CREATE_PENDING {
+  color: #d97706;
+  font-weight: bold;
+}
+
+.lifecycle-DELETE_PENDING {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.lifecycle-UNKNOWN {
+  color: #6b7280;
+  font-weight: 600;
+}
+
 .muted {
   color: #6b7280;
   font-size: 0.9rem;
@@ -197,6 +217,33 @@ th.sort-active.sort-desc::after {
 
 .sidebar-content {
   padding: 1rem;
+}
+
+.sidebar-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button-delete {
+  border: 1px solid #b91c1c;
+  border-radius: 6px;
+  background: #dc2626;
+  color: #ffffff;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button-delete:hover {
+  background: #b91c1c;
+}
+
+.button-delete:disabled {
+  background: #fca5a5;
+  border-color: #f87171;
+  cursor: not-allowed;
 }
 
 .details-grid {

@@ -34,6 +34,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.argThat;
 
 @ExtendWith(MockitoExtension.class)
 class RobotStateServiceImplTest {
@@ -278,6 +279,39 @@ class RobotStateServiceImplTest {
     assertEquals("CREATE_PENDING", response.lifecycleStatus());
     verify(robotRepository).save(any(Robot.class));
     verify(robotCreationCommandGateway).publishLifecycleEvent(any());
+  }
+
+  @Test
+  void shouldMarkRobotDeletePendingAndPublishDeleteCommand() {
+    Robot existingRobot = Robot.builder()
+        .robotId("robot-1")
+        .displayName("Alpha")
+        .lifecycleStatus(RobotLifecycleStatus.ACTIVE)
+        .build();
+    when(robotRepository.findById("robot-1")).thenReturn(Optional.of(existingRobot));
+
+    Optional<RobotSummaryResponse> response = robotStateService.requestRobotDeletion("robot-1");
+
+    assertTrue(response.isPresent());
+    assertEquals("robot-1", response.get().getRobotId());
+    assertEquals(RobotLifecycleStatus.DELETE_PENDING, response.get().getLifecycleStatus());
+    verify(robotRepository).save(existingRobot);
+    verify(robotCreationCommandGateway).publishLifecycleEvent(argThat(event ->
+        event != null
+            && "robot-1".equals(event.getRobotId())
+            && LifecycleEventType.DELETE_PENDING == event.getEventType()
+    ));
+  }
+
+  @Test
+  void shouldNotPublishDeleteCommandWhenRobotIsUnknown() {
+    when(robotRepository.findById("missing")).thenReturn(Optional.empty());
+
+    Optional<RobotSummaryResponse> response = robotStateService.requestRobotDeletion("missing");
+
+    assertTrue(response.isEmpty());
+    verify(robotCreationCommandGateway, never()).publishLifecycleEvent(any());
+    verify(robotRepository, never()).save(any(Robot.class));
   }
 
   @Test
