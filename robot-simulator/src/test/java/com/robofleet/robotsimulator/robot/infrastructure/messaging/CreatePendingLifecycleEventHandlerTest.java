@@ -3,6 +3,7 @@ package com.robofleet.robotsimulator.robot.infrastructure.messaging;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.robofleet.robotsimulator.robot.application.RobotSimulationOrchestrator;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
@@ -66,6 +67,36 @@ class CreatePendingLifecycleEventHandlerTest {
 
     handler.handleEvent(event);
 
-    verify(robotSimulationOrchestrator).registerRobot("robot-42");
+    verify(robotSimulationOrchestrator).registerRobot(
+        "robot-42",
+        null,
+        null,
+        null,
+        null
+    );
+  }
+
+  @Test
+  void handleEvent_shouldRegisterRobotWithStateWhenProvided() {
+    RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .robotId("robot-24")
+        .positionX(11.5)
+        .positionY(7.25)
+        .battery(76.4)
+        .status("CHARGING")
+        .eventType(LifecycleEventType.REHYDRATE_ACTIVE)
+        .timestamp(Instant.parse("2026-05-20T10:00:00Z"))
+        .build();
+
+    handler.handleEvent(event);
+
+    verify(robotSimulationOrchestrator).registerRobot(
+        "robot-24",
+        11.5,
+        7.25,
+        76.4,
+        "CHARGING"
+    );
+    verifyNoMoreInteractions(robotSimulationOrchestrator);
   }
 }

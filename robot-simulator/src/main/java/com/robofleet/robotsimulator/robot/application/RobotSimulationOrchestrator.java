@@ -2,6 +2,7 @@ package com.robofleet.robotsimulator.robot.application;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
 import com.robofleet.robotsimulator.robot.domain.map.MapLocation;
+import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
 import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
@@ -65,6 +66,19 @@ public class RobotSimulationOrchestrator {
    * Registers one robot requested externally by control-plane command.
    */
   public void registerRobot(String robotId) {
+    registerRobot(robotId, null, null, null, null);
+  }
+
+  /**
+   * Registers one robot requested externally, preferring provided persisted state when available.
+   */
+  public void registerRobot(
+      String robotId,
+      Double positionX,
+      Double positionY,
+      Double battery,
+      String status
+  ) {
     boolean alreadyRegistered = robotRegistry.getRegisteredRobots().stream()
         .anyMatch(robot -> robotId.equals(robot.getRobotId()));
     if (alreadyRegistered) {
@@ -73,14 +87,29 @@ public class RobotSimulationOrchestrator {
     }
 
     ThreadLocalRandom random = ThreadLocalRandom.current();
-    MapLocation spawnLocation = robotMap.randomAvailableLocation(random);
+
+    double resolvedPositionX;
+    double resolvedPositionY;
+    if (positionX != null && positionY != null) {
+      resolvedPositionX = clampX(positionX);
+      resolvedPositionY = clampY(positionY);
+    } else {
+      MapLocation spawnLocation = robotMap.randomAvailableLocation(random);
+      resolvedPositionX = spawnLocation.x();
+      resolvedPositionY = spawnLocation.y();
+    }
+
+    double resolvedBattery = battery == null
+        ? random.nextDouble(20.0, 100.0)
+        : clampBattery(battery);
+    RobotStatus resolvedStatus = resolveStatus(status, random);
 
     RobotActor robotActor = RobotActor.builder()
         .robotId(robotId)
-        .positionX(spawnLocation.x())
-        .positionY(spawnLocation.y())
-        .battery(random.nextDouble(20.0, 100.0))
-        .status(RobotStatus.values()[random.nextInt(RobotStatus.values().length)])
+        .positionX(resolvedPositionX)
+        .positionY(resolvedPositionY)
+        .battery(resolvedBattery)
+        .status(resolvedStatus)
         .build();
 
     robotRegistry.register(robotActor);
@@ -107,5 +136,36 @@ public class RobotSimulationOrchestrator {
 
   private double round(double value) {
     return Math.round(value * 100.0) / 100.0;
+  }
+
+  private double clampX(double x) {
+    if (robotMap instanceof RectangularMap rectangularMap) {
+      return rectangularMap.clampX(x);
+    }
+    return x;
+  }
+
+  private double clampY(double y) {
+    if (robotMap instanceof RectangularMap rectangularMap) {
+      return rectangularMap.clampY(y);
+    }
+    return y;
+  }
+
+  private double clampBattery(double value) {
+    return Math.clamp(value, 0.0, 100.0);
+  }
+
+  private RobotStatus resolveStatus(String status, ThreadLocalRandom random) {
+    if (status == null || status.isBlank()) {
+      return RobotStatus.values()[random.nextInt(RobotStatus.values().length)];
+    }
+
+    try {
+      return RobotStatus.valueOf(status.toUpperCase());
+    } catch (IllegalArgumentException exception) {
+      log.warn("Unsupported status '{}' in rehydration payload; defaulting to IDLE", status);
+      return RobotStatus.IDLE;
+    }
   }
 }

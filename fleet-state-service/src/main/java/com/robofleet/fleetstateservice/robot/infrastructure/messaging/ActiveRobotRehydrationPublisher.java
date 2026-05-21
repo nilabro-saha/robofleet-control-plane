@@ -2,7 +2,9 @@ package com.robofleet.fleetstateservice.robot.infrastructure.messaging;
 
 import com.robofleet.fleetstateservice.robot.application.RobotCreationCommandGateway;
 import com.robofleet.fleetstateservice.robot.domain.RobotLifecycleStatus;
+import com.robofleet.fleetstateservice.robot.domain.RobotState;
 import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotRepository;
+import com.robofleet.fleetstateservice.robot.infrastructure.persistence.RobotStateRepository;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Component;
 public class ActiveRobotRehydrationPublisher {
 
   private final RobotRepository robotRepository;
+  private final RobotStateRepository robotStateRepository;
   private final RobotCreationCommandGateway robotCreationCommandGateway;
 
   /**
@@ -36,11 +39,17 @@ public class ActiveRobotRehydrationPublisher {
 
     for (var robot : activeRobots) {
       try {
+        var lastState = robotStateRepository.findById(robot.getRobotId());
+
         robotCreationCommandGateway.publishLifecycleEvent(
             RobotLifecycleEvent.builder()
                 .robotId(robot.getRobotId())
+                .positionX(lastState.map(RobotState::getPositionX).orElse(null))
+                .positionY(lastState.map(RobotState::getPositionY).orElse(null))
+                .battery(lastState.map(RobotState::getBattery).orElse(null))
+                .status(lastState.map(RobotState::getStatus).orElse(null))
                 .eventType(LifecycleEventType.REHYDRATE_ACTIVE)
-                .timestamp(Instant.now())
+                .timestamp(lastState.map(RobotState::getTimestamp).orElse(Instant.now()))
                 .build()
         );
       } catch (Exception exception) {

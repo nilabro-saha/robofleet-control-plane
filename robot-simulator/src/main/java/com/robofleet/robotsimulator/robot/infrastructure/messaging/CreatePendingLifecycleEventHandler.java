@@ -23,6 +23,12 @@ public class CreatePendingLifecycleEventHandler implements RobotLifecycleEventHa
 
   @Override
   public void handleEvent(RobotLifecycleEvent event) {
-    robotSimulationOrchestrator.registerRobot(event.getRobotId());
+    robotSimulationOrchestrator.registerRobot(
+        event.getRobotId(),
+        event.getPositionX(),
+        event.getPositionY(),
+        event.getBattery(),
+        event.getStatus()
+    );
   }
 }

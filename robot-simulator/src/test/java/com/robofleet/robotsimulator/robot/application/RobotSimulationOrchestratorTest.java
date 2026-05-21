@@ -75,6 +75,30 @@ class RobotSimulationOrchestratorTest {
     orchestrator.registerRobot("robot-99");
 
     verify(robotRegistry, times(1)).register(any());
+
+    ArgumentCaptor<RobotActor> robotCaptor = ArgumentCaptor.forClass(RobotActor.class);
+    verify(robotRegistry).register(robotCaptor.capture());
+    Assertions.assertEquals("robot-99", robotCaptor.getValue().getRobotId());
+  }
+
+  @Test
+  void registerRobot_shouldUseProvidedStateWhenAvailable() {
+    RobotMap robotMap = new RectangularMap(0.0, 100.0, 0.0, 100.0);
+    RobotSimulationOrchestrator orchestrator = new RobotSimulationOrchestrator(
+        simulatorProperties,
+        robotMap,
+        robotRegistry);
+
+    orchestrator.registerRobot("robot-11", 12.5, 9.75, 88.0, "MOVING");
+
+    ArgumentCaptor<RobotActor> robotCaptor = ArgumentCaptor.forClass(RobotActor.class);
+    verify(robotRegistry).register(robotCaptor.capture());
+    RobotActor robot = robotCaptor.getValue();
+    Assertions.assertEquals("robot-11", robot.getRobotId());
+    Assertions.assertEquals(12.5, robot.getPositionX());
+    Assertions.assertEquals(9.75, robot.getPositionY());
+    Assertions.assertEquals(88.0, robot.getBattery());
+    Assertions.assertEquals(RobotStatus.MOVING, robot.getStatus());
   }
 
   @Test
