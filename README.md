@@ -150,10 +150,18 @@ Run full verification:
 mvn -f pom.xml verify
 ```
 
+This includes Java module verification, Pact orchestration, and dashboard UI tests (`fleet-dashboard-ui` `npm test`).
+
 Skip root contract orchestration (module lifecycle only):
 
 ```bash
 mvn -f pom.xml -DskipContractTests=true verify
+```
+
+Skip UI tests when needed:
+
+```bash
+mvn -f pom.xml -DskipUiTests=true verify
 ```
 
 ---

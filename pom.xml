@@ -14,6 +14,7 @@
 
     <properties>
         <skipContractTests>false</skipContractTests>
+        <skipUiTests>false</skipUiTests>
     </properties>
 
     <modules>
@@ -28,6 +29,23 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.3.0</version>
                 <executions>
+                    <execution>
+                        <id>ui-tests-fleet-dashboard</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipUiTests}</skip>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>--prefix</argument>
+                                <argument>${project.basedir}/fleet-dashboard-ui</argument>
+                                <argument>test</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>pact-generate-fleet-state-service</id>
                         <phase>verify</phase>

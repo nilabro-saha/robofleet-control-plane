@@ -50,3 +50,23 @@ Supported sort fields used by the UI:
 - `battery`
 - `status`
 - `timestamp`
+
+## Frontend architecture layering
+
+The UI follows lightweight layered boundaries similar to backend modules:
+
+- `src/presentation/*` — DOM bindings and view rendering
+- `src/application/*` — orchestration / use-case flow
+- `src/domain/*` — pure state + formatting logic
+- `src/infrastructure/*` — API and runtime configuration
+
+## Tests
+
+This module uses Node's built-in test runner (`node:test`) with ESM.
+
+Run tests:
+
+```bash
+cd fleet-dashboard-ui
+npm test
+```

@@ -198,12 +198,15 @@ Run full flow from repository root:
 mvn -f pom.xml verify
 ```
 
+This verify flow now also runs the dashboard UI tests (`fleet-dashboard-ui/npm test`) via root Maven orchestration.
+
 Root orchestration order:
 
-1. Fleet consumer pact generation
-2. Simulator consumer pact generation
-3. Fleet provider verification
-4. Simulator provider verification
+1. Dashboard UI tests (`node:test` via npm)
+2. Fleet consumer pact generation
+3. Simulator consumer pact generation
+4. Fleet provider verification
+5. Simulator provider verification
 
 Pacts are written to top-level `pacts/` (gitignored).
 
@@ -211,6 +214,12 @@ Run module lifecycle only (skip root contract orchestration):
 
 ```bash
 mvn -f pom.xml -DskipContractTests=true verify
+```
+
+Skip UI tests when needed:
+
+```bash
+mvn -f pom.xml -DskipUiTests=true verify
 ```
 
 ---

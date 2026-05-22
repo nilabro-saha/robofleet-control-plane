@@ -34,14 +34,15 @@ Enable operators to create tasks and monitor progress directly from the dashboar
 
 ## Technical plan
 
-- Extend `fleet-dashboard-ui/src/app.js` with task query and create flows.
+- Extend the dashboard application layer (`fleet-dashboard-ui/src/application/dashboardController.js`) with task query and create flows.
+- Add/adjust domain + infrastructure modules as needed (for example `src/domain/*` and `src/infrastructure/*`) instead of adding logic directly to bootstrap.
 - Add task sections in `index.html` and corresponding CSS states in `styles.css`.
 - Reuse existing API base query param mechanism (`?apiBase=`).
 - Keep server-side sorting/filtering where available; avoid heavy client-side joins.
 
 ## Testing plan
 
-- Unit-style tests for state formatting helpers (if UI test harness is introduced).
+- Add/extend Node built-in test runner (`node:test`) coverage for task formatting/state/API modules.
 - Manual scenario scripts:
   - create task -> observe queued
   - assign/run/completed progression
