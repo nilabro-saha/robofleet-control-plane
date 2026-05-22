@@ -17,13 +17,18 @@ This service bridges that gap by consuming the event stream and continuously ups
 
 - Consume `robot.telemetry` events
 - Upsert latest state per `robotId` in SQLite
-- Expose API endpoints:
+- Expose latest-state endpoints:
+  - `GET /api/robot-statuses`
+  - `GET /api/robot-statuses/{id}`
+- Expose lifecycle/identity endpoints:
   - `GET /api/robots`
   - `GET /api/robots/{id}`
+  - `POST /api/robots`
+  - `DELETE /api/robots/{id}`
 
 ## API query behavior
 
-`GET /api/robots` supports Spring pageable query params:
+`GET /api/robot-statuses` supports Spring pageable query params:
 
 - `sort=<field>,<direction>`
   - example: `sort=battery,desc`
