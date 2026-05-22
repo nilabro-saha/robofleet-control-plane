@@ -1,6 +1,6 @@
 package com.robofleet.robotsimulator.config;
 
-import com.robofleet.robotsimulator.robot.application.RobotRegistry;
+import com.robofleet.robotsimulator.robot.application.RobotOrchestrator;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.concurrent.Executors;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Runtime bean wiring for registry and shared scheduling pool.
+ * Runtime bean wiring for orchestrator and shared scheduling pool.
  *
  * <p>Intent: centralize simulator runtime composition so application services depend on stable,
  * testable abstractions instead of constructing infrastructure directly.</p>
@@ -47,13 +47,17 @@ public class SimulatorRuntimeConfiguration {
   }
 
   /**
-   * Central robot registry for active robot actors.
+   * Central robot orchestrator for active robot actors.
    *
+   * @param robotMap map used by robot actor references
    * @param applicationEventPublisher event publisher for robot lifecycle events
-   * @return runtime robot registry bean
+   * @return runtime robot orchestrator bean
    */
   @Bean
-  public RobotRegistry robotRegistry(ApplicationEventPublisher applicationEventPublisher) {
-    return new RobotRegistry(applicationEventPublisher);
+  public RobotOrchestrator robotOrchestrator(
+      RobotMap robotMap,
+      ApplicationEventPublisher applicationEventPublisher
+  ) {
+    return new RobotOrchestrator(robotMap, applicationEventPublisher);
   }
 }

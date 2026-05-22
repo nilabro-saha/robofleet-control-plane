@@ -33,17 +33,17 @@ public class RobotLifecycleListener {
    */
   @EventListener
   public void onRobotAdvanced(RobotAdvancedEvent event) {
-    var lastStateView = event.robotActor().lastStateView();
+    var robotView = event.robotView();
     robotLifecyclePublisher.publishTelemetry(
         RobotStateChangedEvent.builder()
             .eventName(TELEMETRY_EVENT_NAME)
             .correlationId(UUID.randomUUID().toString())
-            .robotId(lastStateView.robotId())
-            .positionX(lastStateView.positionX())
-            .positionY(lastStateView.positionY())
-            .battery(lastStateView.battery())
-            .status(lastStateView.status())
-            .timestamp(lastStateView.timestamp())
+            .robotId(robotView.robotId())
+            .positionX(robotView.positionX())
+            .positionY(robotView.positionY())
+            .battery(robotView.battery())
+            .status(robotView.status())
+            .timestamp(robotView.timestamp())
             .build()
     );
   }
@@ -53,18 +53,18 @@ public class RobotLifecycleListener {
    */
   @EventListener
   public void onRobotCreated(RobotCreatedEvent event) {
-    var lastStateView = event.robotActor().lastStateView();
+    var robotView = event.robotView();
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .eventName(LIFECYCLE_EVENT_NAME)
             .correlationId(UUID.randomUUID().toString())
-            .robotId(lastStateView.robotId())
-            .positionX(lastStateView.positionX())
-            .positionY(lastStateView.positionY())
-            .battery(lastStateView.battery())
-            .status(lastStateView.status())
+            .robotId(robotView.robotId())
+            .positionX(robotView.positionX())
+            .positionY(robotView.positionY())
+            .battery(robotView.battery())
+            .status(robotView.status())
             .eventType(LifecycleEventType.CREATED)
-            .timestamp(lastStateView.timestamp())
+            .timestamp(robotView.timestamp())
             .build());
   }
 
@@ -73,18 +73,18 @@ public class RobotLifecycleListener {
    */
   @EventListener
   public void onRobotDeleted(RobotDeletedEvent event) {
-    var lastStateView = event.robotActor().lastStateView();
+    var robotView = event.robotView();
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .eventName(LIFECYCLE_EVENT_NAME)
             .correlationId(UUID.randomUUID().toString())
-            .robotId(lastStateView.robotId())
-            .positionX(lastStateView.positionX())
-            .positionY(lastStateView.positionY())
-            .battery(lastStateView.battery())
-            .status(lastStateView.status())
+            .robotId(robotView.robotId())
+            .positionX(robotView.positionX())
+            .positionY(robotView.positionY())
+            .battery(robotView.battery())
+            .status(robotView.status())
             .eventType(LifecycleEventType.REMOVED)
-            .timestamp(lastStateView.timestamp())
+            .timestamp(robotView.timestamp())
             .build());
   }
 }

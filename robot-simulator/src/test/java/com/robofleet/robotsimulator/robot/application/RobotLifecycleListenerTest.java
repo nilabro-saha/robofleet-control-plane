@@ -6,8 +6,8 @@ import com.robofleet.robotsimulator.robot.application.event.RobotAdvancedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
 
-import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
-import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
+import java.time.Instant;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor.LastStateView;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,18 +19,22 @@ class RobotLifecycleListenerTest {
   @Mock
   private RobotLifecyclePublisher robotLifecyclePublisher;
 
+  private LastStateView robotView(String robotId) {
+    return new LastStateView(
+        robotId,
+        1.0,
+        2.0,
+        50.0,
+        "IDLE",
+        Instant.parse("2026-05-20T10:00:00Z")
+    );
+  }
+
   @Test
   void onRobotAdvanced_shouldPublishTelemetry() {
     RobotLifecycleListener listener = new RobotLifecycleListener(robotLifecyclePublisher);
-    RobotActor robotActor = RobotActor.builder()
-        .robotId("robot-1")
-        .positionX(1.0)
-        .positionY(2.0)
-        .battery(50.0)
-        .status(RobotStatus.IDLE)
-        .build();
 
-    listener.onRobotAdvanced(new RobotAdvancedEvent(robotActor));
+    listener.onRobotAdvanced(new RobotAdvancedEvent(robotView("robot-1")));
 
     verify(robotLifecyclePublisher).publishTelemetry(any());
   }
@@ -38,15 +42,8 @@ class RobotLifecycleListenerTest {
   @Test
   void onRobotCreated_shouldPublishLifecycleCreated() {
     RobotLifecycleListener listener = new RobotLifecycleListener(robotLifecyclePublisher);
-    RobotActor robotActor = RobotActor.builder()
-        .robotId("robot-1")
-        .positionX(1.0)
-        .positionY(2.0)
-        .battery(50.0)
-        .status(RobotStatus.IDLE)
-        .build();
 
-    listener.onRobotCreated(new RobotCreatedEvent(robotActor));
+    listener.onRobotCreated(new RobotCreatedEvent(robotView("robot-1")));
 
     verify(robotLifecyclePublisher).publishLifecycle(any());
   }
@@ -54,15 +51,8 @@ class RobotLifecycleListenerTest {
   @Test
   void onRobotDeleted_shouldPublishLifecycleRemoved() {
     RobotLifecycleListener listener = new RobotLifecycleListener(robotLifecyclePublisher);
-    RobotActor robotActor = RobotActor.builder()
-        .robotId("robot-1")
-        .positionX(1.0)
-        .positionY(2.0)
-        .battery(50.0)
-        .status(RobotStatus.IDLE)
-        .build();
 
-    listener.onRobotDeleted(new RobotDeletedEvent(robotActor));
+    listener.onRobotDeleted(new RobotDeletedEvent(robotView("robot-1")));
 
     verify(robotLifecyclePublisher).publishLifecycle(any());
   }

@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
-import com.robofleet.robotsimulator.robot.application.RobotSimulationOrchestrator;
+import com.robofleet.robotsimulator.robot.application.RobotOrchestrator;
+import com.robofleet.robotsimulator.robot.application.actor.RobotOrchestration;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
 import java.time.Instant;
@@ -18,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class DeletePendingLifecycleEventHandlerTest {
 
   @Mock
-  private RobotSimulationOrchestrator robotSimulationOrchestrator;
+  private RobotOrchestrator robotOrchestrator;
 
   @InjectMocks
   private DeletePendingLifecycleEventHandler handler;
@@ -46,7 +47,7 @@ class DeletePendingLifecycleEventHandlerTest {
   }
 
   @Test
-  void handleEvent_shouldDeregisterRobotById() {
+  void handleEvent_shouldSendDestroyCommandToRegistry() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
         .robotId("robot-42")
         .eventType(LifecycleEventType.DELETE_PENDING)
@@ -55,6 +56,6 @@ class DeletePendingLifecycleEventHandlerTest {
 
     handler.handleEvent(event);
 
-    verify(robotSimulationOrchestrator).deregisterRobot("robot-42");
+    verify(robotOrchestrator).tell(new RobotOrchestration.Destroy("robot-42"));
   }
 }

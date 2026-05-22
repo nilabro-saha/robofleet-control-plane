@@ -1,16 +1,15 @@
 package com.robofleet.robotsimulator.robot.application;
 
 import com.robofleet.robotsimulator.config.SimulatorProperties;
-import com.robofleet.robotsimulator.robot.application.command.AdvanceRobotStateRequest;
+import com.robofleet.robotsimulator.robot.application.actor.RobotCommand;
+import com.robofleet.robotsimulator.robot.application.actor.RobotOrchestration;
 import com.robofleet.robotsimulator.robot.domain.behavior.RandomAdvance;
-import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +28,7 @@ public class AdvanceRobotStateScheduler {
 
   private final ScheduledExecutorService robotTelemetryScheduler;
   private final SimulatorProperties simulatorProperties;
-  private final RobotRegistry robotRegistry;
-  private final ApplicationEventPublisher applicationEventPublisher;
+  private final RobotOrchestrator robotOrchestrator;
 
   /**
    * Starts a periodic scheduler that emits one state-advance request per robot.
@@ -38,7 +36,11 @@ public class AdvanceRobotStateScheduler {
   @EventListener(ApplicationReadyEvent.class)
   public void startScheduling() {
     robotTelemetryScheduler.scheduleAtFixedRate(
-        this::publishAdvanceRequests,
+        () -> robotOrchestrator.tell(
+            new RobotOrchestration.TellAll(
+                new RobotCommand.AdvanceState(new RandomAdvance(ThreadLocalRandom.current()))
+            )
+        ),
         0,
         simulatorProperties.getStateAdvanceIntervalMs(),
         TimeUnit.MILLISECONDS
@@ -50,10 +52,4 @@ public class AdvanceRobotStateScheduler {
     );
   }
 
-  private void publishAdvanceRequests() {
-    for (RobotActor robotActor : robotRegistry.getRegisteredRobots()) {
-      applicationEventPublisher.publishEvent(
-          new AdvanceRobotStateRequest(robotActor, new RandomAdvance(ThreadLocalRandom.current())));
-    }
-  }
 }

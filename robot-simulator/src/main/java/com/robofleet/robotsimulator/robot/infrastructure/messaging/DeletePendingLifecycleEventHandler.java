@@ -1,6 +1,7 @@
 package com.robofleet.robotsimulator.robot.infrastructure.messaging;
 
-import com.robofleet.robotsimulator.robot.application.RobotSimulationOrchestrator;
+import com.robofleet.robotsimulator.robot.application.RobotOrchestrator;
+import com.robofleet.robotsimulator.robot.application.actor.RobotOrchestration;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DeletePendingLifecycleEventHandler implements RobotLifecycleEventHandler {
 
-  private final RobotSimulationOrchestrator robotSimulationOrchestrator;
+  private final RobotOrchestrator robotOrchestrator;
 
   @Override
   public boolean canHandle(RobotLifecycleEvent event) {
@@ -27,6 +28,6 @@ public class DeletePendingLifecycleEventHandler implements RobotLifecycleEventHa
 
   @Override
   public void handleEvent(RobotLifecycleEvent event) {
-    robotSimulationOrchestrator.deregisterRobot(event.getRobotId());
+    robotOrchestrator.tell(new RobotOrchestration.Destroy(event.getRobotId()));
   }
 }

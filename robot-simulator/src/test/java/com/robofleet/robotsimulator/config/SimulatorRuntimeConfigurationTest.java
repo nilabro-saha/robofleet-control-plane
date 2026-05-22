@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-import com.robofleet.robotsimulator.robot.application.RobotRegistry;
+import com.robofleet.robotsimulator.robot.application.RobotOrchestrator;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,10 +42,13 @@ class SimulatorRuntimeConfigurationTest {
   }
 
   @Test
-  void robotRegistry_shouldCreateRegistryBean() {
-    RobotRegistry robotRegistry = configuration.robotRegistry(mock(ApplicationEventPublisher.class));
+  void robotOrchestrator_shouldCreateOrchestratorBean() {
+    RobotOrchestrator robotOrchestrator = configuration.robotOrchestrator(
+        new RectangularMap(0.0, 100.0, 0.0, 100.0),
+        mock(ApplicationEventPublisher.class)
+    );
 
-    assertNotNull(robotRegistry);
+    assertNotNull(robotOrchestrator);
   }
 
 }

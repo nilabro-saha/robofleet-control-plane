@@ -1,11 +1,11 @@
 package com.robofleet.robotsimulator.robot.application.event;
 
-import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.model.RobotActor.LastStateView;
 
 /**
  * Spring event emitted when a robot is deleted/deregistered.
  *
  * @author Nilabro Saha
  */
-public record RobotDeletedEvent(RobotActor robotActor) {
+public record RobotDeletedEvent(LastStateView robotView) {
 }
