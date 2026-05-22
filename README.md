@@ -29,6 +29,40 @@ I intentionally structured this repository to showcase practical software engine
 
 ---
 
+## Technical highlights
+
+1. **Actor-style simulation model**  
+   I model robots as mutable in-memory actors with explicit locking and deterministic state advancement hooks.
+
+2. **Lifecycle command/event choreography**  
+   I model create/delete/rehydrate behavior as lifecycle events with handler-based dispatch on both service and simulator sides.
+
+3. **Startup rehydration for resilience**  
+   I implement startup rehydration to republish active robot state after service restart, allowing runtime actor restoration without duplicate registration.
+
+4. **Read-optimized projection service**  
+   I implement fleet state materialization by consuming telemetry and continuously upserting latest robot state, giving operators a low-latency “current truth” API.
+
+5. **Operator-oriented API semantics**  
+   I keep read APIs paging/sorting friendly, and I return `202 Accepted` for async create/delete lifecycle processing.
+
+6. **Operationally realistic UI behavior**  
+   I design the dashboard around real operator workflows: live refresh controls, backend sorting, details panel, and async lifecycle feedback.
+
+7. **Contract-testing discipline across modules**  
+   I wire both modules into Pact generation and verification in both directions, with root Maven orchestration for full cross-module contract flow.
+
+8. **Unified multi-stack verification**  
+   I orchestrate Java tests, contract checks, and dashboard UI tests in one root-level verification pipeline.
+
+9. **Reproducible local operations**  
+   I provide one-command scripts that handle startup/shutdown, logs, and Docker/no-Docker Kafka paths for consistent demos.
+
+10. **Versioned contracts and phased roadmap**  
+   I document event metadata/versioning policies and an explicit evolution path from MVP control-plane behavior toward ROS2 and Gazebo simulation flows.
+
+---
+
 ## System architecture (at a glance)
 
 ### Visual diagram (Mermaid)
@@ -111,28 +145,6 @@ Stop everything:
 - Robot lifecycle summary API: `http://localhost:8080/api/robots`
 
 If startup scripts pick a fallback port (for example `8081`), use the printed URL from script output.
-
----
-
-## Technical highlights
-
-1. **Actor-style simulation model**  
-   I modeled robots as mutable in-memory actors (`RobotActor`) with explicit locking and deterministic state advancement hooks.
-
-2. **Lifecycle command/event choreography**  
-   I modeled create/delete/rehydrate behavior as lifecycle events with handler-based dispatch on both service and simulator sides.
-
-3. **Startup rehydration for resilience**  
-   I implemented startup rehydration (`ActiveRobotRehydrationPublisher`) to republish active robot state after service restart, allowing runtime actor restoration without duplicate registration.
-
-4. **Read-optimized projection service**  
-   I implemented fleet state materialization by consuming telemetry and continuously upserting latest robot state, giving operators a low-latency “current truth” API.
-
-5. **Contract-testing discipline across modules**  
-   I wired both modules into Pact generation and verification, with root Maven orchestration for full cross-module contract flow.
-
-6. **Operationally practical developer experience**  
-   I added scripts that support both Docker and local no-Docker Kafka fallback, with explicit PID/log management for reproducible demos.
 
 ---
 
