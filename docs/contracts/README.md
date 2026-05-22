@@ -1,6 +1,7 @@
 # Event Contract Specifications
 
-This directory contains versioned event contract docs for the RoboFleet control plane.
+This folder contains the event contract docs for the RoboFleet control plane.
+Each contract is versioned so we can evolve safely without breaking consumers.
 
 ## Current specs
 
@@ -11,12 +12,12 @@ This directory contains versioned event contract docs for the RoboFleet control 
 
 ## Metadata policy (Phase 2 baseline)
 
-- `correlationId` is mandatory for newly emitted events.
-- `eventName` is mandatory for newly emitted events (kebab-case).
-- `eventId` and `causationId` are deferred to a later phase.
-- Consumers should tolerate unknown additive fields.
+- `correlationId` is required for all newly emitted events.
+- `eventName` is required for all newly emitted events (kebab-case).
+- `eventId` and `causationId` are planned for a later phase.
+- Consumers should ignore unknown additive fields.
 
 ## Versioning policy
 
-- Additive fields are backward-compatible and preferred.
-- Breaking schema changes require a new versioned contract doc.
+- Prefer additive changes when possible (backward-compatible).
+- If a change is breaking, publish a new versioned contract doc.

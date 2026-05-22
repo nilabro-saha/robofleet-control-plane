@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Handles CREATED lifecycle events by applying activation materialization.
+ *
+ * @author Nilabro Saha
  */
 @Component
 @RequiredArgsConstructor

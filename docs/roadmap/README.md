@@ -1,13 +1,13 @@
 # RoboFleet Evolution Roadmap (Detailed Execution Plans)
 
-This directory expands the high-level evolution roadmap from the root `README.md`
-into phase-by-phase execution plans.
+This directory breaks the high-level roadmap in the root `README.md` into practical,
+phase-by-phase execution plans.
 
 ## Purpose
 
-- Make each phase executable by turning goals into concrete workstreams
-- Clarify dependencies and acceptance criteria before coding
-- Keep implementation planning version-controlled and reviewable
+- Turn each phase into concrete, actionable workstreams
+- Clarify dependencies and acceptance criteria before implementation
+- Keep planning docs version-controlled and easy to review
 
 ## Phases
 
@@ -21,9 +21,9 @@ into phase-by-phase execution plans.
 
 ## Suggested planning cadence
 
-- Treat each phase plan as the source for sprint/iteration breakdown.
-- Update the `Current status` block in each phase document as work lands.
-- Add links to implemented PRs/issues under each workstream for traceability.
+- Treat each phase plan as input for sprint/iteration breakdown.
+- Update the `Current status` section in each phase doc as work lands.
+- Add links to merged PRs/issues under each workstream for traceability.
 
 ## Checklist update rules (roadmap phase documents)
 

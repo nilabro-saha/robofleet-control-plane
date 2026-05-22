@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Future control-plane command channel to request robot task execution.
+Planned control-plane command channel for requesting robot task execution.
 
 ## JSON schema (draft)
 
@@ -25,5 +25,5 @@ Future control-plane command channel to request robot task execution.
 
 ## Notes
 
-- Phase 2 status: draft only (topic not implemented in code yet).
-- `correlationId` will be mandatory from first implementation.
+- Phase 2 status: draft only (topic is not implemented yet).
+- `correlationId` will be required from the first implementation.

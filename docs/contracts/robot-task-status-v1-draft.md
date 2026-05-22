@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Future status channel to report task execution progress/results back to control-plane.
+Planned status channel for reporting task progress and outcomes back to the control plane.
 
 ## JSON schema (draft)
 
@@ -24,6 +24,6 @@ Future status channel to report task execution progress/results back to control-
 
 ## Notes
 
-- Phase 2 status: draft only (topic not implemented in code yet).
+- Phase 2 status: draft only (topic is not implemented yet).
 - `status` examples: `QUEUED`, `ASSIGNED`, `RUNNING`, `COMPLETED`, `FAILED`.
-- `correlationId` links status stream to originating task command.
+- `correlationId` links each status event to the original task command.

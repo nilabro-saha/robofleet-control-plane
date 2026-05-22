@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 
 /**
  * Application-level orchestrator for robot lifecycle and simulator scheduling requests.
+ *
+ * <p>Intent: coordinate robot creation/removal workflows and state normalization rules while
+ * keeping transport and persistence concerns outside core simulator behavior.</p>
+ *
+ * @author Nilabro Saha
  */
 @Slf4j
 @Service

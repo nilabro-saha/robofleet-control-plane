@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Carries robot lifecycle orchestration commands/events between fleet-state-service and robot-simulator.
+Carries robot lifecycle orchestration events between `fleet-state-service` and `robot-simulator`.
 
 ## JSON schema (logical)
 
@@ -38,10 +38,10 @@ Carries robot lifecycle orchestration commands/events between fleet-state-servic
 - `schemaVersion`: required, fixed value `v1`.
 - `eventName`: required, fixed value `robot-lifecycle-changed`.
 - `correlationId`: required in Phase 2 baseline.
-- `x`, `y`, `battery`, `status`: optional, used for state-carrying events (especially rehydration).
-- `eventType`: drives handler routing logic.
+- `x`, `y`, `battery`, `status`: optional; mainly used when events carry state (especially during rehydration).
+- `eventType`: determines which handler path should run.
 
 ## Compatibility
 
 - Consumers should ignore unknown additive fields.
-- New event types must be added conservatively with handler fallback behavior.
+- New event types should be introduced carefully, with fallback handling in consumers.

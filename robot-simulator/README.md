@@ -4,7 +4,7 @@
 
 This module is now a **Spring Boot robot actor simulator** for the edge side of RoboFleet.
 
-It models each robot as an in-memory actor with internal mutable state and registers telemetry tasks into a shared Spring-managed thread pool.
+It models each robot as an in-memory actor with internal mutable state, and registers telemetry tasks into a shared Spring-managed thread pool.
 
 ## What it does
 
@@ -95,7 +95,7 @@ From repository root:
 mvn -f pom.xml verify
 ```
 
-This root Maven flow executes:
+From the root, this Maven flow executes:
 
 1. Fleet consumer pact generation
 2. Simulator consumer pact generation

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Canonical schema versions for robot-simulator event payloads.
+ *
+ * @author Nilabro Saha
  */
 @Getter
 @RequiredArgsConstructor

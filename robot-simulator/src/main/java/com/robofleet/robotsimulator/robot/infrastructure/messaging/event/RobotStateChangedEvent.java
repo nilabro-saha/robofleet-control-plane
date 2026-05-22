@@ -8,6 +8,8 @@ import lombok.extern.jackson.Jacksonized;
 
 /**
  * Outgoing telemetry contract emitted to Kafka.
+ *
+ * @author Nilabro Saha
  */
 @Value
 @Builder

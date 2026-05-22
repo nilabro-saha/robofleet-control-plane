@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Kafka lifecycle consumer for simulator-side lifecycle handling.
+ *
+ * <p>Intent: serve as the inbound messaging boundary that decodes lifecycle events and delegates
+ * business handling to dedicated strategy handlers.</p>
+ *
+ * @author Nilabro Saha
  */
 @Component
 @Slf4j

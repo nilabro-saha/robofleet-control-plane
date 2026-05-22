@@ -4,6 +4,8 @@ import java.time.Instant;
 
 /**
  * Shared metadata contract for Kafka events in robot-simulator.
+ *
+ * @author Nilabro Saha
  */
 public interface KafkaEventMetadata {
 

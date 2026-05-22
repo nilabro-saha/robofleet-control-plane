@@ -2,7 +2,7 @@
 
 ## Objective
 
-Introduce a bridge service that translates control-plane Kafka task messages to ROS2 execution primitives and returns ROS2 feedback/results back to Kafka.
+Introduce a bridge service that translates control-plane Kafka task messages into ROS2 execution primitives, and then sends ROS2 feedback/results back to Kafka.
 
 ## Scope
 
@@ -14,7 +14,7 @@ Introduce a bridge service that translates control-plane Kafka task messages to 
 
 - Control-plane remains orchestration source of truth.
 - ROS2 runtime remains execution source of truth for in-flight robot behavior.
-- Bridge is stateless or minimally stateful where possible.
+- Keep the bridge stateless (or minimally stateful) whenever possible.
 
 ## Contracts to establish
 

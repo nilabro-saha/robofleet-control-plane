@@ -4,12 +4,12 @@
 
 These scripts are the **operator convenience layer** for the MVP.
 
-They reduce startup friction so the whole system can be launched/stopped predictably without memorizing many commands.
+They reduce startup friction so the whole system can be launched and stopped predictably, without memorizing lots of commands.
 
 ## Why this exists in the MVP
 
 An MVP is most valuable when anyone can run it quickly.
-These scripts make the demo reproducible across different machine constraints (Docker present vs absent, port conflicts, existing host Kafka, etc.).
+These scripts make the demo reproducible across different machine constraints (Docker present/absent, port conflicts, existing host Kafka, etc.).
 
 ## Responsibilities
 

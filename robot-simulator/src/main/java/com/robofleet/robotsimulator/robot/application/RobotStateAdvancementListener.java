@@ -13,6 +13,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Listens for single state advancement requests and publishes telemetry for advanced state.
+ *
+ * <p>Intent: isolate advancement execution and failure handling from scheduler/event wiring so
+ * domain state transitions remain predictable and observable.</p>
+ *
+ * @author Nilabro Saha
  */
 @Slf4j
 @Component

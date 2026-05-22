@@ -16,6 +16,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Schedules periodic requests to advance robot state.
+ *
+ * <p>Intent: decouple time-based advancement triggering from advancement execution so scheduling
+ * policy can evolve independently from state-transition logic.</p>
+ *
+ * @author Nilabro Saha
  */
 @Slf4j
 @Component

@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
  *
  * <p>Intent: represent the control-plane snapshot table, not an event history table.
  * Each row is overwritten as newer telemetry arrives for the same robot.</p>
+ *
+ * @author Nilabro Saha
  */
 @Entity
 @Table(name = "robot_state")

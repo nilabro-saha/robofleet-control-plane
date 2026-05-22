@@ -6,6 +6,8 @@ import lombok.Value;
 
 /**
  * API projection for robot identity/lifecycle metadata.
+ *
+ * @author Nilabro Saha
  */
 @Value
 @Builder

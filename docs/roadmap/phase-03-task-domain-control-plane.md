@@ -58,6 +58,6 @@ Add first-class task orchestration to the control plane so operators can create,
 
 ## Exit criteria
 
-- Operator can create a task via API.
-- Task is persisted and visible through list/detail APIs.
+- Operators can create tasks via API.
+- Tasks are persisted and visible through list/detail APIs.
 - Status events drive transitions to terminal states.

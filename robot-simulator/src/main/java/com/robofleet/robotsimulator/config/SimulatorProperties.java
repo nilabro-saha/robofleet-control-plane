@@ -9,6 +9,11 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * Configuration properties for robot simulator runtime behavior.
+ *
+ * <p>Intent: provide one validated, centralized configuration contract for simulator sizing,
+ * timing, and map boundaries across runtime components.</p>
+ *
+ * @author Nilabro Saha
  */
 @Getter
 @Setter

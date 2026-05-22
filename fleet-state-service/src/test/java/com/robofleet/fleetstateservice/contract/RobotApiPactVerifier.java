@@ -20,6 +20,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+/**
+ * Consumer-side Pact contract tests for the dashboard-facing HTTP APIs exposed by
+ * {@code fleet-state-service}.
+ *
+ * <p>These tests define the expected request/response shape and assert that generated Pact
+ * interactions remain compatible with the dashboard consumer expectations.
+ *
+ * @author Nilabro Saha
+ */
 @ExtendWith(PactConsumerTestExt.class)
 @PactTestFor(providerName = "fleet-state-service")
 @PactDirectory("../pacts")
@@ -27,6 +36,9 @@ class RobotApiPactVerifier {
 
   private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
+  /**
+   * Defines the contract for listing robot status projections via {@code GET /api/robot-statuses}.
+   */
   @Pact(consumer = "fleet-dashboard-ui")
   V4Pact getRobotStatusesPact(PactBuilder builder) {
     return builder
@@ -55,6 +67,9 @@ class RobotApiPactVerifier {
         .toPact(V4Pact.class);
   }
 
+  /**
+   * Defines the contract for listing robot lifecycle summaries via {@code GET /api/robots}.
+   */
   @Pact(consumer = "fleet-dashboard-ui")
   V4Pact getRobotsPact(PactBuilder builder) {
     return builder
@@ -75,6 +90,9 @@ class RobotApiPactVerifier {
         .toPact(V4Pact.class);
   }
 
+  /**
+   * Defines the contract for fetching a single robot summary via {@code GET /api/robots/{id}}.
+   */
   @Pact(consumer = "fleet-dashboard-ui")
   V4Pact getRobotByIdPact(PactBuilder builder) {
     return builder
@@ -95,6 +113,9 @@ class RobotApiPactVerifier {
         .toPact(V4Pact.class);
   }
 
+  /**
+   * Verifies that the generated interaction for {@code /api/robot-statuses} matches expectations.
+   */
   @Test
   @PactTestFor(pactMethod = "getRobotStatusesPact")
   void shouldMatchGetRobotStatusesContract(MockServer mockServer)
@@ -117,6 +138,9 @@ class RobotApiPactVerifier {
         false);
   }
 
+  /**
+   * Verifies that the generated interaction for {@code /api/robots} matches expectations.
+   */
   @Test
   @PactTestFor(pactMethod = "getRobotsPact")
   void shouldMatchGetRobotsContract(MockServer mockServer)
@@ -139,6 +163,9 @@ class RobotApiPactVerifier {
         false);
   }
 
+  /**
+   * Verifies that the generated interaction for {@code /api/robots/{id}} matches expectations.
+   */
   @Test
   @PactTestFor(pactMethod = "getRobotByIdPact")
   void shouldMatchGetRobotByIdContract(MockServer mockServer)

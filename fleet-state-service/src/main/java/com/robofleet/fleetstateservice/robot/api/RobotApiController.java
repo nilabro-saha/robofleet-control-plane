@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>Intent: expose a clean, stable query surface for operator experiences
  * (dashboards, status widgets, ad-hoc checks) without coupling them to Kafka
  * or persistence implementation details.</p>
+ *
+ * @author Nilabro Saha
  */
 @RestController
 @RequestMapping("/api")
@@ -64,6 +66,9 @@ public class RobotApiController {
 
   /**
    * Lists robot identity/lifecycle data.
+   *
+   * @param pageable pagination and sorting request
+   * @return robot identity/lifecycle projection list
    */
   @GetMapping("/robots")
   public List<RobotSummaryResponse> getAllRobots(
@@ -74,6 +79,9 @@ public class RobotApiController {
 
   /**
    * Fetches robot identity/lifecycle data for one robot.
+   *
+   * @param id robot identifier
+   * @return 200 with summary when found, otherwise 404
    */
   @GetMapping("/robots/{id}")
   public ResponseEntity<RobotSummaryResponse> getRobotById(@PathVariable("id") String id) {
@@ -84,6 +92,9 @@ public class RobotApiController {
 
   /**
    * Creates a new robot orchestration request and marks it pending.
+   *
+   * @param request create-robot request payload
+   * @return 202 response containing pending robot metadata
    */
   @PostMapping("/robots")
   public ResponseEntity<RobotCreationResponse> createRobot(
@@ -94,6 +105,10 @@ public class RobotApiController {
 
   /**
    * Requests asynchronous robot deletion via lifecycle workflow.
+   *
+   * @param id robot identifier
+   * @param correlationId optional correlation identifier from request header
+   * @return 202 with pending-delete summary when found, otherwise 404
    */
   @DeleteMapping("/robots/{id}")
   public ResponseEntity<RobotSummaryResponse> deleteRobot(

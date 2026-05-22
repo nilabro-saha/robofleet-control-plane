@@ -11,6 +11,8 @@ import lombok.Value;
  *
  * <p>Intent: provide UI-friendly, immutable data representing what operators
  * need to understand current robot health and position.</p>
+ *
+ * @author Nilabro Saha
  */
 @Value
 @Builder

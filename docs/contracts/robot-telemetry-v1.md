@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Carries latest robot runtime telemetry from simulator/edge producers to fleet-state-service for state materialization.
+Carries the latest runtime telemetry from simulator/edge producers to `fleet-state-service`, where it is materialized into current robot state.
 
 ## JSON schema (logical)
 
@@ -39,4 +39,4 @@ Carries latest robot runtime telemetry from simulator/edge producers to fleet-st
 ## Compatibility
 
 - Consumers must ignore unknown additive fields.
-- Existing required fields must retain semantics in v1.
+- Existing required fields must keep the same meaning in v1.

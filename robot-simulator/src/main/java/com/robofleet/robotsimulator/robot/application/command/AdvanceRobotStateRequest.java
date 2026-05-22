@@ -5,6 +5,8 @@ import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
 
 /**
  * Event requesting a single robot state advancement cycle.
+ *
+ * @author Nilabro Saha
  */
 public record AdvanceRobotStateRequest(RobotActor robotActor, AdvancementMode advancementMode) {
 }

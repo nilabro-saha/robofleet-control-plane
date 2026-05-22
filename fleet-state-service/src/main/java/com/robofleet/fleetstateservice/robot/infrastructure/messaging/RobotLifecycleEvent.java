@@ -8,6 +8,8 @@ import lombok.extern.jackson.Jacksonized;
 
 /**
  * Lifecycle contract for create/remove robot events transported over Kafka.
+ *
+ * @author Nilabro Saha
  */
 @Value
 @Builder

@@ -11,6 +11,8 @@ import lombok.extern.jackson.Jacksonized;
  *
  * <p>Intent: define the minimum shared schema between telemetry producers
  * (simulator/robots) and the fleet state materializer.</p>
+ *
+ * @author Nilabro Saha
  */
 @Value
 @Builder

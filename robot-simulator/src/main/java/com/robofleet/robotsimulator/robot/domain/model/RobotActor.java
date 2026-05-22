@@ -15,6 +15,8 @@ import lombok.Getter;
 
 /**
  * Mutable actor representing one robot with internal state.
+ *
+ * @author Nilabro Saha
  */
 @Getter
 @Builder

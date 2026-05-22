@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Handles REMOVED lifecycle events by removing materialized robot state.
+ *
+ * @author Nilabro Saha
  */
 @Component
 @RequiredArgsConstructor

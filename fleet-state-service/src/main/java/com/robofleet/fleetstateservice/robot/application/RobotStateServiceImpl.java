@@ -34,6 +34,8 @@ import org.springframework.stereotype.Service;
  *
  * <p>Intent: maintain an always-current snapshot by upserting incoming telemetry
  * and serving read-optimized DTOs for API consumers.</p>
+ *
+ * @author Nilabro Saha
  */
 @Service
 @RequiredArgsConstructor
@@ -92,6 +94,9 @@ public class RobotStateServiceImpl implements RobotStateService {
 
   /**
    * Creates a robot orchestration request and persists pending status.
+   *
+   * @param request create-robot request payload
+   * @return pending robot creation response
    */
   @Override
   public RobotCreationResponse createRobot(CreateRobotRequest request) {
@@ -124,6 +129,10 @@ public class RobotStateServiceImpl implements RobotStateService {
 
   /**
    * Marks robot as delete pending and emits lifecycle delete command.
+   *
+   * @param robotId robot identifier to mark for deletion
+   * @param correlationId correlation identifier to propagate into lifecycle event
+   * @return updated robot summary when robot exists, otherwise empty
    */
   @Override
   public Optional<RobotSummaryResponse> requestRobotDeletion(String robotId, String correlationId) {
@@ -175,6 +184,9 @@ public class RobotStateServiceImpl implements RobotStateService {
 
   /**
    * Retrieves robot identity/lifecycle rows for all robots.
+   *
+   * @param pageable paging and sorting request
+   * @return list of robot identity/lifecycle summaries
    */
   @Override
   public List<RobotSummaryResponse> getAllRobots(Pageable pageable) {
@@ -184,6 +196,9 @@ public class RobotStateServiceImpl implements RobotStateService {
 
   /**
    * Retrieves one robot identity/lifecycle row by id.
+   *
+   * @param robotId robot identifier
+   * @return robot summary when available
    */
   @Override
   public Optional<RobotSummaryResponse> getRobotById(String robotId) {
@@ -203,6 +218,8 @@ public class RobotStateServiceImpl implements RobotStateService {
 
   /**
    * Applies REMOVED lifecycle update by deleting robot projections.
+   *
+   * @param event lifecycle event indicating robot removal
    */
   @Override
   public void applyRemovedLifecycleEvent(RobotLifecycleEvent event) {
@@ -211,6 +228,8 @@ public class RobotStateServiceImpl implements RobotStateService {
 
   /**
    * Applies CREATED lifecycle update by activating and seeding robot state.
+   *
+   * @param event lifecycle event indicating robot creation completion
    */
   @Override
   public void applyCreatedLifecycleEvent(RobotLifecycleEvent event) {

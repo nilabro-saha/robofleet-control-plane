@@ -2,7 +2,7 @@
 
 ## Objective
 
-Enable operators to create tasks and monitor progress from the dashboard without needing direct API tools.
+Enable operators to create tasks and monitor progress directly from the dashboard, without needing API tools.
 
 ## Scope
 
@@ -15,7 +15,7 @@ Enable operators to create tasks and monitor progress from the dashboard without
 
 - A new operator can create a task in under 30 seconds.
 - Task status changes are visible within polling interval.
-- Failures provide clear, actionable reason text.
+- Failures show clear, actionable reason text.
 
 ## Planned features
 

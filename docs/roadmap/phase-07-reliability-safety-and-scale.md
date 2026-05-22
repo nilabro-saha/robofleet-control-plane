@@ -2,7 +2,7 @@
 
 ## Objective
 
-Harden the platform for multi-robot operations, failure handling, and operational trustworthiness.
+Harden the platform for multi-robot operations, better failure handling, and day-to-day operational trustworthiness.
 
 ## Scope
 

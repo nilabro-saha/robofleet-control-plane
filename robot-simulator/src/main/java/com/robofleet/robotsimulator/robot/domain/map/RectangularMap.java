@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @param maxX maximum allowed X coordinate in map space
  * @param minY minimum allowed Y coordinate in map space
  * @param maxY maximum allowed Y coordinate in map space
+ * @author Nilabro Saha
  */
 public record RectangularMap(double minX, double maxX, double minY, double maxY)
     implements RobotMap {

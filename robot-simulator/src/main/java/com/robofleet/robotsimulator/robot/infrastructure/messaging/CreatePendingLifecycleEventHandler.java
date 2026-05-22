@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Handles CREATE_PENDING lifecycle events by registering robots in simulator runtime.
+ *
+ * <p>Intent: map create/rehydrate lifecycle commands into orchestrator registration operations
+ * while keeping command-type branching localized.</p>
+ *
+ * @author Nilabro Saha
  */
 @Component
 @RequiredArgsConstructor

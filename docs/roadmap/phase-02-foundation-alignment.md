@@ -2,11 +2,11 @@
 
 ## Objective
 
-Prepare the current MVP architecture for task orchestration by tightening contracts, topic semantics, and lifecycle/state conventions without breaking existing robot telemetry flows.
+Prepare the current MVP architecture for task orchestration by tightening contracts, topic semantics, and lifecycle/state conventions, without breaking existing telemetry flows.
 
 ## Why this phase matters
 
-Phase 3 (task domain) will add new APIs, entities, and Kafka topics. If message contracts, IDs, and naming conventions are not standardized now, task features will create brittle integration points and migration overhead.
+Phase 3 (task domain) will add new APIs, entities, and Kafka topics. If message contracts, IDs, and naming conventions are not standardized now, task features can introduce brittle integration points and extra migration overhead.
 
 ## Current status
 
@@ -21,7 +21,7 @@ Not yet complete:
 - No formal event contract/versioning documentation for all topics.
 - No standardized correlation-id / causation-id policy implemented end-to-end.
 - No task lifecycle enum/state model yet.
-- Naming conventions between API projections and topics need consolidation guidance.
+- Naming conventions between API projections and topics still need consolidation guidance.
 
 ## Detailed target outcomes
 

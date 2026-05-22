@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * Master robot table containing robot identity attributes.
+ *
+ * @author Nilabro Saha
  */
 @Entity
 @Table(name = "robot")

@@ -11,12 +11,19 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Runtime bean wiring for registry and shared scheduling pool.
+ *
+ * <p>Intent: centralize simulator runtime composition so application services depend on stable,
+ * testable abstractions instead of constructing infrastructure directly.</p>
+ *
+ * @author Nilabro Saha
  */
 @Configuration
 public class SimulatorRuntimeConfiguration {
 
   /**
    * Shared scheduled pool where robot telemetry tasks are registered.
+   *
+   * @return shared scheduler used by simulator background tasks
    */
   @Bean(destroyMethod = "shutdownNow")
   public ScheduledExecutorService robotTelemetryScheduler() {
@@ -25,6 +32,9 @@ public class SimulatorRuntimeConfiguration {
 
   /**
    * Bounded rectangular map configured for robot simulation.
+   *
+   * @param simulatorProperties simulator map-boundary properties
+   * @return map implementation used by robot movement logic
    */
   @Bean
   public RobotMap robotMap(SimulatorProperties simulatorProperties) {
@@ -38,6 +48,9 @@ public class SimulatorRuntimeConfiguration {
 
   /**
    * Central robot registry for active robot actors.
+   *
+   * @param applicationEventPublisher event publisher for robot lifecycle events
+   * @return runtime robot registry bean
    */
   @Bean
   public RobotRegistry robotRegistry(ApplicationEventPublisher applicationEventPublisher) {

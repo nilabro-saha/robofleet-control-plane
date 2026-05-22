@@ -14,6 +14,8 @@ import org.springframework.data.repository.query.Param;
  *
  * <p>Intent: rely on Spring Data defaults for MVP simplicity; custom query
  * complexity is intentionally deferred until needed.</p>
+ *
+ * @author Nilabro Saha
  */
 public interface RobotStateRepository extends JpaRepository<RobotState, String> {
 

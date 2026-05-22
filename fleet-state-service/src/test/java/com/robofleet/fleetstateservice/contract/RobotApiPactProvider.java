@@ -27,6 +27,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 
+/**
+ * Provider-side Pact verification for HTTP contracts exposed by {@code fleet-state-service} to
+ * the dashboard consumer.
+ *
+ * <p>This class binds Pact verification to a MockMvc target and provides state fixtures through
+ * mocked {@link RobotStateService} responses.
+ *
+ * @author Nilabro Saha
+ */
 @WebMvcTest(RobotApiController.class)
 @Provider("fleet-state-service")
 @Consumer("fleet-dashboard-ui")
@@ -42,6 +51,7 @@ class RobotApiPactProvider {
   @MockBean
   private RobotStateService robotStateService;
 
+  /** Configures the Pact verification target to use Spring MockMvc. */
   @BeforeEach
   void before(PactVerificationContext context) {
     if (context != null) {
@@ -51,12 +61,14 @@ class RobotApiPactProvider {
     }
   }
 
+  /** Executes each Pact interaction discovered for this provider/consumer pair. */
   @TestTemplate
   @ExtendWith(PactVerificationInvocationContextProvider.class)
   void verifyPact(PactVerificationContext context) {
     context.verifyInteraction();
   }
 
+  /** Supplies provider state for {@code GET /api/robot-statuses}. */
   @State("robot statuses exist")
   void robotStatusesExist() {
     when(robotStateService.getAllRobotStatuses(any(Pageable.class))).thenReturn(List.of(
@@ -72,6 +84,7 @@ class RobotApiPactProvider {
             .build()));
   }
 
+  /** Supplies provider state for {@code GET /api/robots}. */
   @State("robot summaries exist")
   void robotSummariesExist() {
     when(robotStateService.getAllRobots(any(Pageable.class))).thenReturn(List.of(
@@ -82,6 +95,7 @@ class RobotApiPactProvider {
             .build()));
   }
 
+  /** Supplies provider state for {@code GET /api/robots/{id}} using {@code robot-1}. */
   @State("robot with id robot-1 exists")
   void robotWithIdExists() {
     when(robotStateService.getRobotById("robot-1")).thenReturn(Optional.of(

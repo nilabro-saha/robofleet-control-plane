@@ -13,6 +13,8 @@ import org.springframework.data.repository.query.Param;
 
 /**
  * Persistence access point for master robot identity rows.
+ *
+ * @author Nilabro Saha
  */
 public interface RobotRepository extends JpaRepository<Robot, String> {
 

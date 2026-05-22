@@ -8,6 +8,8 @@ import lombok.extern.jackson.Jacksonized;
 
 /**
  * Lifecycle contract emitted to Kafka for create/remove state changes.
+ *
+ * @author Nilabro Saha
  */
 @Value
 @Builder

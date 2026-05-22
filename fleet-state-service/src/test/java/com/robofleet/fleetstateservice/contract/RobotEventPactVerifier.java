@@ -15,13 +15,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 /**
- * Consumer-side Pact contracts for Kafka-style robot events consumed by fleet-state-service.
+ * Consumer-side Pact contracts for asynchronous robot events consumed by
+ * {@code fleet-state-service}.
+ *
+ * <p>These contracts lock expected payload shape for telemetry and lifecycle events emitted by the
+ * simulator side.
+ *
+ * @author Nilabro Saha
  */
 @ExtendWith(PactConsumerTestExt.class)
 @PactTestFor(providerName = "robot-simulator", providerType = ProviderType.ASYNCH)
 @PactDirectory("../pacts")
 class RobotEventPactVerifier {
 
+  /** Defines the telemetry-event message contract consumed by fleet-state-service. */
   @Pact(consumer = "fleet-state-service")
   V4Pact telemetryEventPact(PactBuilder builder) {
     return builder
@@ -47,6 +54,7 @@ class RobotEventPactVerifier {
         .toPact(V4Pact.class);
   }
 
+  /** Defines the lifecycle-event message contract consumed by fleet-state-service. */
   @Pact(consumer = "fleet-state-service")
   V4Pact lifecycleEventPact(PactBuilder builder) {
     return builder
@@ -73,6 +81,7 @@ class RobotEventPactVerifier {
         .toPact(V4Pact.class);
   }
 
+  /** Verifies the generated telemetry message contract fixture. */
   @Test
   @PactTestFor(pactMethod = "telemetryEventPact", providerType = ProviderType.ASYNCH)
   void shouldMatchTelemetryEventContract(V4Interaction.AsynchronousMessage message) throws Exception {
@@ -89,6 +98,7 @@ class RobotEventPactVerifier {
         false);
   }
 
+  /** Verifies the generated lifecycle message contract fixture. */
   @Test
   @PactTestFor(pactMethod = "lifecycleEventPact", providerType = ProviderType.ASYNCH)
   void shouldMatchLifecycleEventContract(V4Interaction.AsynchronousMessage message) throws Exception {

@@ -4,12 +4,12 @@
 
 This module is the **operator visibility surface** of the MVP.
 
-It deliberately stays lightweight (plain HTML/CSS/JS) to keep attention on the behavior of the system rather than framework setup.
+It intentionally stays lightweight (plain HTML/CSS/JS) so the focus remains on system behavior, not framework setup.
 
 ## Why this exists in the MVP
 
 The control plane is only useful if humans can quickly understand fleet health.
-This UI converts API responses into an at-a-glance operations view.
+This UI turns API responses into an at-a-glance operations view.
 
 ## Responsibilities
 
@@ -36,7 +36,7 @@ This keeps the UI static and backend-agnostic.
 
 ## Sorting contract
 
-Sorting is not performed in the browser. The UI calls backend pageable sort params:
+Sorting is not done in the browser. The UI calls backend pageable sort params:
 
 - `GET /api/robot-statuses?sort=<field>,<direction>&size=100`
 

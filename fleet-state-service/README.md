@@ -4,13 +4,13 @@
 
 This module is the **state materialization layer** of the MVP.
 
-Its role is to transform a stream of robot telemetry events into a simple, queryable view of fleet state for operators and downstream tools.
+Its role is to turn a stream of robot telemetry events into a simple, queryable fleet-state view for operators and downstream tools.
 
 In other words: this service answers **"what is the latest known state of each robot right now?"**
 
 ## Why this exists in the MVP
 
-Kafka is excellent for event flow, but operators and dashboards need low-latency read endpoints.
+Kafka is great for event flow, but operators and dashboards still need low-latency read endpoints.
 This service bridges that gap by consuming the event stream and continuously upserting latest state.
 
 ## Responsibilities
@@ -46,7 +46,7 @@ Supported sort fields for this endpoint:
 
 ## Design note
 
-This service intentionally stores only the latest state (not full history), keeping the MVP simple and fast to reason about.
+This service intentionally stores only the latest state (not full history), which keeps the MVP simple and easier to reason about.
 
 ## Local Pact contract testing
 
@@ -87,7 +87,7 @@ From repository root:
 mvn -f pom.xml verify
 ```
 
-This root Maven flow executes:
+From the root, this Maven flow executes:
 
 1. Fleet consumer pact generation
 2. Simulator consumer pact generation

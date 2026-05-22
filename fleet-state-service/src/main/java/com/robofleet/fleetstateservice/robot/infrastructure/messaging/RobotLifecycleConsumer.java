@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Kafka ingestion boundary for robot telemetry and lifecycle events.
+ *
+ * @author Nilabro Saha
  */
 @Component
 @Slf4j

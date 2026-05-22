@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Canonical schema versions for fleet-state-service event payloads.
+ *
+ * @author Nilabro Saha
  */
 @Getter
 @RequiredArgsConstructor

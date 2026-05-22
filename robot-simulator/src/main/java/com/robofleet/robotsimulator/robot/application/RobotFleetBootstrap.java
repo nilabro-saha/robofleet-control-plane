@@ -7,6 +7,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Spawns initial robots, registers them, and schedules periodic telemetry tasks.
+ *
+ * <p>Intent: provide a single startup hook that initializes simulator fleet state after the Spring
+ * context is fully ready.</p>
+ *
+ * @author Nilabro Saha
  */
 @Component
 @RequiredArgsConstructor

@@ -9,7 +9,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * Emits robot lifecycle events to Kafka.
+ * Emits simulator telemetry and lifecycle events to Kafka topics.
+ *
+ * <p>Intent: keep Kafka publishing concerns isolated from domain/application event handling so
+ * lifecycle listeners remain transport-agnostic.</p>
+ *
+ * @author Nilabro Saha
  */
 @Slf4j
 @Component
@@ -26,6 +31,8 @@ public class RobotLifecyclePublisher {
 
   /**
    * Publishes one telemetry event keyed by robot id.
+   *
+   * @param telemetryEvent telemetry payload to publish
    */
   public void publishTelemetry(RobotStateChangedEvent telemetryEvent) {
     kafkaTemplate.send(telemetryTopic, telemetryEvent.getRobotId(), telemetryEvent);
@@ -34,6 +41,8 @@ public class RobotLifecyclePublisher {
 
   /**
    * Publishes one lifecycle event keyed by robot id.
+   *
+   * @param lifecycleEvent lifecycle payload to publish
    */
   public void publishLifecycle(RobotLifecycleEvent lifecycleEvent) {
     kafkaTemplate.send(lifecycleTopic, lifecycleEvent.getRobotId(), lifecycleEvent);

@@ -2,7 +2,7 @@
 
 ## Objective
 
-Validate task execution visually and behaviorally in Gazebo, closing the loop between control-plane orchestration and realistic robot movement.
+Validate task execution both visually and behaviorally in Gazebo, so the loop is closed between control-plane orchestration and realistic robot movement.
 
 ## Scope
 

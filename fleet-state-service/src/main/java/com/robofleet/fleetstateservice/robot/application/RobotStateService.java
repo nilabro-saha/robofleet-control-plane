@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
  *
  * <p>Intent: keep higher-level behavior explicit (ingest telemetry, read latest state)
  * while isolating callers from persistence and transport concerns.</p>
+ *
+ * @author Nilabro Saha
  */
 public interface RobotStateService {
 
@@ -37,6 +39,7 @@ public interface RobotStateService {
    * Marks a robot as pending deletion and publishes a delete lifecycle command.
    *
    * @param robotId unique robot identifier
+   * @param correlationId correlation identifier propagated to downstream lifecycle event
    * @return updated robot summary when robot exists
    */
   Optional<RobotSummaryResponse> requestRobotDeletion(String robotId, String correlationId);

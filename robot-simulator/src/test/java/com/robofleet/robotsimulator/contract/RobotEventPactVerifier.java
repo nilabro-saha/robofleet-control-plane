@@ -14,11 +14,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+/**
+ * Consumer-side Pact contracts for asynchronous lifecycle command events consumed by
+ * {@code robot-simulator}.
+ *
+ * <p>These contracts assert the payload shape expected from fleet-state-service when issuing
+ * create/delete lifecycle commands.
+ *
+ * @author Nilabro Saha
+ */
 @ExtendWith(PactConsumerTestExt.class)
 @PactTestFor(providerName = "fleet-state-service", providerType = ProviderType.ASYNCH)
 @PactDirectory("../pacts")
 class RobotEventPactVerifier {
 
+  /** Defines the contract for the create-pending lifecycle command message. */
   @Pact(consumer = "robot-simulator")
   V4Pact createPendingLifecycleCommandPact(PactBuilder builder) {
     return builder
@@ -45,6 +55,7 @@ class RobotEventPactVerifier {
         .toPact(V4Pact.class);
   }
 
+  /** Defines the contract for the delete-pending lifecycle command message. */
   @Pact(consumer = "robot-simulator")
   V4Pact deletePendingLifecycleCommandPact(PactBuilder builder) {
     return builder
@@ -71,6 +82,7 @@ class RobotEventPactVerifier {
         .toPact(V4Pact.class);
   }
 
+  /** Verifies the generated create-pending lifecycle command message fixture. */
   @Test
   @PactTestFor(pactMethod = "createPendingLifecycleCommandPact", providerType = ProviderType.ASYNCH)
   void shouldMatchCreatePendingLifecycleCommand(V4Interaction.AsynchronousMessage message)
@@ -87,6 +99,7 @@ class RobotEventPactVerifier {
         false);
   }
 
+  /** Verifies the generated delete-pending lifecycle command message fixture. */
   @Test
   @PactTestFor(pactMethod = "deletePendingLifecycleCommandPact", providerType = ProviderType.ASYNCH)
   void shouldMatchDeletePendingLifecycleCommand(V4Interaction.AsynchronousMessage message)

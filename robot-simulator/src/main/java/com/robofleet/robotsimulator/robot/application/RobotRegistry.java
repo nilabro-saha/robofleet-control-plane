@@ -13,6 +13,11 @@ import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * Central registry representing active simulator robots.
+ *
+ * <p>Intent: provide a thread-safe source of truth for currently active robot actors and publish
+ * lifecycle transition events whenever membership changes.</p>
+ *
+ * @author Nilabro Saha
  */
 @Getter
 public class RobotRegistry {
@@ -21,12 +26,19 @@ public class RobotRegistry {
   private final Lock robotsLock = new ReentrantLock();
   private final ApplicationEventPublisher applicationEventPublisher;
 
+  /**
+   * Creates a registry bound to the provided application event publisher.
+   *
+   * @param applicationEventPublisher publisher used for created/deleted robot events
+   */
   public RobotRegistry(ApplicationEventPublisher applicationEventPublisher) {
     this.applicationEventPublisher = applicationEventPublisher;
   }
 
   /**
    * Registers one robot actor and emits lifecycle CREATED.
+   *
+   * @param robotActor robot actor to register
    */
   public void register(RobotActor robotActor) {
     robotsLock.lock();
@@ -40,6 +52,8 @@ public class RobotRegistry {
 
   /**
    * Returns immutable snapshot of registered robots.
+   *
+   * @return immutable copy of currently registered robots
    */
   public List<RobotActor> getRegisteredRobots() {
     robotsLock.lock();
@@ -52,6 +66,8 @@ public class RobotRegistry {
 
   /**
    * Removes all registered robots and emits lifecycle REMOVED events.
+   *
+   * @return immutable list of removed robots
    */
   public List<RobotActor> clearAndGetRemovedRobots() {
     robotsLock.lock();
@@ -69,6 +85,9 @@ public class RobotRegistry {
 
   /**
    * Removes one robot by id and emits lifecycle REMOVED when present.
+   *
+   * @param robotId robot identifier to remove
+   * @return true if a robot was removed, otherwise false
    */
   public boolean deregisterById(String robotId) {
     robotsLock.lock();

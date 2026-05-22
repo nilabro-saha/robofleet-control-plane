@@ -2,7 +2,7 @@
 
 ## Objective
 
-Ensure robots already present in control-plane persistence are recreated in simulator runtime after restarts so they resume live behavior and telemetry.
+Make sure robots that already exist in control-plane persistence are recreated in simulator runtime after restarts, so they resume live behavior and telemetry.
 
 ## Current status
 
@@ -39,7 +39,7 @@ In place (implemented in current codebase):
 
 ## Exit criteria
 
-- After service restart, previously ACTIVE robots become live again without manual recreation.
+- After a service restart, previously ACTIVE robots become live again without manual recreation.
 - No duplicate runtime actors are created for the same `robotId`.
 - Dashboard receives fresh telemetry for rehydrated robots.
 

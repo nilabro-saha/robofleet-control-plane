@@ -1,8 +1,8 @@
 # RoboFleet Control Plane MVP
 
-This repository contains a multi-module MVP for a **RoboFleet Control Plane** idea.
+This repository contains a multi-module MVP for a **RoboFleet Control Plane** concept.
 
-The intent of this project is to demonstrate a clear separation of concerns that often appears in real robotics platforms:
+The goal of this project is to show a clean separation of concerns that often appears in real robotics platforms:
 
 - an **edge producer** (robots/simulators) that emits telemetry,
 - a **control-plane state service** that materializes fleet state from a stream,
@@ -16,7 +16,7 @@ The intent of this project is to demonstrate a clear separation of concerns that
 - Persist latest robot state to SQLite
 - Expose API and a tiny dashboard for fleet visibility
 
-This MVP intentionally focuses on **current state materialization** rather than historical analytics. It is a “what is happening now?” system for operators.
+This MVP intentionally focuses on **current state materialization** rather than historical analytics. It is a “what is happening right now?” system for operators.
 
 ## Repository Structure
 
@@ -29,7 +29,7 @@ This MVP intentionally focuses on **current state materialization** rather than 
 └── docker-compose.yml      # Local Kafka infrastructure
 ```
 
-For deeper intent and file-level guidance, see module docs:
+For deeper context and file-level guidance, see the module docs:
 
 - `robot-simulator/README.md`
 - `fleet-state-service/README.md`
@@ -71,7 +71,7 @@ cd robot-simulator
 mvn spring-boot:run
 ```
 
-The simulator continuously emits synthetic state for robot actors and is intentionally configurable so you can quickly tune behavior (spawn count, map bounds, publish interval).
+The simulator continuously emits synthetic state for robot actors and is intentionally configurable, so you can quickly tune behavior (spawn count, map bounds, publish interval).
 
 ## Verify
 
@@ -191,7 +191,7 @@ mvn -f pom.xml -DskipContractTests=true verify
 
 ## Evolution Plan: Control Plane + Kafka + ROS2 + Gazebo
 
-This section captures the intended path from the current MVP into a task-driven
+This section outlines the intended path from the current MVP into a task-driven
 robot operations platform where an operator can assign jobs like:
 
 "Pick object at point A, then drop at point B"
@@ -421,7 +421,7 @@ Exit criteria:
 
 ## Definition of Done for “Pick and Place from Dashboard”
 
-The capability is considered complete when all are true:
+This capability is considered complete when all of the following are true:
 
 - Task can be created from dashboard with pickup/drop coordinates
 - Task is assigned to a specific robot and status is visible live

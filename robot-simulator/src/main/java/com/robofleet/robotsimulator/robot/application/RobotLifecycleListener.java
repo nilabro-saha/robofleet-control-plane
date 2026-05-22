@@ -13,6 +13,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Listens to robot lifecycle/advancement events and publishes to Kafka.
+ *
+ * <p>Intent: translate internal simulator domain events into external integration events without
+ * leaking transport concerns into domain actors.</p>
+ *
+ * @author Nilabro Saha
  */
 @Component
 @RequiredArgsConstructor

@@ -8,7 +8,13 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * Publishes lifecycle events to the shared lifecycle topic.
+ * Publishes lifecycle commands to the shared robot lifecycle topic.
+ *
+ * <p>This is the infrastructure adapter for the
+ * {@link com.robofleet.fleetstateservice.robot.application.RobotCreationCommandGateway}
+ * outbound port.
+ *
+ * @author Nilabro Saha
  */
 @Component
 @Slf4j
@@ -22,6 +28,8 @@ public class RobotCreationCommandPublisher implements RobotCreationCommandGatewa
 
   /**
    * Publishes one lifecycle event keyed by robot id.
+   *
+   * @param command lifecycle command payload
    */
   @Override
   public void publishLifecycleEvent(RobotLifecycleEvent command) {

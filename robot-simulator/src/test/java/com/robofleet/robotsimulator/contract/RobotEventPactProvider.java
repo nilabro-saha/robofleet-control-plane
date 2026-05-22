@@ -19,7 +19,12 @@ import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * Provider-side Pact verification for simulator-emitted asynchronous robot events.
+ * Provider-side Pact verification for asynchronous events emitted by {@code robot-simulator}.
+ *
+ * <p>This class exposes deterministic telemetry and lifecycle event fixtures used by
+ * fleet-state-service consumer verification.
+ *
+ * @author Nilabro Saha
  */
 @Provider("robot-simulator")
 @PactFolder("../pacts")
@@ -29,6 +34,7 @@ class RobotEventPactProvider {
       .findAndRegisterModules()
       .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+  /** Configures Pact to verify asynchronous message interactions. */
   @BeforeEach
   @SuppressWarnings("JUnitMalformedDeclaration")
   void before(PactVerificationContext context) {
@@ -37,22 +43,26 @@ class RobotEventPactProvider {
     }
   }
 
+  /** Executes each discovered Pact interaction for this provider. */
   @TestTemplate
   @ExtendWith(PactVerificationInvocationContextProvider.class)
   void verifyPact(PactVerificationContext context) {
     context.verifyInteraction();
   }
 
+  /** Declares provider state for telemetry-event fixture generation. */
   @State("robot telemetry event is emitted")
   void robotTelemetryEventIsEmitted() {
     // State setup not required for static fixture payload.
   }
 
+  /** Declares provider state for lifecycle-event fixture generation. */
   @State("robot lifecycle event is emitted")
   void robotLifecycleEventIsEmitted() {
     // State setup not required for static fixture payload.
   }
 
+  /** Supplies the fixture payload for the telemetry-event interaction. */
   @PactVerifyProvider("robot telemetry event")
   String robotTelemetryEvent() throws JsonProcessingException {
     RobotStateChangedEvent event = RobotStateChangedEvent.builder()
@@ -68,6 +78,7 @@ class RobotEventPactProvider {
     return objectMapper.writeValueAsString(event);
   }
 
+  /** Supplies the fixture payload for the lifecycle-event interaction. */
   @PactVerifyProvider("robot lifecycle event")
   String robotLifecycleEvent() throws JsonProcessingException {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()

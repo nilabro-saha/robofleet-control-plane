@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Handles DELETE_PENDING lifecycle events by removing robots from simulator runtime.
+ *
+ * <p>Intent: localize delete-command handling so simulator de-registration behavior remains
+ * independent from Kafka consumer wiring.</p>
+ *
+ * @author Nilabro Saha
  */
 @Component
 @RequiredArgsConstructor

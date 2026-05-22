@@ -7,6 +7,8 @@ import lombok.extern.jackson.Jacksonized;
 
 /**
  * Command payload to request creation of a simulator robot.
+ *
+ * @author Nilabro Saha
  */
 @Value
 @Builder
