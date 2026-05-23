@@ -27,13 +27,7 @@ public class RobotLifecycleConsumer {
    */
   @KafkaListener(
       topics = "${robot.simulator.kafka.lifecycle-topic:robot.lifecycle}",
-      groupId = "${spring.kafka.consumer.group-id:robot-simulator}",
-      properties = {
-          "spring.json.trusted.packages=com.robofleet.robotsimulator.*",
-          "spring.json.value.default.type=com.robofleet.robotsimulator."
-              + "robot.infrastructure.messaging.event.RobotLifecycleEvent",
-          "spring.json.use.type.headers=false"
-      }
+      groupId = "${spring.kafka.consumer.group-id:robot-simulator}"
   )
   public void consume(RobotLifecycleEvent event) {
     try {
