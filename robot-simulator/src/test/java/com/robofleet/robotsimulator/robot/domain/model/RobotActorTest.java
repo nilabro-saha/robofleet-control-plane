@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.robofleet.robotsimulator.robot.domain.behavior.RandomAdvance;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
-import java.time.Instant;
+
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Test;
 
@@ -23,15 +23,13 @@ class RobotActorTest {
         .status(RobotStatus.IDLE)
         .build();
 
-    RobotActor.LastStateView lastStateView = robotActor.lastStateView();
+    RobotState lastStateView = robotActor.lastState();
 
     assertEquals("robot-1", lastStateView.robotId());
-    assertEquals(10.13, lastStateView.positionX());
-    assertEquals(20.99, lastStateView.positionY());
-    assertEquals(55.68, lastStateView.battery());
-    assertEquals("IDLE", lastStateView.status());
-    assertNotNull(lastStateView.timestamp());
-    assertTrue(lastStateView.timestamp().isBefore(Instant.now().plusSeconds(1)));
+    assertEquals(10.126, lastStateView.positionX());
+    assertEquals(20.994, lastStateView.positionY());
+    assertEquals(55.678, lastStateView.battery());
+    assertEquals(RobotStatus.IDLE, lastStateView.status());
   }
 
   @Test
@@ -47,7 +45,7 @@ class RobotActorTest {
 
     for (int i = 0; i < 200; i++) {
       robotActor.advanceState(map, new RandomAdvance(ThreadLocalRandom.current()));
-      RobotActor.LastStateView lastStateView = robotActor.lastStateView();
+      RobotState lastStateView = robotActor.lastState();
       assertTrue(lastStateView.positionX() >= 0.0 && lastStateView.positionX() <= 100.0);
       assertTrue(lastStateView.positionY() >= 0.0 && lastStateView.positionY() <= 100.0);
       assertTrue(lastStateView.battery() >= 0.0 && lastStateView.battery() <= 100.0);

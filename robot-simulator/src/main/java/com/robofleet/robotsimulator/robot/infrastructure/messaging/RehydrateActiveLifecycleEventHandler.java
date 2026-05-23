@@ -2,7 +2,7 @@ package com.robofleet.robotsimulator.robot.infrastructure.messaging;
 
 import com.robofleet.robotsimulator.robot.application.RobotOrchestrator;
 import com.robofleet.robotsimulator.robot.application.actor.RobotOrchestration;
-import com.robofleet.robotsimulator.robot.application.actor.RobotState;
+import com.robofleet.robotsimulator.robot.domain.model.RobotState;
 import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;

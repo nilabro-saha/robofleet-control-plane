@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import com.robofleet.robotsimulator.robot.application.actor.RobotCommand;
 import com.robofleet.robotsimulator.robot.application.actor.RobotOrchestration;
-import com.robofleet.robotsimulator.robot.application.actor.RobotState;
+import com.robofleet.robotsimulator.robot.domain.model.RobotState;
 import com.robofleet.robotsimulator.robot.application.event.RobotAdvancedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;

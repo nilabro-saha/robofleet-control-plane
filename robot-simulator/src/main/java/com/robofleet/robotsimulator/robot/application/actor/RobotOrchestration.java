@@ -1,5 +1,7 @@
 package com.robofleet.robotsimulator.robot.application.actor;
 
+import com.robofleet.robotsimulator.robot.domain.model.RobotState;
+
 /**
  * Marker contract for commands handled by {@code RobotOrchestrator} via message passing.
  *

@@ -1,6 +1,4 @@
-package com.robofleet.robotsimulator.robot.application.actor;
-
-import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
+package com.robofleet.robotsimulator.robot.domain.model;
 
 /**
  * State payload describing desired initial robot state.

@@ -4,10 +4,10 @@ import com.robofleet.robotsimulator.robot.application.actor.ActorRef;
 import com.robofleet.robotsimulator.robot.application.actor.RobotActorRef;
 import com.robofleet.robotsimulator.robot.application.actor.RobotCommand;
 import com.robofleet.robotsimulator.robot.application.actor.RobotOrchestration;
-import com.robofleet.robotsimulator.robot.application.actor.RobotState;
 import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
+import com.robofleet.robotsimulator.robot.domain.model.RobotState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -61,7 +61,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
     robotsLock.lock();
     try {
       boolean alreadyRegistered = robotActorRefs.stream()
-          .anyMatch(ref -> ref.lastStateView().robotId().equals(requestedState.robotId()));
+          .anyMatch(ref -> ref.lastState().robotId().equals(requestedState.robotId()));
       if (alreadyRegistered) {
         log.info("Robot {} already registered, skipping create command", requestedState.robotId());
         return;
@@ -73,7 +73,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
           applicationEventPublisher
       );
       robotActorRefs.add(robotActorRef);
-      var robotView = robotActorRef.lastStateView();
+      var robotView = robotActorRef.lastState();
       applicationEventPublisher.publishEvent(new RobotCreatedEvent(robotView));
       log.info(
           "Registered command-driven robot {} at ({}, {})",
@@ -90,7 +90,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
     robotsLock.lock();
     try {
       boolean alreadyRegistered = robotActorRefs.stream()
-          .anyMatch(ref -> ref.lastStateView().robotId().equals(robotId));
+          .anyMatch(ref -> ref.lastState().robotId().equals(robotId));
       if (alreadyRegistered) {
         log.info("Robot {} already registered, skipping create command", robotId);
         return;
@@ -103,7 +103,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
           applicationEventPublisher
       );
       robotActorRefs.add(robotActorRef);
-      var robotView = robotActorRef.lastStateView();
+      var robotView = robotActorRef.lastState();
       applicationEventPublisher.publishEvent(new RobotCreatedEvent(robotView));
       log.info(
           "Registered random-state robot {} at ({}, {})",
@@ -120,7 +120,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
     robotsLock.lock();
     try {
       List<RobotDeletedEvent> deletedEvents = robotActorRefs.stream()
-          .map(robotActorRef -> new RobotDeletedEvent(robotActorRef.lastStateView()))
+          .map(robotActorRef -> new RobotDeletedEvent(robotActorRef.lastState()))
           .toList();
       robotActorRefs.clear();
       for (var deletedEvent : deletedEvents) {
@@ -137,7 +137,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
     try {
       RobotActorRef removedRobotRef = null;
       for (RobotActorRef robotActorRef : robotActorRefs) {
-        if (robotActorRef.lastStateView().robotId().equals(robotId)) {
+        if (robotActorRef.lastState().robotId().equals(robotId)) {
           removedRobotRef = robotActorRef;
           break;
         }
@@ -146,7 +146,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
       if (removedRobotRef != null) {
         robotActorRefs.remove(removedRobotRef);
         applicationEventPublisher.publishEvent(
-            new RobotDeletedEvent(removedRobotRef.lastStateView())
+            new RobotDeletedEvent(removedRobotRef.lastState())
         );
         log.info("Deregistered command-driven robot {}", robotId);
         return;

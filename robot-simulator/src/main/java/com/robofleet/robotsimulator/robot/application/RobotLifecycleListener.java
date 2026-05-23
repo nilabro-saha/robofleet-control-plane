@@ -6,6 +6,7 @@ import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.LifecycleEventType;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotLifecycleEvent;
 import com.robofleet.robotsimulator.robot.infrastructure.messaging.event.RobotStateChangedEvent;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -42,8 +43,8 @@ public class RobotLifecycleListener {
             .positionX(robotView.positionX())
             .positionY(robotView.positionY())
             .battery(robotView.battery())
-            .status(robotView.status())
-            .timestamp(robotView.timestamp())
+            .status(robotView.status().name())
+            .timestamp(Instant.now())
             .build()
     );
   }
@@ -62,9 +63,9 @@ public class RobotLifecycleListener {
             .positionX(robotView.positionX())
             .positionY(robotView.positionY())
             .battery(robotView.battery())
-            .status(robotView.status())
+            .status(robotView.status().name())
             .eventType(LifecycleEventType.CREATED)
-            .timestamp(robotView.timestamp())
+            .timestamp(Instant.now())
             .build());
   }
 
@@ -82,9 +83,9 @@ public class RobotLifecycleListener {
             .positionX(robotView.positionX())
             .positionY(robotView.positionY())
             .battery(robotView.battery())
-            .status(robotView.status())
+            .status(robotView.status().name())
             .eventType(LifecycleEventType.REMOVED)
-            .timestamp(robotView.timestamp())
+            .timestamp(Instant.now())
             .build());
   }
 }

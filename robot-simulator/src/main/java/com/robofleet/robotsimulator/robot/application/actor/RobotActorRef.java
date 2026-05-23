@@ -5,6 +5,7 @@ import com.robofleet.robotsimulator.robot.domain.map.MapLocation;
 import com.robofleet.robotsimulator.robot.domain.map.RectangularMap;
 import com.robofleet.robotsimulator.robot.domain.map.RobotMap;
 import com.robofleet.robotsimulator.robot.domain.model.RobotActor;
+import com.robofleet.robotsimulator.robot.domain.model.RobotState;
 import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
@@ -58,8 +59,8 @@ public class RobotActorRef implements ActorRef<RobotCommand> {
   /**
    * Returns a read-only state view for the managed actor.
    */
-  public RobotActor.LastStateView lastStateView() {
-    return robotActor.lastStateView();
+  public RobotState lastState() {
+    return robotActor.lastState();
   }
 
   /**
@@ -99,28 +100,24 @@ public class RobotActorRef implements ActorRef<RobotCommand> {
   private void handleAdvanceState(RobotCommand.AdvanceState command) {
     try {
       robotActor.advanceState(robotMap, command.advancementMode());
-      applicationEventPublisher.publishEvent(new RobotAdvancedEvent(lastStateView()));
-    } catch (Exception exception) {
-      log.error(
-          "Failed to process advance-state command for {}",
-          robotActor.getRobotId(),
-          exception
-      );
+      applicationEventPublisher.publishEvent(new RobotAdvancedEvent(lastState()));
+    } catch (Exception e) {
+      log.error("Failed to process advance-state command for {}", robotActor.getRobotId(), e);
     }
   }
 
   private static double clampX(RobotMap map, double x) {
-    if (map instanceof RectangularMap rectangularMap) {
-      return rectangularMap.clampX(x);
-    }
-    return x;
+    return switch (map) {
+      case RectangularMap rm -> rm.clampX(x);
+      case null -> x;
+    };
   }
 
   private static double clampY(RobotMap map, double y) {
-    if (map instanceof RectangularMap rectangularMap) {
-      return rectangularMap.clampY(y);
-    }
-    return y;
+    return switch (map) {
+      case RectangularMap rm -> rm.clampY(y);
+      case null -> y;
+    };
   }
 
   private static double clampBattery(double value) {

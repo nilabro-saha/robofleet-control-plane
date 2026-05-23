@@ -6,8 +6,8 @@ import com.robofleet.robotsimulator.robot.application.event.RobotAdvancedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotCreatedEvent;
 import com.robofleet.robotsimulator.robot.application.event.RobotDeletedEvent;
 
-import java.time.Instant;
-import com.robofleet.robotsimulator.robot.domain.model.RobotActor.LastStateView;
+import com.robofleet.robotsimulator.robot.domain.model.RobotState;
+import com.robofleet.robotsimulator.robot.domain.model.RobotStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,15 +19,8 @@ class RobotLifecycleListenerTest {
   @Mock
   private RobotLifecyclePublisher robotLifecyclePublisher;
 
-  private LastStateView robotView(String robotId) {
-    return new LastStateView(
-        robotId,
-        1.0,
-        2.0,
-        50.0,
-        "IDLE",
-        Instant.parse("2026-05-20T10:00:00Z")
-    );
+  private RobotState robotView(String robotId) {
+    return new RobotState(robotId, 1.0, 2.0, 50.0, RobotStatus.IDLE);
   }
 
   @Test
