@@ -1,6 +1,7 @@
 package com.robofleet.robotsimulator.robot.infrastructure.messaging;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -51,6 +52,7 @@ class RehydrateActiveLifecycleEventHandlerTest {
   @Test
   void handleEvent_shouldSendFixedStateSpawnCommandToRegistry() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .correlationId("corr-rehydrate-24")
         .robotId("robot-24")
         .positionX(11.5)
         .positionY(7.25)
@@ -67,10 +69,11 @@ class RehydrateActiveLifecycleEventHandlerTest {
     verify(robotOrchestrator).tell(commandCaptor.capture());
 
     var requestedState = commandCaptor.getValue().requestedState();
-    assertTrue("robot-24".equals(requestedState.robotId()));
-    assertTrue(requestedState.positionX() == 11.5);
-    assertTrue(requestedState.positionY() == 7.25);
-    assertTrue(requestedState.battery() == 76.4);
-    assertTrue(requestedState.status() == RobotStatus.CHARGING);
+    assertEquals("robot-24", requestedState.robotId());
+    assertEquals(11.5, requestedState.positionX());
+    assertEquals(7.25, requestedState.positionY());
+    assertEquals(76.4, requestedState.battery());
+    assertEquals(RobotStatus.CHARGING, requestedState.status());
+    assertEquals("corr-rehydrate-24", commandCaptor.getValue().correlationId());
   }
 }

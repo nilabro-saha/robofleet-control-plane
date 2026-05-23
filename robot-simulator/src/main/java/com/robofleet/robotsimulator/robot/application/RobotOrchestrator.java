@@ -49,15 +49,15 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
   @Override
   public void tell(RobotOrchestration message) {
     switch (message) {
-      case RobotOrchestration.Spawn(var requestedState) -> spawnInternal(requestedState);
-      case RobotOrchestration.SpawnRandom(var robotId) -> spawnRandomInternal(robotId);
-      case RobotOrchestration.Destroy(var robotId) -> destroyInternal(robotId);
+      case RobotOrchestration.Spawn(var state, var corrId) -> spawnInternal(state, corrId);
+      case RobotOrchestration.SpawnRandom(var rid, var cid) -> spawnRandomInternal(rid, cid);
+      case RobotOrchestration.Destroy(var rid, var cid) -> destroyInternal(rid, cid);
       case RobotOrchestration.DestroyAll ignored -> destroyAllInternal();
       case RobotOrchestration.TellAll(var robotCommand) -> tellAllRobotsInternal(robotCommand);
     }
   }
 
-  private void spawnInternal(RobotState requestedState) {
+  private void spawnInternal(RobotState requestedState, String correlationId) {
     robotsLock.lock();
     try {
       boolean alreadyRegistered = robotActorRefs.stream()
@@ -74,7 +74,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
       );
       robotActorRefs.add(robotActorRef);
       var robotView = robotActorRef.lastState();
-      applicationEventPublisher.publishEvent(new RobotCreatedEvent(robotView));
+      applicationEventPublisher.publishEvent(new RobotCreatedEvent(robotView, correlationId));
       log.info(
           "Registered command-driven robot {} at ({}, {})",
           robotView.robotId(),
@@ -86,7 +86,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
     }
   }
 
-  private void spawnRandomInternal(String robotId) {
+  private void spawnRandomInternal(String robotId, String correlationId) {
     robotsLock.lock();
     try {
       boolean alreadyRegistered = robotActorRefs.stream()
@@ -104,7 +104,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
       );
       robotActorRefs.add(robotActorRef);
       var robotView = robotActorRef.lastState();
-      applicationEventPublisher.publishEvent(new RobotCreatedEvent(robotView));
+      applicationEventPublisher.publishEvent(new RobotCreatedEvent(robotView, correlationId));
       log.info(
           "Registered random-state robot {} at ({}, {})",
           robotView.robotId(),
@@ -120,7 +120,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
     robotsLock.lock();
     try {
       List<RobotDeletedEvent> deletedEvents = robotActorRefs.stream()
-          .map(robotActorRef -> new RobotDeletedEvent(robotActorRef.lastState()))
+          .map(robotActorRef -> new RobotDeletedEvent(robotActorRef.lastState(), null))
           .toList();
       robotActorRefs.clear();
       for (var deletedEvent : deletedEvents) {
@@ -132,7 +132,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
     }
   }
 
-  private void destroyInternal(String robotId) {
+  private void destroyInternal(String robotId, String correlationId) {
     robotsLock.lock();
     try {
       RobotActorRef removedRobotRef = null;
@@ -146,7 +146,7 @@ public class RobotOrchestrator implements ActorRef<RobotOrchestration> {
       if (removedRobotRef != null) {
         robotActorRefs.remove(removedRobotRef);
         applicationEventPublisher.publishEvent(
-            new RobotDeletedEvent(removedRobotRef.lastState())
+            new RobotDeletedEvent(removedRobotRef.lastState(), correlationId)
         );
         log.info("Deregistered command-driven robot {}", robotId);
         return;

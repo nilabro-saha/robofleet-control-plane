@@ -15,6 +15,13 @@ public sealed interface RobotCommand permits RobotCommand.AdvanceState {
   /**
    * Command instructing one robot actor reference to advance state once.
    */
-  record AdvanceState(AdvancementMode advancementMode) implements RobotCommand {
+  record AdvanceState(
+      AdvancementMode advancementMode,
+      String correlationId
+  ) implements RobotCommand {
+
+    public AdvanceState(AdvancementMode advancementMode) {
+      this(advancementMode, null);
+    }
   }
 }

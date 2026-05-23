@@ -38,7 +38,7 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishTelemetry(
         RobotStateChangedEvent.builder()
             .eventName(TELEMETRY_EVENT_NAME)
-            .correlationId(UUID.randomUUID().toString())
+            .correlationId(resolveCorrelationId(event.correlationId()))
             .robotId(robotView.robotId())
             .positionX(robotView.positionX())
             .positionY(robotView.positionY())
@@ -58,7 +58,7 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .eventName(LIFECYCLE_EVENT_NAME)
-            .correlationId(UUID.randomUUID().toString())
+            .correlationId(resolveCorrelationId(event.correlationId()))
             .robotId(robotView.robotId())
             .positionX(robotView.positionX())
             .positionY(robotView.positionY())
@@ -78,7 +78,7 @@ public class RobotLifecycleListener {
     robotLifecyclePublisher.publishLifecycle(
         RobotLifecycleEvent.builder()
             .eventName(LIFECYCLE_EVENT_NAME)
-            .correlationId(UUID.randomUUID().toString())
+            .correlationId(resolveCorrelationId(event.correlationId()))
             .robotId(robotView.robotId())
             .positionX(robotView.positionX())
             .positionY(robotView.positionY())
@@ -87,5 +87,9 @@ public class RobotLifecycleListener {
             .eventType(LifecycleEventType.REMOVED)
             .timestamp(Instant.now())
             .build());
+  }
+
+  private String resolveCorrelationId(String correlationId) {
+    return correlationId != null ? correlationId : UUID.randomUUID().toString();
   }
 }

@@ -49,6 +49,7 @@ class DeletePendingLifecycleEventHandlerTest {
   @Test
   void handleEvent_shouldSendDestroyCommandToRegistry() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .correlationId("corr-delete-42")
         .robotId("robot-42")
         .eventType(LifecycleEventType.DELETE_PENDING)
         .timestamp(Instant.parse("2026-05-20T10:00:00Z"))
@@ -56,6 +57,6 @@ class DeletePendingLifecycleEventHandlerTest {
 
     handler.handleEvent(event);
 
-    verify(robotOrchestrator).tell(new RobotOrchestration.Destroy("robot-42"));
+    verify(robotOrchestrator).tell(new RobotOrchestration.Destroy("robot-42", "corr-delete-42"));
   }
 }

@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.robofleet.robotsimulator.config.SimulatorProperties;
 import com.robofleet.robotsimulator.robot.application.actor.RobotActorRef;
 import com.robofleet.robotsimulator.robot.application.actor.RobotOrchestration;
-import java.util.List;
+
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
@@ -58,9 +58,9 @@ class AdvanceRobotStateSchedulerTest {
     when(simulatorProperties.getStateAdvanceIntervalMs()).thenReturn(500L);
     doAnswer(invocation -> {
       Object message = invocation.getArgument(0);
-      if (message instanceof RobotOrchestration.TellAll command) {
-        robotActorRefOne.tell(command.robotCommand());
-        robotActorRefTwo.tell(command.robotCommand());
+      if (message instanceof RobotOrchestration.TellAll(var rc)) {
+        robotActorRefOne.tell(rc);
+        robotActorRefTwo.tell(rc);
       }
       return null;
     }).when(robotOrchestrator).tell(any());

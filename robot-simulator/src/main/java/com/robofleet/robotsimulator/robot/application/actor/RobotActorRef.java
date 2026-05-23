@@ -100,7 +100,9 @@ public class RobotActorRef implements ActorRef<RobotCommand> {
   private void handleAdvanceState(RobotCommand.AdvanceState command) {
     try {
       robotActor.advanceState(robotMap, command.advancementMode());
-      applicationEventPublisher.publishEvent(new RobotAdvancedEvent(lastState()));
+      applicationEventPublisher.publishEvent(
+          new RobotAdvancedEvent(lastState(), command.correlationId())
+      );
     } catch (Exception e) {
       log.error("Failed to process advance-state command for {}", robotActor.getRobotId(), e);
     }

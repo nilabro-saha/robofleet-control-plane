@@ -44,6 +44,6 @@ public class RehydrateActiveLifecycleEventHandler implements RobotLifecycleEvent
         event.getBattery() != null ? event.getBattery() : 100.0,
         resolvedStatus
     );
-    robotOrchestrator.tell(new RobotOrchestration.Spawn(fixedState));
+    robotOrchestrator.tell(new RobotOrchestration.Spawn(fixedState, event.getCorrelationId()));
   }
 }

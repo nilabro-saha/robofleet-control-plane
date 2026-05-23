@@ -28,6 +28,8 @@ public class CreatePendingLifecycleEventHandler implements RobotLifecycleEventHa
 
   @Override
   public void handleEvent(RobotLifecycleEvent event) {
-    robotOrchestrator.tell(new RobotOrchestration.SpawnRandom(event.getRobotId()));
+    robotOrchestrator.tell(
+        new RobotOrchestration.SpawnRandom(event.getRobotId(), event.getCorrelationId())
+    );
   }
 }

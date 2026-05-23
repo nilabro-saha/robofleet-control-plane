@@ -28,6 +28,8 @@ public class DeletePendingLifecycleEventHandler implements RobotLifecycleEventHa
 
   @Override
   public void handleEvent(RobotLifecycleEvent event) {
-    robotOrchestrator.tell(new RobotOrchestration.Destroy(event.getRobotId()));
+    robotOrchestrator.tell(
+        new RobotOrchestration.Destroy(event.getRobotId(), event.getCorrelationId())
+    );
   }
 }

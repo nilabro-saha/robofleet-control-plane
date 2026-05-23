@@ -7,5 +7,9 @@ import com.robofleet.robotsimulator.robot.domain.model.RobotState;
  *
  * @author Nilabro Saha
  */
-public record RobotDeletedEvent(RobotState robotView) {
+public record RobotDeletedEvent(RobotState robotView, String correlationId) {
+
+  public RobotDeletedEvent(RobotState robotView) {
+    this(robotView, null);
+  }
 }

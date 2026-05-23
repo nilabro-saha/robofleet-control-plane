@@ -7,5 +7,9 @@ import com.robofleet.robotsimulator.robot.domain.model.RobotState;
  *
  * @author Nilabro Saha
  */
-public record RobotAdvancedEvent(RobotState robotView) {
+public record RobotAdvancedEvent(RobotState robotView, String correlationId) {
+
+  public RobotAdvancedEvent(RobotState robotView) {
+    this(robotView, null);
+  }
 }

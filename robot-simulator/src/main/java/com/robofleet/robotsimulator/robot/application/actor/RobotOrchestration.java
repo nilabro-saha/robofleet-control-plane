@@ -17,19 +17,19 @@ public sealed interface RobotOrchestration permits
   /**
    * Spawns one robot from explicit state.
    */
-  record Spawn(RobotState requestedState) implements RobotOrchestration {
+  record Spawn(RobotState requestedState, String correlationId) implements RobotOrchestration {
   }
 
   /**
    * Spawns one robot with randomized state.
    */
-  record SpawnRandom(String robotId) implements RobotOrchestration {
+  record SpawnRandom(String robotId, String correlationId) implements RobotOrchestration {
   }
 
   /**
    * Destroys one robot.
    */
-  record Destroy(String robotId) implements RobotOrchestration {
+  record Destroy(String robotId, String correlationId) implements RobotOrchestration {
   }
 
   /**

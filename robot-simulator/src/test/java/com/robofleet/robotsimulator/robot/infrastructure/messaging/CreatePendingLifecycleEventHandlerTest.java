@@ -60,6 +60,7 @@ class CreatePendingLifecycleEventHandlerTest {
   @Test
   void handleEvent_shouldSendSpawnRandomCommandToRegistry() {
     RobotLifecycleEvent event = RobotLifecycleEvent.builder()
+        .correlationId("corr-create-42")
         .robotId("robot-42")
         .eventType(LifecycleEventType.CREATE_PENDING)
         .timestamp(Instant.parse("2026-05-20T10:00:00Z"))
@@ -67,6 +68,6 @@ class CreatePendingLifecycleEventHandlerTest {
 
     handler.handleEvent(event);
 
-    verify(robotOrchestrator).tell(new RobotOrchestration.SpawnRandom("robot-42"));
+    verify(robotOrchestrator).tell(new RobotOrchestration.SpawnRandom("robot-42", "corr-create-42"));
   }
 }
